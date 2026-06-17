@@ -13,6 +13,7 @@ const ACTIONS = [
     icon: FileSignature,
     color: "text-tertiary bg-tertiary/10 border-tertiary/20",
     cta: "Get a Quote",
+    enabled: true,
   },
   {
     title: "Track Your Shipment",
@@ -21,6 +22,7 @@ const ACTIONS = [
     icon: MapPin,
     color: "text-secondary bg-secondary/10 border-secondary/20",
     cta: "Track Shipments",
+    enabled: true,
   },
   {
     title: "Download Invoices",
@@ -29,6 +31,7 @@ const ACTIONS = [
     icon: Receipt,
     color: "text-green-400 bg-green-400/10 border-green-400/20",
     cta: "View Invoices",
+    enabled: true,
   },
   {
     title: "Insure Your Cargo",
@@ -37,6 +40,7 @@ const ACTIONS = [
     icon: Shield,
     color: "text-on-tertiary-container bg-on-tertiary-container/10 border-on-tertiary-container/20",
     cta: "Get Insured",
+    enabled: true,
   },
   {
     title: "Get Support",
@@ -45,6 +49,7 @@ const ACTIONS = [
     icon: HeadphonesIcon,
     color: "text-error bg-error/10 border-error/20",
     cta: "Contact Support",
+    enabled: true,
   },
 ];
 
@@ -67,28 +72,23 @@ export default function CustomerDashboardPage() {
       {/* Quick Actions */}
       <div className="space-y-3">
         <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">Quick Actions</h2>
-        {ACTIONS.map(({ title, desc, href, icon: Icon, color, cta }) => (
-          <Card key={title} className="p-5 hover:bg-white/2 transition-colors duration-150 border border-white/5">
+        {ACTIONS.map(({ title, desc, href, icon: Icon, color, cta, enabled }) => (
+          <Card key={title} className={`p-5 border border-white/5 transition-colors duration-150 ${enabled ? "hover:bg-white/2" : "opacity-40"}`}>
             <div className="flex items-center gap-4">
-              {/* Icon */}
               <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border ${color}`}>
                 <Icon className="h-5 w-5" />
               </span>
-
-              {/* Content */}
               <div className="flex-grow min-w-0">
                 <p className="text-sm font-semibold text-on-surface">{title}</p>
                 <p className="text-xs text-on-surface-variant mt-1 leading-relaxed">{desc}</p>
               </div>
-
-              {/* CTA */}
-              <Link
-                href={href}
-                className="shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#1E88E5] text-white text-xs font-bold hover:bg-[#1565C0] transition-all shadow-[0_0_16px_rgba(30,136,229,0.3)] whitespace-nowrap"
-              >
-                {cta}
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
+              {enabled ? (
+                <Link href={href} className="shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#1E88E5] text-white text-xs font-bold hover:bg-[#1565C0] transition-all shadow-[0_0_16px_rgba(30,136,229,0.3)] whitespace-nowrap">
+                  {cta} <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              ) : (
+                <span className="shrink-0 px-4 py-2 rounded-xl bg-white/5 text-on-surface-variant text-xs font-bold cursor-not-allowed whitespace-nowrap">Coming Soon</span>
+              )}
             </div>
           </Card>
         ))}

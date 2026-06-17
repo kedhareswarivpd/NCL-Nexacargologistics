@@ -9,6 +9,20 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+
+type Quote = {
+  id: string;
+  origin: string;
+  destination: string;
+  cargo_type: string;
+  weight: number;
+  service: string;
+  total: number;
+  status: string;
+  created_at: string;
+};
 
 const STATS = [
   { label: "Total Users",     value: "1,284", delta: "+24 this week",     Icon: Users,       color: "text-tertiary bg-tertiary/10" },
@@ -53,12 +67,22 @@ const itemVariants = {
   show: {
     opacity: 1,
     y: 0,
-    transition: { type: "spring", stiffness: 260, damping: 22 },
+    transition: { type: "spring" as const, stiffness: 260, damping: 22 },
   },
-};
+} as const;
 
 export default function AdminDashboardPage() {
   const { user } = useAuth();
+  const [quotes, setQuotes] = useState<Quote[]>([]);
+
+  useEffect(() => {
+    supabase
+      .from("quotes")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(10)
+      .then(({ data }) => { if (data) setQuotes(data); });
+  }, []);
 
   return (
     <motion.div
@@ -206,6 +230,49 @@ export default function AdminDashboardPage() {
           </Card>
         </motion.div>
       </div>
+
+      {/* Quote Requests */}
+      <motion.div variants={itemVariants} className="space-y-3">
+        <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">Recent Quote Requests</h2>
+        <Card className="bg-white/[0.01] overflow-hidden">
+          {quotes.length === 0 ? (
+            <p className="text-sm text-on-surface-variant p-6">No quote requests yet.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-white/5 text-[11px] uppercase tracking-widest text-on-surface-variant border-b border-white/10">
+                  <tr>
+                    <th className="px-5 py-3">Origin</th>
+                    <th className="px-5 py-3">Destination</th>
+                    <th className="px-5 py-3">Cargo</th>
+                    <th className="px-5 py-3">Weight</th>
+                    <th className="px-5 py-3">Service</th>
+                    <th className="px-5 py-3">Total</th>
+                    <th className="px-5 py-3">Status</th>
+                    <th className="px-5 py-3">Date</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {quotes.map((q) => (
+                    <tr key={q.id} className="hover:bg-white/5 transition-colors">
+                      <td className="px-5 py-3 text-on-surface">{q.origin}</td>
+                      <td className="px-5 py-3 text-on-surface">{q.destination}</td>
+                      <td className="px-5 py-3 text-on-surface-variant">{q.cargo_type}</td>
+                      <td className="px-5 py-3 text-on-surface-variant">{q.weight} kg</td>
+                      <td className="px-5 py-3 text-on-surface-variant">{q.service}</td>
+                      <td className="px-5 py-3 font-mono font-bold text-on-surface">${q.total.toFixed(2)}</td>
+                      <td className="px-5 py-3">
+                        <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-yellow-400/10 text-yellow-400 capitalize">{q.status}</span>
+                      </td>
+                      <td className="px-5 py-3 text-on-surface-variant">{new Date(q.created_at).toLocaleDateString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Card>
+      </motion.div>
 
       {/* Portal Dashboards */}
       <motion.div variants={itemVariants} className="space-y-3">

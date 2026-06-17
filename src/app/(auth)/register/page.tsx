@@ -5,11 +5,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { User as UserIcon, AtSign, Lock, Building2, ArrowRight, Loader2 } from "lucide-react";
 import { FormField } from "@/components/ui/FormField";
+import { PhoneField } from "@/components/ui/PhoneField";
 import { Button } from "@/components/ui/button";
 import { useForm } from "@/hooks/useForm";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
-import { required, isEmail, isStrongPassword, matches, passwordScore } from "@/lib/validation";
+import { required, isEmail, isStrongPassword, matches, passwordScore, isPhone } from "@/lib/validation";
 import { cn } from "@/lib/utils";
 
 const STRENGTH = ["Too short", "Weak", "Fair", "Good", "Strong"];
@@ -21,10 +22,11 @@ export default function RegisterPage() {
   const [formError, setFormError] = React.useState<string | null>(null);
 
   const form = useForm({
-    initialValues: { name: "", email: "", company: "", password: "", confirmPassword: "" },
+    initialValues: { name: "", email: "", company: "", phone: "", password: "", confirmPassword: "" },
     validators: {
       name: [required("Name")],
       email: [required("Email"), isEmail],
+      phone: [isPhone],
       password: [required("Password"), isStrongPassword],
       confirmPassword: [required("Confirmation"), matches("password")],
     },
@@ -35,11 +37,12 @@ export default function RegisterPage() {
           name: values.name,
           email: values.email,
           company: values.company,
+          phone: values.phone,
           password: values.password,
           confirmPassword: values.confirmPassword,
         });
-        toast.success("Account created! Please sign in to continue.");
-        router.replace("/login");
+        toast.success(`Welcome, ${user.name.split(" ")[0]}! Your account is ready.`);
+        router.replace("/customer");
       } catch (err) {
         const message = err instanceof Error ? err.message : "Could not create account.";
         setFormError(message);
@@ -67,6 +70,16 @@ export default function RegisterPage() {
         <FormField label="Full name" autoComplete="name" placeholder="John Doe" icon={UserIcon} {...form.fieldProps("name")} />
         <FormField label="Email" type="email" autoComplete="email" placeholder="john@company.com" icon={AtSign} {...form.fieldProps("email")} />
         <FormField label="Company (optional)" placeholder="Acme Freight Inc." icon={Building2} {...form.fieldProps("company")} />
+        <PhoneField
+          name="phone"
+          value={form.values.phone}
+          onChange={(v) => form.setValues({ ...form.values, phone: v })}
+          onBlur={() =>
+            form.handleBlur({ target: { name: "phone" } } as React.FocusEvent<HTMLInputElement>)
+          }
+          error={form.touched.phone ? form.errors.phone : undefined}
+          disabled={form.submitting}
+        />
 
         <div>
           <FormField label="Password" type="password" autoComplete="new-password" placeholder="Create a strong password" icon={Lock} {...form.fieldProps("password")} />

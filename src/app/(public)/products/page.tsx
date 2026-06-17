@@ -20,7 +20,7 @@ export default function TechnologyProductsPage() {
             <h1 className="font-display-lg text-5xl md:text-[64px] mb-6 leading-tight font-bold">Intelligent Logistics <br /><span className="text-tertiary">Product Suite</span></h1>
             <p className="font-body-lg text-lg text-on-surface-variant mb-12 max-w-2xl mx-auto">Enterprise-grade SaaS solutions designed to optimize every link in your global supply chain with real-time intelligence and seamless automation.</p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Button size="lg" className="px-8 h-12 text-base">Request Demo</Button>
+              <Link href="/products/demo"><Button size="lg" className="px-8 h-12 text-base">Request Demo</Button></Link>
               <Button size="lg" variant="secondary" className="px-8 h-12 text-base bg-white/5 border-transparent hover:bg-white/10">View Pricing</Button>
             </div>
           </div>
@@ -183,7 +183,7 @@ export default function TechnologyProductsPage() {
             <h2 className="font-display-lg text-4xl md:text-5xl font-bold text-on-surface mb-6">Ready to modernize your fleet?</h2>
             <p className="font-body-lg text-lg text-on-surface-variant mb-12 max-w-xl mx-auto">Join 5,000+ global enterprises scaling their logistics with NexaCargo technology.</p>
             <div className="flex flex-wrap justify-center gap-6">
-              <Button size="lg" className="px-8 h-14 text-lg">Get Started Today</Button>
+              <Link href="/products/demo"><Button size="lg" className="px-8 h-14 text-lg">Get Started Today</Button></Link>
               <Button size="lg" variant="secondary" className="px-8 h-14 text-lg bg-transparent border-white/10 hover:bg-white/5">Schedule a Consult</Button>
             </div>
           </div>

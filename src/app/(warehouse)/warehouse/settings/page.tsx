@@ -7,12 +7,26 @@ import { useAuth } from "@/context/AuthContext";
 
 export default function SettingsPage() {
   const { user } = useAuth();
-  const [notifications, setNotifications] = useState({
-    inbound: true,
-    outbound: true,
-    lowStock: true,
-    taskAssigned: false,
-  });
+  const [notifications, setNotifications] = useState({ inbound: true, outbound: true, lowStock: true, taskAssigned: false });
+  const [pwForm, setPwForm] = useState({ current: "", next: "", confirm: "" });
+  const [pwErrors, setPwErrors] = useState<Record<string, string>>({});
+  const [pwSaved, setPwSaved] = useState(false);
+
+  function handlePasswordSave(e: React.FormEvent) {
+    e.preventDefault();
+    const errs: Record<string, string> = {};
+    if (!pwForm.current.trim()) errs.current = "Current password is required.";
+    if (!pwForm.next.trim()) errs.next = "New password is required.";
+    else if (pwForm.next.length < 8) errs.next = "Must be at least 8 characters.";
+    else if (!/[A-Za-z]/.test(pwForm.next)) errs.next = "Must include a letter.";
+    else if (!/[0-9]/.test(pwForm.next)) errs.next = "Must include a number.";
+    if (pwForm.confirm !== pwForm.next) errs.confirm = "Passwords do not match.";
+    if (Object.keys(errs).length) { setPwErrors(errs); return; }
+    setPwErrors({});
+    setPwSaved(true);
+    setPwForm({ current: "", next: "", confirm: "" });
+    setTimeout(() => setPwSaved(false), 3000);
+  }
 
   return (
     <div className="p-6 space-y-6 max-w-2xl">
@@ -110,17 +124,25 @@ export default function SettingsPage() {
           <Shield className="h-4 w-4 text-tertiary" />
           <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">Security</h2>
         </div>
-        <div>
-          <label className="text-xs uppercase tracking-widest text-on-surface-variant">Current Password</label>
-          <input type="password" placeholder="••••••••" className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" />
-        </div>
-        <div>
-          <label className="text-xs uppercase tracking-widest text-on-surface-variant">New Password</label>
-          <input type="password" placeholder="••••••••" className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" />
-        </div>
-        <button className="mt-2 px-4 py-2 rounded-lg bg-error/10 text-error text-sm font-semibold hover:bg-error/20 transition-colors">
-          Update Password
-        </button>
+        {pwSaved && <p className="text-xs text-green-400 bg-green-400/10 rounded-lg px-3 py-2">Password updated successfully.</p>}
+        <form onSubmit={handlePasswordSave} className="space-y-4">
+          <div>
+            <label className="text-xs uppercase tracking-widest text-on-surface-variant">Current Password</label>
+            <input type="password" value={pwForm.current} onChange={e => { setPwForm(p => ({...p, current: e.target.value})); setPwErrors(p => ({...p, current: ""})); }} placeholder="••••••••" className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface focus:outline-none focus:border-tertiary/50 ${pwErrors.current ? "border-red-500" : "border-white/10"}`} />
+            {pwErrors.current && <p className="text-xs text-error mt-1">{pwErrors.current}</p>}
+          </div>
+          <div>
+            <label className="text-xs uppercase tracking-widest text-on-surface-variant">New Password</label>
+            <input type="password" value={pwForm.next} onChange={e => { setPwForm(p => ({...p, next: e.target.value})); setPwErrors(p => ({...p, next: ""})); }} placeholder="••••••••" className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface focus:outline-none focus:border-tertiary/50 ${pwErrors.next ? "border-red-500" : "border-white/10"}`} />
+            {pwErrors.next && <p className="text-xs text-error mt-1">{pwErrors.next}</p>}
+          </div>
+          <div>
+            <label className="text-xs uppercase tracking-widest text-on-surface-variant">Confirm New Password</label>
+            <input type="password" value={pwForm.confirm} onChange={e => { setPwForm(p => ({...p, confirm: e.target.value})); setPwErrors(p => ({...p, confirm: ""})); }} placeholder="••••••••" className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface focus:outline-none focus:border-tertiary/50 ${pwErrors.confirm ? "border-red-500" : "border-white/10"}`} />
+            {pwErrors.confirm && <p className="text-xs text-error mt-1">{pwErrors.confirm}</p>}
+          </div>
+          <button type="submit" className="mt-2 px-4 py-2 rounded-lg bg-error/10 text-error text-sm font-semibold hover:bg-error/20 transition-colors">Update Password</button>
+        </form>
       </Card>
     </div>
   );

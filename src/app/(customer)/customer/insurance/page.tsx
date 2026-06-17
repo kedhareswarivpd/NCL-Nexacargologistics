@@ -44,9 +44,21 @@ export default function CargoInsurancePage() {
   const [submitted, setSubmitted] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState("Standard Cover");
   const [form, setForm] = useState({ shipment: "", value: "" });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = () => {
+    const e: Record<string, string> = {};
+    if (!form.shipment.trim()) e.shipment = "Shipment ID is required.";
+    if (!form.value.trim()) e.value = "Cargo value is required.";
+    else if (isNaN(Number(form.value)) || Number(form.value) <= 0) e.value = "Enter a valid positive amount.";
+    return e;
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const errs = validate();
+    if (Object.keys(errs).length) { setErrors(errs); return; }
+    setErrors({});
     setSubmitted(true);
     setTimeout(() => setSubmitted(false), 5000);
     setForm({ shipment: "", value: "" });
@@ -134,15 +146,17 @@ export default function CargoInsurancePage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="text-xs uppercase tracking-widest text-on-surface-variant">Shipment ID</label>
-              <input required value={form.shipment} onChange={(e) => setForm({ ...form, shipment: e.target.value })}
+              <input value={form.shipment} onChange={(e) => { setForm({ ...form, shipment: e.target.value }); setErrors(p => ({ ...p, shipment: "" })); }}
                 placeholder="e.g. NX-8842-HK"
-                className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50" />
+                className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 ${errors.shipment ? "border-red-500" : "border-white/10"}`} />
+              {errors.shipment && <p className="text-xs text-error mt-1">{errors.shipment}</p>}
             </div>
             <div>
               <label className="text-xs uppercase tracking-widest text-on-surface-variant">Declared Cargo Value (USD)</label>
-              <input required type="number" value={form.value} onChange={(e) => setForm({ ...form, value: e.target.value })}
+              <input type="number" value={form.value} onChange={(e) => { setForm({ ...form, value: e.target.value }); setErrors(p => ({ ...p, value: "" })); }}
                 placeholder="e.g. 80000"
-                className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50" />
+                className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 ${errors.value ? "border-red-500" : "border-white/10"}`} />
+              {errors.value && <p className="text-xs text-error mt-1">{errors.value}</p>}
             </div>
             <div>
               <label className="text-xs uppercase tracking-widest text-on-surface-variant">Selected Plan</label>

@@ -12,7 +12,7 @@ import { CursorToggleButton } from "@/components/ui/CursorSwitcher"
 const NAV_LINKS = [
   { name: "Home", href: "/" },
   { name: "Services", href: "/services" },
-  { name: "Industries", href: "/solutions" },
+  { name: "Industries", href: "/industries" },
   { name: "Products", href: "/products" },
   { name: "About", href: "/about" },
   { name: "Track", href: "/track" },

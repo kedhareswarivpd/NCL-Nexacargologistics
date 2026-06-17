@@ -21,6 +21,7 @@ export default function InvoicesPage() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   async function load() {
     const { data } = await supabase.from("finance_invoices").select("*").order("due", { ascending: false });
@@ -31,7 +32,14 @@ export default function InvoicesPage() {
 
   async function handleGenerate(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.client || !form.amount || !form.due) return;
+    const errs: Record<string, string> = {};
+    if (!form.client.trim()) errs.client = "Client name is required.";
+    if (!form.amount.trim()) errs.amount = "Amount is required.";
+    else if (isNaN(Number(form.amount)) || Number(form.amount) <= 0) errs.amount = "Enter a valid positive amount.";
+    if (!form.due) errs.due = "Due date is required.";
+    else if (new Date(form.due) < new Date(new Date().toDateString())) errs.due = "Due date must be today or later.";
+    if (Object.keys(errs).length) { setFormErrors(errs); return; }
+    setFormErrors({});
     setSaving(true);
     const id = `INV-${Date.now().toString().slice(-4)}`;
     await supabase.from("finance_invoices").insert({
@@ -91,35 +99,33 @@ export default function InvoicesPage() {
             <div>
               <label className="text-xs uppercase tracking-widest text-on-surface-variant">Client Name</label>
               <input
-                required
                 value={form.client}
-                onChange={(e) => setForm((f) => ({ ...f, client: e.target.value }))}
+                onChange={(e) => { setForm((f) => ({ ...f, client: e.target.value })); setFormErrors(p => ({...p, client: ""})); }}
                 placeholder="e.g. Amazon EU"
-                className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50"
+                className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface focus:outline-none focus:border-tertiary/50 ${formErrors.client ? "border-red-500" : "border-white/10"}`}
               />
+              {formErrors.client && <p className="text-xs text-error mt-1">{formErrors.client}</p>}
             </div>
             <div>
               <label className="text-xs uppercase tracking-widest text-on-surface-variant">Amount (USD)</label>
               <input
-                required
-                type="number"
-                min="0"
-                step="0.01"
+                type="number" min="0" step="0.01"
                 value={form.amount}
-                onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value }))}
+                onChange={(e) => { setForm((f) => ({ ...f, amount: e.target.value })); setFormErrors(p => ({...p, amount: ""})); }}
                 placeholder="e.g. 12400"
-                className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50"
+                className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface focus:outline-none focus:border-tertiary/50 ${formErrors.amount ? "border-red-500" : "border-white/10"}`}
               />
+              {formErrors.amount && <p className="text-xs text-error mt-1">{formErrors.amount}</p>}
             </div>
             <div>
               <label className="text-xs uppercase tracking-widest text-on-surface-variant">Due Date</label>
               <input
-                required
                 type="date"
                 value={form.due}
-                onChange={(e) => setForm((f) => ({ ...f, due: e.target.value }))}
-                className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50"
+                onChange={(e) => { setForm((f) => ({ ...f, due: e.target.value })); setFormErrors(p => ({...p, due: ""})); }}
+                className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface focus:outline-none focus:border-tertiary/50 ${formErrors.due ? "border-red-500" : "border-white/10"}`}
               />
+              {formErrors.due && <p className="text-xs text-error mt-1">{formErrors.due}</p>}
             </div>
             <div>
               <label className="text-xs uppercase tracking-widest text-on-surface-variant">Description</label>

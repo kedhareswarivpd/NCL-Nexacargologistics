@@ -30,8 +30,16 @@ export default function RoutesPage() {
 
   useEffect(() => { load(); }, []);
 
+  const [routeErrors, setRouteErrors] = useState<Record<string, string>>({});
+
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
+    const errs: Record<string, string> = {};
+    if (!form.route_code.trim()) errs.route_code = "Route code is required.";
+    if (!form.origin.trim()) errs.origin = "Origin is required.";
+    if (!form.destination.trim()) errs.destination = "Destination is required.";
+    if (Object.keys(errs).length) { setRouteErrors(errs); return; }
+    setRouteErrors({});
     setSaving(true);
     await supabase.from("routes").insert([{ ...form, status: "Scheduled" }]);
     setForm({ route_code: "", origin: "", destination: "", distance: "", duration: "", driver: "", vehicle: "" });
@@ -77,9 +85,21 @@ export default function RoutesPage() {
           <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">New Route</h2>
           <form onSubmit={handleAdd} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Route Code</label><input required value={form.route_code} onChange={(e) => setForm({ ...form, route_code: e.target.value })} placeholder="e.g. RTE-2300" className={inputCls} /></div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Origin</label><input required value={form.origin} onChange={(e) => setForm({ ...form, origin: e.target.value })} placeholder="e.g. Shanghai" className={inputCls} /></div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Destination</label><input required value={form.destination} onChange={(e) => setForm({ ...form, destination: e.target.value })} placeholder="e.g. Rotterdam" className={inputCls} /></div>
+              <div>
+                <label className="text-xs uppercase tracking-widest text-on-surface-variant">Route Code</label>
+                <input required value={form.route_code} onChange={(e) => { setForm({ ...form, route_code: e.target.value }); setRouteErrors(p => ({...p, route_code: ""})); }} placeholder="e.g. RTE-2300" className={`${inputCls} ${routeErrors.route_code ? "border-red-500" : ""}`} />
+                {routeErrors.route_code && <p className="text-xs text-error mt-1">{routeErrors.route_code}</p>}
+              </div>
+              <div>
+                <label className="text-xs uppercase tracking-widest text-on-surface-variant">Origin</label>
+                <input required value={form.origin} onChange={(e) => { setForm({ ...form, origin: e.target.value }); setRouteErrors(p => ({...p, origin: ""})); }} placeholder="e.g. Shanghai" className={`${inputCls} ${routeErrors.origin ? "border-red-500" : ""}`} />
+                {routeErrors.origin && <p className="text-xs text-error mt-1">{routeErrors.origin}</p>}
+              </div>
+              <div>
+                <label className="text-xs uppercase tracking-widest text-on-surface-variant">Destination</label>
+                <input required value={form.destination} onChange={(e) => { setForm({ ...form, destination: e.target.value }); setRouteErrors(p => ({...p, destination: ""})); }} placeholder="e.g. Rotterdam" className={`${inputCls} ${routeErrors.destination ? "border-red-500" : ""}`} />
+                {routeErrors.destination && <p className="text-xs text-error mt-1">{routeErrors.destination}</p>}
+              </div>
               <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Distance</label><input value={form.distance} onChange={(e) => setForm({ ...form, distance: e.target.value })} placeholder="e.g. 19,500 km" className={inputCls} /></div>
               <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Duration</label><input value={form.duration} onChange={(e) => setForm({ ...form, duration: e.target.value })} placeholder="e.g. 25 days" className={inputCls} /></div>
               <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Driver</label><input value={form.driver} onChange={(e) => setForm({ ...form, driver: e.target.value })} placeholder="e.g. Elena Rodriguez" className={inputCls} /></div>

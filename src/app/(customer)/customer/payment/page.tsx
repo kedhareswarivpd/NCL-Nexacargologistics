@@ -50,10 +50,11 @@ export default function PaymentPage() {
   const [copied,    setCopied]    = useState(false);
   const [txRef]     = useState(() => "TXN-" + Math.random().toString(36).slice(2,10).toUpperCase());
 
-  /* Card form */
   const [card, setCard] = useState({ name: "", number: "", expiry: "", cvv: "" });
+  const [cardErrors, setCardErrors] = useState<Record<string, string>>({});
   /* Bank form */
   const [bank, setBank] = useState({ name: "", account: "", routing: "" });
+  const [bankErrors, setBankErrors] = useState<Record<string, string>>({});
   /* Wallet */
   const [wallet, setWallet] = useState<"paypal"|"apple"|"google">("paypal");
 
@@ -64,6 +65,23 @@ export default function PaymentPage() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (method === "card") {
+      const errs: Record<string, string> = {};
+      if (!card.name.trim()) errs.name = "Name is required.";
+      if (card.number.replace(/\s/g, "").length !== 16) errs.number = "Enter a valid 16-digit card number.";
+      if (!/^\d{2}\/\d{2}$/.test(card.expiry)) errs.expiry = "Use MM/YY format.";
+      else { const [mm, yy] = card.expiry.split("/").map(Number); if (mm < 1 || mm > 12) errs.expiry = "Invalid month."; else if (new Date(2000 + yy, mm - 1) < new Date()) errs.expiry = "Card has expired."; }
+      if (!/^\d{3,4}$/.test(card.cvv)) errs.cvv = "CVV must be 3 or 4 digits.";
+      if (Object.keys(errs).length) { setCardErrors(errs); return; }
+      setCardErrors({});
+    }
+    if (method === "bank") {
+      const errs: Record<string, string> = {};
+      if (!bank.name.trim()) errs.name = "Bank/account name is required.";
+      if (!bank.account.trim()) errs.account = "Account number is required.";
+      if (Object.keys(errs).length) { setBankErrors(errs); return; }
+      setBankErrors({});
+    }
     setStage("processing");
     setTimeout(() => setStage("success"), 3000);
   }
@@ -250,34 +268,38 @@ export default function PaymentPage() {
                   <div>
                     <label className={labelCls}>Cardholder Name</label>
                     <input required value={card.name}
-                      onChange={e => setCard({...card, name: e.target.value})}
-                      placeholder="John Smith" className={inputCls} />
+                      onChange={e => { setCard({...card, name: e.target.value}); setCardErrors(p => ({...p, name: ""})); }}
+                      placeholder="John Smith" className={`${inputCls} ${cardErrors.name ? "border-red-500" : ""}`} />
+                    {cardErrors.name && <p className="text-xs text-red-400 mt-1">{cardErrors.name}</p>}
                   </div>
                   <div>
                     <label className={labelCls}>Card Number</label>
                     <div className="relative">
                       <input required value={card.number}
-                        onChange={e => setCard({...card, number: formatCard(e.target.value)})}
+                        onChange={e => { setCard({...card, number: formatCard(e.target.value)}); setCardErrors(p => ({...p, number: ""})); }}
                         placeholder="0000 0000 0000 0000"
-                        maxLength={19} className={inputCls + " pr-12"} />
+                        maxLength={19} className={`${inputCls} pr-12 ${cardErrors.number ? "border-red-500" : ""}`} />
                       <div className="absolute right-3 top-1/2 -translate-y-1/2 flex gap-1">
                         <div className="w-6 h-4 rounded bg-[#1a1f6b] opacity-80" />
                         <div className="w-6 h-4 rounded bg-[#eb001b] opacity-80" />
                       </div>
                     </div>
+                    {cardErrors.number && <p className="text-xs text-red-400 mt-1">{cardErrors.number}</p>}
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className={labelCls}>Expiry (MM/YY)</label>
                       <input required value={card.expiry}
-                        onChange={e => setCard({...card, expiry: formatExpiry(e.target.value)})}
-                        placeholder="08/27" maxLength={5} className={inputCls} />
+                        onChange={e => { setCard({...card, expiry: formatExpiry(e.target.value)}); setCardErrors(p => ({...p, expiry: ""})); }}
+                        placeholder="08/27" maxLength={5} className={`${inputCls} ${cardErrors.expiry ? "border-red-500" : ""}`} />
+                      {cardErrors.expiry && <p className="text-xs text-red-400 mt-1">{cardErrors.expiry}</p>}
                     </div>
                     <div>
                       <label className={labelCls}>CVV</label>
                       <input required type="password" value={card.cvv}
-                        onChange={e => setCard({...card, cvv: e.target.value.slice(0,4)})}
-                        placeholder="•••" maxLength={4} className={inputCls} />
+                        onChange={e => { setCard({...card, cvv: e.target.value.slice(0,4)}); setCardErrors(p => ({...p, cvv: ""})); }}
+                        placeholder="•••" maxLength={4} className={`${inputCls} ${cardErrors.cvv ? "border-red-500" : ""}`} />
+                      {cardErrors.cvv && <p className="text-xs text-red-400 mt-1">{cardErrors.cvv}</p>}
                     </div>
                   </div>
                   {/* Accepted cards */}
@@ -311,14 +333,16 @@ export default function PaymentPage() {
                   <div>
                     <label className={labelCls}>Your Bank / Account Name</label>
                     <input required value={bank.name}
-                      onChange={e => setBank({...bank, name: e.target.value})}
-                      placeholder="Acme Corp Ltd." className={inputCls} />
+                      onChange={e => { setBank({...bank, name: e.target.value}); setBankErrors(p => ({...p, name: ""})); }}
+                      placeholder="Acme Corp Ltd." className={`${inputCls} ${bankErrors.name ? "border-red-500" : ""}`} />
+                    {bankErrors.name && <p className="text-xs text-red-400 mt-1">{bankErrors.name}</p>}
                   </div>
                   <div>
                     <label className={labelCls}>Your Account Number</label>
                     <input required value={bank.account}
-                      onChange={e => setBank({...bank, account: e.target.value})}
-                      placeholder="IBAN or account number" className={inputCls} />
+                      onChange={e => { setBank({...bank, account: e.target.value}); setBankErrors(p => ({...p, account: ""})); }}
+                      placeholder="IBAN or account number" className={`${inputCls} ${bankErrors.account ? "border-red-500" : ""}`} />
+                    {bankErrors.account && <p className="text-xs text-red-400 mt-1">{bankErrors.account}</p>}
                   </div>
                   <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-400/5 border border-amber-400/20">
                     <AlertCircle className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />

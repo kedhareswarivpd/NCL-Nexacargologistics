@@ -26,6 +26,7 @@ export default function ShipmentsPage() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ tracking_id: generateShipmentId(), origin: "", destination: "", cargo_type: "", weight: "", customer: "", eta: "" });
   const [saving, setSaving] = useState(false);
+  const [shipmentErrors, setShipmentErrors] = useState<Record<string, string>>({});
 
   async function load() {
     setLoading(true);
@@ -38,6 +39,12 @@ export default function ShipmentsPage() {
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
+    const errs: Record<string, string> = {};
+    if (!form.tracking_id.trim()) errs.tracking_id = "Tracking ID is required.";
+    if (!form.origin.trim()) errs.origin = "Origin is required.";
+    if (!form.destination.trim()) errs.destination = "Destination is required.";
+    if (Object.keys(errs).length) { setShipmentErrors(errs); return; }
+    setShipmentErrors({});
     setSaving(true);
     await supabase.from("shipments").insert([{ ...form, status: "Awaiting Dispatch" }]);
     setForm({ tracking_id: "", origin: "", destination: "", cargo_type: "", weight: "", customer: "", eta: "" });
@@ -87,10 +94,10 @@ export default function ShipmentsPage() {
           <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">New Shipment</h2>
           <form onSubmit={handleAdd} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Tracking ID</label><input required value={form.tracking_id} onChange={(e) => setForm({ ...form, tracking_id: e.target.value })} placeholder="e.g. SHP-90500" className={inputCls} /></div>
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Tracking ID</label><input value={form.tracking_id} onChange={(e) => { setForm({ ...form, tracking_id: e.target.value }); setShipmentErrors(p => ({...p, tracking_id: ""})); }} placeholder="e.g. SHP-90500" className={`${inputCls} ${shipmentErrors.tracking_id ? "border-red-500" : ""}`} />{shipmentErrors.tracking_id && <p className="text-xs text-error mt-1">{shipmentErrors.tracking_id}</p>}</div>
               <div><button type="button" onClick={() => setForm({ ...form, tracking_id: generateShipmentId() })} className="absolute mt-1 ml-28 px-2 py-1 rounded bg-white/5 text-[10px] text-on-surface-variant hover:bg-white/10 transition-colors">Generate ID</button></div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Origin</label><input required value={form.origin} onChange={(e) => setForm({ ...form, origin: e.target.value })} placeholder="e.g. Shanghai" className={inputCls} /></div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Destination</label><input required value={form.destination} onChange={(e) => setForm({ ...form, destination: e.target.value })} placeholder="e.g. Rotterdam" className={inputCls} /></div>
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Origin</label><input value={form.origin} onChange={(e) => { setForm({ ...form, origin: e.target.value }); setShipmentErrors(p => ({...p, origin: ""})); }} placeholder="e.g. Shanghai" className={`${inputCls} ${shipmentErrors.origin ? "border-red-500" : ""}`} />{shipmentErrors.origin && <p className="text-xs text-error mt-1">{shipmentErrors.origin}</p>}</div>
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Destination</label><input value={form.destination} onChange={(e) => { setForm({ ...form, destination: e.target.value }); setShipmentErrors(p => ({...p, destination: ""})); }} placeholder="e.g. Rotterdam" className={`${inputCls} ${shipmentErrors.destination ? "border-red-500" : ""}`} />{shipmentErrors.destination && <p className="text-xs text-error mt-1">{shipmentErrors.destination}</p>}</div>
               <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Cargo Type</label><input value={form.cargo_type} onChange={(e) => setForm({ ...form, cargo_type: e.target.value })} placeholder="e.g. Electronics" className={inputCls} /></div>
               <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Weight</label><input value={form.weight} onChange={(e) => setForm({ ...form, weight: e.target.value })} placeholder="e.g. 5,000 kg" className={inputCls} /></div>
               <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Customer</label><input value={form.customer} onChange={(e) => setForm({ ...form, customer: e.target.value })} placeholder="e.g. Amazon EU" className={inputCls} /></div>

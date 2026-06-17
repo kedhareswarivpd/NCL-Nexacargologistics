@@ -40,6 +40,7 @@ export interface RegisterInput {
   password: string;
   confirmPassword: string;
   company?: string;
+  phone?: string;
   role?: UserRole;
 }
 

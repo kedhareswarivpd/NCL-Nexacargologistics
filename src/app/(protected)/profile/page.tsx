@@ -6,9 +6,10 @@ import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
 import { useForm } from "@/hooks/useForm";
 import { FormField } from "@/components/ui/FormField";
+import { PhoneField } from "@/components/ui/PhoneField";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { required } from "@/lib/validation";
+import { required, isPhone } from "@/lib/validation";
 import { ROLE_LABEL } from "@/lib/types";
 
 export default function ProfilePage() {
@@ -22,7 +23,7 @@ export default function ProfilePage() {
       company: user?.company ?? "",
       phone: user?.phone ?? "",
     },
-    validators: { name: [required("Name")] },
+    validators: { name: [required("Name")], phone: [isPhone] },
     onSubmit: async (values) => {
       try {
         await updateProfile({ name: values.name, company: values.company, phone: values.phone });
@@ -100,7 +101,16 @@ export default function ProfilePage() {
           <form className="space-y-4" onSubmit={form.handleSubmit} noValidate>
             <FormField label="Full name" icon={UserIcon} {...form.fieldProps("name")} />
             <FormField label="Company" icon={Building2} placeholder="Company name" {...form.fieldProps("company")} />
-            <FormField label="Phone" icon={Phone} placeholder="+880 ..." {...form.fieldProps("phone")} />
+            <PhoneField
+              name="phone"
+              value={form.values.phone}
+              onChange={(v) => form.setValues({ ...form.values, phone: v })}
+              onBlur={() =>
+                form.handleBlur({ target: { name: "phone" } } as React.FocusEvent<HTMLInputElement>)
+              }
+              error={form.touched.phone ? form.errors.phone : undefined}
+              disabled={form.submitting}
+            />
             <div className="pt-2">
               <Button
                 type="submit"

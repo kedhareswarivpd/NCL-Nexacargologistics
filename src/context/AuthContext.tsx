@@ -2,11 +2,10 @@
 
 import * as React from "react";
 import { useEffect, useCallback, useMemo, useReducer, createContext, useContext } from "react";
-import { supabase } from "@/lib/supabase";
-import type { LoginInput, ProfileInput, RegisterInput, User, UserRole } from "@/lib/types";
+import type { LoginInput, ProfileInput, RegisterInput, User } from "@/lib/types";
 import {
   loginUser, registerUser, logoutUser,
-  updateUser, requestPasswordReset,
+  updateUser, requestPasswordReset, getCurrentUser,
 } from "@/lib/auth-store";
 
 type Status = "loading" | "authenticated" | "unauthenticated";
@@ -37,21 +36,6 @@ function reducer(state: AuthState, action: Action): AuthState {
   }
 }
 
-/** Map Supabase session user → our User shape */
-function sessionToUser(sbUser: import("@supabase/supabase-js").User): User {
-  const meta = sbUser.user_metadata ?? {};
-  const appMeta = sbUser.app_metadata ?? {};
-  return {
-    id:        sbUser.id,
-    name:      meta.name    ?? sbUser.email?.split("@")[0] ?? "User",
-    email:     sbUser.email ?? "",
-    role:      (meta.role ?? appMeta.role ?? "customer") as UserRole,
-    company:   meta.company,
-    phone:     meta.phone,
-    createdAt: sbUser.created_at,
-  };
-}
-
 interface AuthContextValue extends AuthState {
   isAuthenticated: boolean;
   login: (input: LoginInput) => Promise<User>;
@@ -66,23 +50,11 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, { user: null, status: "loading" });
 
+  // Rehydrate session from localStorage on mount
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      dispatch({
-        type: "RESTORE",
-        user: session?.user ? sessionToUser(session.user) : null,
-      });
+    getCurrentUser().then(user => {
+      dispatch({ type: "RESTORE", user });
     });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        dispatch({ type: "AUTH_SUCCESS", user: sessionToUser(session.user) });
-      } else {
-        dispatch({ type: "LOGOUT" });
-      }
-    });
-
-    return () => subscription.unsubscribe();
   }, []);
 
   const login = useCallback(async (input: LoginInput) => {

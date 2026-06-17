@@ -44,8 +44,8 @@ export default function OrbitCursor() {
           width: 18,
           height: 18,
           borderRadius: "9999px",
-          background: "radial-gradient(circle, rgba(56,189,248,0.35), rgba(168,85,247,0.08))",
-          boxShadow: "0 0 18px 8px rgba(56,189,248,0.22)",
+          background: "radial-gradient(circle, rgba(0,194,255,0.85), rgba(99,102,241,0.4))",
+          boxShadow: "0 0 28px 12px rgba(0,194,255,0.55)",
           pointerEvents: "none",
           zIndex: 9998,
         }}
@@ -62,10 +62,10 @@ export default function OrbitCursor() {
         }}
       >
         <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="24" cy="24" r="19" stroke="rgba(125,211,252,0.45)" strokeWidth="1.2" fill="none" />
-          <circle cx="24" cy="24" r="10" stroke="rgba(192,132,252,0.35)" strokeWidth="1" fill="none" />
-          <path d="M24 6 C30 14, 38 18, 42 24 C38 30, 30 34, 24 42 C18 34, 10 30, 6 24 C10 18, 18 14, 24 6Z" fill="rgba(15,23,42,0.55)" stroke="rgba(191,219,254,0.85)" strokeWidth="1" />
-          <circle cx="24" cy="24" r="3" fill="rgba(224,242,254,1)" />
+          <circle cx="24" cy="24" r="19" stroke="rgba(0,194,255,0.95)" strokeWidth="2" fill="none" />
+          <circle cx="24" cy="24" r="10" stroke="rgba(168,85,247,0.85)" strokeWidth="1.5" fill="none" />
+          <path d="M24 6 C30 14, 38 18, 42 24 C38 30, 30 34, 24 42 C18 34, 10 30, 6 24 C10 18, 18 14, 24 6Z" fill="rgba(0,194,255,0.15)" stroke="rgba(0,229,255,1)" strokeWidth="1.5" />
+          <circle cx="24" cy="24" r="3.5" fill="rgba(0,229,255,1)" />
         </svg>
       </div>
     </>

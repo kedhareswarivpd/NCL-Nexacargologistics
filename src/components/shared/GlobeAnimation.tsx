@@ -37,7 +37,7 @@ function StickerMover({ emoji, path, speed, offset }: {
   return (
     <text
       x={pos.x} y={pos.y}
-      fontSize="14"
+      fontSize="22"
       textAnchor="middle"
       dominantBaseline="middle"
       style={{ userSelect: "none", filter: "drop-shadow(0 0 4px rgba(0,194,255,0.8))" }}
@@ -161,12 +161,14 @@ export function GlobeAnimation() {
 
         {/* Bangladesh */}
         <g clipPath="url(#globeClip)">
-          <path d={BD}
+          <motion.path d={BD}
             fill="url(#bgd)"
             stroke="#00e5ff"
             strokeWidth="1.5"
-            opacity="0.96"
             filter="url(#bdGlow)"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 1, 0.2, 1, 0.1, 1, 0.3, 1, 0.96] }}
+            transition={{ duration: 1.6, ease: "easeInOut", times: [0, 0.15, 0.25, 0.4, 0.52, 0.65, 0.78, 0.9, 1] }}
           />
         </g>
 

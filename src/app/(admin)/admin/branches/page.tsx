@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { GitBranch, MapPin, Users, Package, CheckCircle2, AlertTriangle, Plus, Edit, Trash2, ArrowLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import Link from "next/link";
 
 const BRANCHES = [
@@ -29,7 +29,7 @@ const TYPE_STYLES: Record<string, string> = {
   "Regional Office": "text-on-surface-variant bg-white/5",
 };
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
@@ -37,7 +37,7 @@ const containerVariants = {
   }
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 10 },
   show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 260, damping: 22 } }
 };
@@ -45,6 +45,18 @@ const itemVariants = {
 export default function BranchManagementPage() {
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
+  const [branchForm, setBranchForm] = useState({ name: "", location: "", type: "Logistics Hub" });
+  const [branchErrors, setBranchErrors] = useState<Record<string, string>>({});
+
+  function handleBranchSave() {
+    const e: Record<string, string> = {};
+    if (!branchForm.name.trim()) e.name = "Branch name is required.";
+    if (!branchForm.location.trim()) e.location = "Location is required.";
+    if (Object.keys(e).length) { setBranchErrors(e); return; }
+    setBranchErrors({});
+    setShowForm(false);
+    setBranchForm({ name: "", location: "", type: "Logistics Hub" });
+  }
 
   const filtered = BRANCHES.filter(
     (b) => b.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -98,22 +110,29 @@ export default function BranchManagementPage() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="text-xs uppercase tracking-widest text-on-surface-variant">Branch Name</label>
-                  <input placeholder="e.g. Tokyo Office" className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50" />
+                  <input value={branchForm.name} onChange={e => { setBranchForm(p => ({...p, name: e.target.value})); setBranchErrors(p => ({...p, name: ""})); }}
+                    placeholder="e.g. Tokyo Office"
+                    className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 ${branchErrors.name ? "border-red-500" : "border-white/10"}`} />
+                  {branchErrors.name && <p className="text-xs text-error mt-1">{branchErrors.name}</p>}
                 </div>
                 <div>
                   <label className="text-xs uppercase tracking-widest text-on-surface-variant">Location</label>
-                  <input placeholder="e.g. Tokyo, JP" className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50" />
+                  <input value={branchForm.location} onChange={e => { setBranchForm(p => ({...p, location: e.target.value})); setBranchErrors(p => ({...p, location: ""})); }}
+                    placeholder="e.g. Tokyo, JP"
+                    className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 ${branchErrors.location ? "border-red-500" : "border-white/10"}`} />
+                  {branchErrors.location && <p className="text-xs text-error mt-1">{branchErrors.location}</p>}
                 </div>
                 <div>
                   <label className="text-xs uppercase tracking-widest text-on-surface-variant">Type</label>
-                  <select className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
+                  <select value={branchForm.type} onChange={e => setBranchForm(p => ({...p, type: e.target.value}))}
+                    className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
                     <option>Logistics Hub</option><option>Warehouse</option><option>Port Office</option><option>Regional Office</option>
                   </select>
                 </div>
               </div>
               <div className="flex gap-3">
-                <button onClick={() => setShowForm(false)} className="px-4 py-2 rounded-lg bg-tertiary/20 text-tertiary text-sm font-semibold hover:bg-tertiary/30 transition-colors">Save Branch</button>
-                <button onClick={() => setShowForm(false)} className="px-4 py-2 rounded-lg bg-white/5 text-on-surface-variant text-sm font-semibold hover:bg-white/10 transition-colors">Cancel</button>
+                <button onClick={handleBranchSave} className="px-4 py-2 rounded-lg bg-tertiary/20 text-tertiary text-sm font-semibold hover:bg-tertiary/30 transition-colors">Save Branch</button>
+                <button onClick={() => { setShowForm(false); setBranchErrors({}); }} className="px-4 py-2 rounded-lg bg-white/5 text-on-surface-variant text-sm font-semibold hover:bg-white/10 transition-colors">Cancel</button>
               </div>
             </Card>
           </motion.div>

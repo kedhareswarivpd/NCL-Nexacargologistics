@@ -30,14 +30,28 @@ export default function AddUserPage() {
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   function set(field: string, value: string) {
     setForm((f) => ({ ...f, [field]: value }));
+    setFieldErrors((p) => ({ ...p, [field]: "" }));
+  }
+
+  function validate() {
+    const e: Record<string, string> = {};
+    if (!form.name.trim()) e.name = "Name is required.";
+    if (!form.email.trim()) e.email = "Email is required.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) e.email = "Enter a valid email address.";
+    if (form.phone && !/^\+?[\d\s\-()]{7,15}$/.test(form.phone.trim())) e.phone = "Enter a valid phone number.";
+    return e;
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    const errs = validate();
+    if (Object.keys(errs).length) { setFieldErrors(errs); return; }
+    setFieldErrors({});
     setSaving(true);
     const { error: err } = await supabase.from("users").insert([
       {
@@ -90,13 +104,17 @@ export default function AddUserPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className={labelCls}>Full Name *</label>
-              <input required value={form.name} onChange={(e) => set("name", e.target.value)}
-                placeholder="e.g. Marcus Johnson" className={inputCls} />
+              <input value={form.name} onChange={(e) => set("name", e.target.value)}
+                placeholder="e.g. Marcus Johnson"
+                className={`${inputCls} ${fieldErrors.name ? "border-red-500" : ""}`} />
+              {fieldErrors.name && <p className="text-xs text-error mt-1">{fieldErrors.name}</p>}
             </div>
             <div>
               <label className={labelCls}>Email Address *</label>
-              <input required type="email" value={form.email} onChange={(e) => set("email", e.target.value)}
-                placeholder="e.g. user@nexacargo.com" className={inputCls} />
+              <input type="email" value={form.email} onChange={(e) => set("email", e.target.value)}
+                placeholder="e.g. user@nexacargo.com"
+                className={`${inputCls} ${fieldErrors.email ? "border-red-500" : ""}`} />
+              {fieldErrors.email && <p className="text-xs text-error mt-1">{fieldErrors.email}</p>}
             </div>
           </div>
 
@@ -105,7 +123,9 @@ export default function AddUserPage() {
             <div>
               <label className={labelCls}>Phone Number</label>
               <input value={form.phone} onChange={(e) => set("phone", e.target.value)}
-                placeholder="e.g. +1 555 000 0000" className={inputCls} />
+                placeholder="e.g. +1 555 000 0000"
+                className={`${inputCls} ${fieldErrors.phone ? "border-red-500" : ""}`} />
+              {fieldErrors.phone && <p className="text-xs text-error mt-1">{fieldErrors.phone}</p>}
             </div>
             <div>
               <label className={labelCls}>Department</label>

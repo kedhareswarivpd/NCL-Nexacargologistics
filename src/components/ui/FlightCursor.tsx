@@ -49,8 +49,8 @@ export default function FlightCursor() {
           width: 8,
           height: 8,
           borderRadius: "50%",
-          background: "rgba(153,203,255,0.55)",
-          boxShadow: "0 0 10px 4px rgba(153,203,255,0.3)",
+          background: "rgba(0,194,255,0.9)",
+          boxShadow: "0 0 18px 8px rgba(0,194,255,0.6)",
           pointerEvents: "none",
           zIndex: 9998,
           transition: "opacity 0.2s",
@@ -77,29 +77,29 @@ export default function FlightCursor() {
           style={{
             transition: "transform 0.15s ease",
             transform: clicked ? "scale(0.85) rotate(-10deg)" : "scale(1) rotate(0deg)",
-            filter: "drop-shadow(0 0 6px rgba(153,203,255,0.8))",
+            filter: "drop-shadow(0 0 10px rgba(0,194,255,1))",
           }}
         >
           {/* Outer crosshair ring */}
-          <circle cx="24" cy="24" r="18" stroke="rgba(153,203,255,0.35)" strokeWidth="1" fill="none" />
+          <circle cx="24" cy="24" r="18" stroke="rgba(0,194,255,0.8)" strokeWidth="1.5" fill="none" />
 
           {/* Crosshair lines — top */}
-          <line x1="24" y1="2"  x2="24" y2="11" stroke="rgba(153,203,255,0.9)" strokeWidth="1.2" strokeLinecap="round" />
+          <line x1="24" y1="2"  x2="24" y2="11" stroke="rgba(0,229,255,1)" strokeWidth="1.8" strokeLinecap="round" />
           {/* bottom */}
-          <line x1="24" y1="37" x2="24" y2="46" stroke="rgba(153,203,255,0.9)" strokeWidth="1.2" strokeLinecap="round" />
+          <line x1="24" y1="37" x2="24" y2="46" stroke="rgba(0,229,255,1)" strokeWidth="1.8" strokeLinecap="round" />
           {/* left */}
-          <line x1="2"  y1="24" x2="11" y2="24" stroke="rgba(153,203,255,0.9)" strokeWidth="1.2" strokeLinecap="round" />
+          <line x1="2"  y1="24" x2="11" y2="24" stroke="rgba(0,229,255,1)" strokeWidth="1.8" strokeLinecap="round" />
           {/* right */}
-          <line x1="37" y1="24" x2="46" y2="24" stroke="rgba(153,203,255,0.9)" strokeWidth="1.2" strokeLinecap="round" />
+          <line x1="37" y1="24" x2="46" y2="24" stroke="rgba(0,229,255,1)" strokeWidth="1.8" strokeLinecap="round" />
 
           {/* Diagonal tick marks */}
-          <line x1="10" y1="10" x2="13.5" y2="13.5" stroke="rgba(153,203,255,0.5)" strokeWidth="1" strokeLinecap="round" />
-          <line x1="38" y1="10" x2="34.5" y2="13.5" stroke="rgba(153,203,255,0.5)" strokeWidth="1" strokeLinecap="round" />
-          <line x1="10" y1="38" x2="13.5" y2="34.5" stroke="rgba(153,203,255,0.5)" strokeWidth="1" strokeLinecap="round" />
-          <line x1="38" y1="38" x2="34.5" y2="34.5" stroke="rgba(153,203,255,0.5)" strokeWidth="1" strokeLinecap="round" />
+          <line x1="10" y1="10" x2="13.5" y2="13.5" stroke="rgba(0,194,255,0.85)" strokeWidth="1.2" strokeLinecap="round" />
+          <line x1="38" y1="10" x2="34.5" y2="13.5" stroke="rgba(0,194,255,0.85)" strokeWidth="1.2" strokeLinecap="round" />
+          <line x1="10" y1="38" x2="13.5" y2="34.5" stroke="rgba(0,194,255,0.85)" strokeWidth="1.2" strokeLinecap="round" />
+          <line x1="38" y1="38" x2="34.5" y2="34.5" stroke="rgba(0,194,255,0.85)" strokeWidth="1.2" strokeLinecap="round" />
 
           {/* Center dot */}
-          <circle cx="24" cy="24" r="1.8" fill="rgba(153,203,255,1)" />
+          <circle cx="24" cy="24" r="2.5" fill="rgba(0,229,255,1)" />
 
           {/* Airplane body — pointing up-right (45°) */}
           <g transform="translate(24,24) rotate(-45)">

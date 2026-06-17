@@ -43,6 +43,64 @@ export const matches =
   (value, allValues) =>
     allValues && value !== allValues[otherKey] ? `${label} do not match.` : undefined;
 
+// dial code → required digit count (must match PhoneField's COUNTRIES list)
+const DIAL_DIGIT_MAP: Record<string, number> = {
+  "+1": 10, "+44": 10, "+91": 10, "+880": 10, "+86": 11, "+81": 10,
+  "+82": 10, "+65": 8,  "+971": 9, "+966": 9,  "+49": 11, "+33": 9,
+  "+39": 10, "+34": 9,  "+7": 10,  "+55": 11,  "+52": 10, "+61": 9,
+  "+27": 9,  "+20": 10, "+234": 10,"+254": 9,  "+92": 10, "+94": 9,
+  "+977": 10,"+60": 10, "+62": 12, "+63": 10,  "+66": 9,  "+84": 10,
+  "+90": 10, "+98": 10, "+964": 10,"+972": 9,
+};
+
+/** Phone: optional — if provided must be "<dialCode> <digits>" with exact digit count. */
+export const isPhone: Validator = (value) => {
+  if (!value.trim()) return undefined;
+  const match = value.match(/^(\+\d+)\s(\d+)$/);
+  if (!match) return "Enter a valid phone number.";
+  const [, dial, digits] = match;
+  const expectedLen = DIAL_DIGIT_MAP[dial];
+  if (expectedLen && digits.length !== expectedLen)
+    return `Phone number must be exactly ${expectedLen} digits for ${dial}.`;
+  return undefined;
+};
+
+/** Must be a positive number. */
+export const isPositiveNumber =
+  (label = "This field"): Validator =>
+  (value) => {
+    const n = parseFloat(value);
+    if (isNaN(n) || n <= 0) return `${label} must be a positive number.`;
+    return undefined;
+  };
+
+/** Date must not be in the past. */
+export const isFutureDate: Validator = (value) => {
+  if (!value) return undefined;
+  return new Date(value) < new Date(new Date().toDateString())
+    ? "Date must be today or in the future."
+    : undefined;
+};
+
+/** Credit card: 16 digits (spaces allowed). */
+export const isCardNumber: Validator = (value) => {
+  const digits = value.replace(/\s/g, "");
+  return /^\d{16}$/.test(digits) ? undefined : "Enter a valid 16-digit card number.";
+};
+
+/** Card expiry MM/YY — must not be expired. */
+export const isCardExpiry: Validator = (value) => {
+  if (!/^\d{2}\/\d{2}$/.test(value)) return "Use MM/YY format.";
+  const [mm, yy] = value.split("/").map(Number);
+  if (mm < 1 || mm > 12) return "Invalid month.";
+  const exp = new Date(2000 + yy, mm - 1, 1);
+  return exp < new Date() ? "Card has expired." : undefined;
+};
+
+/** CVV: 3 or 4 digits. */
+export const isCVV: Validator = (value) =>
+  /^\d{3,4}$/.test(value) ? undefined : "CVV must be 3 or 4 digits.";
+
 /** Run a list of validators, returning the first error found. */
 export function runValidators(
   value: string,

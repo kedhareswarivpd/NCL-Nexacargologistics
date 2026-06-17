@@ -23,9 +23,20 @@ export default function SupportTicketsPage() {
   const [submitted, setSubmitted] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [form, setForm] = useState({ subject: "", category: "Shipment Issue", priority: "Medium", message: "" });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = () => {
+    const e: Record<string, string> = {};
+    if (!form.subject.trim()) e.subject = "Subject is required.";
+    if (!form.message.trim()) e.message = "Message is required.";
+    return e;
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const errs = validate();
+    if (Object.keys(errs).length) { setErrors(errs); return; }
+    setErrors({});
     setSubmitted(true);
     setTimeout(() => setSubmitted(false), 5000);
     setForm({ subject: "", category: "Shipment Issue", priority: "Medium", message: "" });
@@ -89,9 +100,10 @@ export default function SupportTicketsPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="text-xs uppercase tracking-widest text-on-surface-variant">Subject</label>
-              <input required value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })}
+              <input value={form.subject} onChange={(e) => { setForm({ ...form, subject: e.target.value }); setErrors(p => ({ ...p, subject: "" })); }}
                 placeholder="Brief description of your issue"
-                className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50" />
+                className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 ${errors.subject ? "border-red-500" : "border-white/10"}`} />
+              {errors.subject && <p className="text-xs text-error mt-1">{errors.subject}</p>}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -117,9 +129,10 @@ export default function SupportTicketsPage() {
             </div>
             <div>
               <label className="text-xs uppercase tracking-widest text-on-surface-variant">Message</label>
-              <textarea required value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} rows={4}
+              <textarea value={form.message} onChange={(e) => { setForm({ ...form, message: e.target.value }); setErrors(p => ({ ...p, message: "" })); }} rows={4}
                 placeholder="Describe your issue in detail…"
-                className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 resize-none" />
+                className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 resize-none ${errors.message ? "border-red-500" : "border-white/10"}`} />
+              {errors.message && <p className="text-xs text-error mt-1">{errors.message}</p>}
             </div>
             <button type="submit" className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] transition-colors shadow-[0_0_20px_rgba(30,136,229,0.3)]">
               <Send className="h-4 w-4" /> Submit Support Ticket

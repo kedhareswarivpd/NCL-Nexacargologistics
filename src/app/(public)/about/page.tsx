@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Target, Globe, Shield, Leaf, Zap, ArrowRight } from "lucide-react";
 import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 80 },
@@ -81,17 +82,21 @@ export default function AboutPage() {
             Established 1998
           </motion.span>
           <motion.h1 variants={fadeUp} className="font-display-lg text-5xl md:text-[64px] leading-tight mb-6">
-            Redefining the <span className="text-tertiary">Global Logistics</span> Infrastructure
+            Built to Move the World —<br /><span className="text-tertiary">One Shipment at a Time</span>
           </motion.h1>
           <motion.p variants={fadeUp} className="font-body-lg text-on-surface-variant max-w-2xl mx-auto">
-            NexaCargo leverages quantum-ready data processing and a carbon-neutral fleet to move the world's most critical assets across every continent.
+            NexaCargo leverages real-time data and a carbon-conscious fleet to move critical goods across every continent — reliably and on schedule.
           </motion.p>
           <motion.div variants={fadeUp} className="mt-10 flex justify-center gap-4 flex-wrap">
             <motion.div whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.95 }}>
-              <Button size="lg" className="px-10 py-4 text-base">Explore Solutions</Button>
+              <Link href="/solutions">
+                <Button size="lg" className="px-10 py-4 text-base">Explore Solutions</Button>
+              </Link>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.95 }}>
-              <Button size="lg" variant="secondary" className="px-10 py-4 text-base">Meet the Team</Button>
+              <Link href="/contact">
+                <Button size="lg" variant="secondary" className="px-10 py-4 text-base">Meet the Team</Button>
+              </Link>
             </motion.div>
           </motion.div>
         </motion.div>
@@ -120,9 +125,11 @@ export default function AboutPage() {
               >
                 <Target className="text-tertiary w-6 h-6" />
               </motion.div>
-              <h2 className="font-headline-lg text-3xl font-semibold mb-4 text-on-surface">Our Mission</h2>
-              <p className="font-body-lg text-on-surface-variant max-w-xl">
-                To orchestrate the world's commerce through a seamless, intelligent, and sustainable network that empowers industries to transcend geographical boundaries. We don't just move freight; we move progress.
+              <h2 className="font-headline-lg text-3xl font-semibold mb-4 text-on-surface">What We're Here to Do</h2>
+              <p className="font-body-lg text-on-surface-variant max-w-xl">— so your team can focus on what actually matters to your business. We don't just shift cargo; we help companies grow.
+                NexaCargo Logistics is a prominent logistics and transportation company offering comprehensive supply chain solutions across Asia, Europe, and the Middle East. We excel in freight
+                forwarding, customs clearance, warehousing, and international cargo management, ensuring
+                seamless business operations.
               </p>
             </div>
           </motion.div>
@@ -140,8 +147,8 @@ export default function AboutPage() {
             </div>
             <div>
               <div className="text-[72px] font-black text-tertiary leading-none">{count}+</div>
-              <div className="font-title-md text-xl font-semibold mb-2 mt-4 text-on-surface">Countries Reached</div>
-              <p className="font-body-sm text-on-surface-variant">Operating across 6 continents with 400+ logistics hubs, ensuring 99.9% on-time delivery.</p>
+              <div className="font-title-md text-xl font-semibold mb-2 mt-4 text-on-surface">Countries We Reach</div>
+              <p className="font-body-sm text-on-surface-variant">Active in 6 continents with 400+ logistics hubs and a 99.9% on-time delivery record that we're genuinely proud of.</p>
             </div>
             <div className="mt-6 relative overflow-hidden rounded-xl border border-cyan-400/20 bg-black/20 p-2">
               <img
@@ -189,15 +196,15 @@ export default function AboutPage() {
           <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
             <div className="max-w-xl">
               <span className="font-label-caps text-xs text-tertiary mb-2 block uppercase tracking-widest">Foundation</span>
-              <h2 className="font-headline-lg text-3xl font-semibold text-on-surface">Corporate Values</h2>
+              <h2 className="font-headline-lg text-3xl font-semibold text-on-surface">How We Work</h2>
             </div>
-            <p className="font-body-lg text-on-surface-variant md:w-1/3">Our principles are the navigational beacons that guide every shipment and every strategy.</p>
+            <p className="font-body-lg text-on-surface-variant md:w-1/3">These aren't buzzwords on a wall — they're how we actually make decisions every day.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { icon: Shield, title: "Integrity First", copy: "Uncompromising commitment to ethical standards and transparent communication in every contract and delivery." },
-              { icon: Leaf, title: "Sustainability", copy: "Investing in electric fleets and AI-optimized routes to reduce our carbon footprint by 60% by 2030." },
-              { icon: Zap, title: "Innovation", copy: "Continuous integration of blockchain and IoT to provide unmatched supply chain visibility." },
+              { icon: Shield, title: "We Do What We Say",  copy: "Honesty matters to us. We're upfront about timelines, costs and any issues that come up — no surprises, no runaround." },
+              { icon: Leaf,   title: "We Think Long Term", copy: "We're investing in cleaner vehicles and smarter routes because we want this business to still be here in 50 years." },
+              { icon: Zap,    title: "We Keep Improving",  copy: "We use technology to solve real problems — not to impress people with jargon. If it makes shipping better, we build it." },
             ].map((item, index) => {
               const Icon = item.icon;
               return (
@@ -226,7 +233,7 @@ export default function AboutPage() {
       <section className="py-24 px-6 max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <span className="font-label-caps text-xs text-tertiary mb-2 block uppercase tracking-widest">Visionaries</span>
-          <h2 className="font-headline-lg text-3xl font-semibold text-on-surface">Executive Leadership</h2>
+          <h2 className="font-headline-lg text-3xl font-semibold text-on-surface">The People Running the Show</h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
@@ -277,13 +284,17 @@ export default function AboutPage() {
             <div className="absolute left-10 top-10 h-16 w-16 rounded-full bg-tertiary/10 blur-2xl" />
             <div className="absolute right-10 bottom-10 h-20 w-20 rounded-full bg-primary/10 blur-2xl" />
           </motion.div>
-          <h2 className="font-headline-lg text-3xl font-semibold mb-8 relative z-10 text-on-surface">Ready to optimize your supply chain?</h2>
+          <h2 className="font-headline-lg text-3xl font-semibold mb-8 relative z-10 text-on-surface">Want to talk about your shipping needs?</h2>
           <div className="flex flex-col sm:flex-row gap-6 justify-center relative z-10">
             <motion.div whileHover={{ scale: 1.05, x: 3, y: -3 }}>
-              <Button size="lg" className="px-12 py-4 text-base">Get a Quote</Button>
+              <Link href="/customer/quotes">
+                <Button size="lg" className="px-12 py-4 text-base">Get a Quote</Button>
+              </Link>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05, x: 3, y: -3 }}>
-              <Button size="lg" variant="secondary" className="px-12 py-4 text-base">Contact Sales</Button>
+              <Link href="/contact">
+                <Button size="lg" variant="secondary" className="px-12 py-4 text-base">Contact Sales</Button>
+              </Link>
             </motion.div>
           </div>
         </motion.div>

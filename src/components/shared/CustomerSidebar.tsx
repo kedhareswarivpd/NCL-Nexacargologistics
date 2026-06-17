@@ -8,13 +8,13 @@ import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard",      href: "/customer" },
-  { icon: MapPin,          label: "Track Shipments", href: "/customer/track" },
-  { icon: FileSignature,   label: "Request Quotes",  href: "/customer/quotes" },
-  { icon: Receipt,         label: "Invoices",        href: "/customer/invoices" },
-  { icon: CreditCard,      label: "Payments",        href: "/customer/payment" },
-  { icon: Shield,          label: "Cargo Insurance", href: "/customer/insurance" },
-  { icon: HeadphonesIcon,  label: "Support Tickets", href: "/customer/support" },
+  { icon: LayoutDashboard, label: "Dashboard",      href: "/customer",           enabled: true },
+  { icon: MapPin,          label: "Track Shipments", href: "/customer/track",     enabled: true },
+  { icon: FileSignature,   label: "Request Quotes",  href: "/customer/quotes",    enabled: true },
+  { icon: Receipt,         label: "Invoices",        href: "/customer/invoices",  enabled: true },
+  { icon: CreditCard,      label: "Payments",        href: "/customer/payment",   enabled: true },
+  { icon: Shield,          label: "Cargo Insurance", href: "/customer/insurance", enabled: true },
+  { icon: HeadphonesIcon,  label: "Support Tickets", href: "/customer/support",   enabled: true },
 ];
 
 export function CustomerSidebar() {
@@ -38,6 +38,13 @@ export function CustomerSidebar() {
       <nav className="flex flex-col gap-1 flex-grow">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
+          if (!item.enabled) return (
+            <div key={item.label} className="flex items-center gap-4 p-3 rounded-lg text-xs uppercase tracking-widest text-on-surface-variant/30 cursor-not-allowed select-none">
+              <item.icon className="w-5 h-5" />
+              <span className="flex-1">{item.label}</span>
+              <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/5 text-on-surface-variant/40 normal-case tracking-normal">Soon</span>
+            </div>
+          );
           return (
             <Link
               key={item.label}
