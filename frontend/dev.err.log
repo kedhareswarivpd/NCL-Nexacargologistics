@@ -1,0 +1,36 @@
+[browser] Uncaught TypeError: Cannot read properties of undefined (reading 'toFixed')
+    at <unknown> (src/app/(admin)/admin/page.tsx:283:95)
+    at Array.map (<anonymous>)
+    at AdminDashboardPage (src/app/(admin)/admin/page.tsx:276:27)
+  281 | ...-on-surface-variant">{q.weight} kg</td>
+  282 | ...-on-surface-variant">{q.service}</td>
+> 283 | ...-mono font-bold text-on-surface">${q.total.toFixed(2)}</td>
+      |                                               ^
+  284 | ...
+  285 | ...5 rounded-full text-[11px] font-semibold bg-yellow-400/10 text-yellow-400 capitalize">...
+  286 | ...
+[browser] Uncaught Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check the render method of `UserManagementPage`.
+    at <unknown> (src/app/(admin)/admin/users/page.tsx:228:27)
+    at Array.map (<anonymous>)
+    at UserManagementPage (src/app/(admin)/admin/users/page.tsx:198:27)
+  226 |                       <td className="px-4 py-3">
+  227 |                         <span className={`flex items-center gap-1.5 w-fit rounded-full px...
+> 228 |                           <StatusIcon className="h-3 w-3" /> {u.status}
+      |                           ^
+  229 |                         </span>
+  230 |                       </td>
+  231 |                       <td className="px-4 py-3 text-on-surface-variant text-xs">{u.joined...
+[browser] Uncaught TypeError: Cannot read properties of undefined (reading 'toFixed')
+    at <unknown> (src/app/(admin)/admin/page.tsx:283:95)
+    at Array.map (<anonymous>)
+    at AdminDashboardPage (src/app/(admin)/admin/page.tsx:276:27)
+  281 | ...-on-surface-variant">{q.weight} kg</td>
+  282 | ...-on-surface-variant">{q.service}</td>
+> 283 | ...-mono font-bold text-on-surface">${q.total.toFixed(2)}</td>
+      |                                               ^
+  284 | ...
+  285 | ...5 rounded-full text-[11px] font-semibold bg-yellow-400/10 text-yellow-400 capitalize">...
+  286 | ...
+[browser] Not authenticated (src/app/(public)
