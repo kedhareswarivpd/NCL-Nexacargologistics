@@ -16,7 +16,7 @@ from app.schemas.payloads import (
     DocumentCreate,
 )
 from app.services import crud
-from app.services.notification_service import notify_shipment_update
+from app.services.notification_service import notify_shipment_update, notify_shipment_created
 from app.utils.helpers import generate_tracking_id, serialize
 
 router = APIRouter(prefix="/shipments", tags=["shipments"])
@@ -73,6 +73,12 @@ async def create_shipment(
         changed_by=current_user.id,
     ))
     await db.flush()
+    await notify_shipment_created(
+        db,
+        customer_id=str(shipment.customer_id) if shipment.customer_id else None,
+        tracking_id=shipment.tracking_id,
+        email_to=shipment.customer_email,
+    )
     return serialize(shipment)
 
 

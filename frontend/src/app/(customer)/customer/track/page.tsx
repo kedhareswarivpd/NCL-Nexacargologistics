@@ -239,7 +239,7 @@ function TrackShipmentsContent() {
       )}
 
       {!shipment && !loading && query && (
-        <Card className="p-8 text-center text-on-surface-variant text-sm">No shipment found for "{query}".</Card>
+        <Card className="p-8 text-center text-red-400 text-sm font-semibold">No shipment found for "{query}". Please check your tracking ID — only existing shipments can be tracked.</Card>
       )}
 
       {/* All Shipments List */}
