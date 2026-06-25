@@ -1,7 +1,3 @@
-"""
-Quote, Shipment, status history & document models (customer + logistics core).
-"""
-
 from sqlalchemy import Column, String, Float, ForeignKey, Text
 from sqlalchemy.dialects.postgresql import UUID
 
@@ -40,7 +36,7 @@ class Quote(Base):
     incoterm = Column(String(20), nullable=True)
     amount = Column(Float, nullable=True)
     currency = Column(String(10), nullable=False, default="USD")
-    status = Column(String(30), nullable=False, default="pending")  # pending|quoted|accepted|rejected|expired
+    status = Column(String(30), nullable=False, default="pending")
     valid_until = Column(String(40), nullable=True)
     contact_name = Column(String(255), nullable=True)
     contact_email = Column(String(255), nullable=True)
@@ -97,7 +93,7 @@ class Document(Base):
 
     id = pk_column()
     shipment_id = Column(UUID(as_uuid=True), ForeignKey("shipments.id", ondelete="CASCADE"), nullable=True, index=True)
-    doc_type = Column(String(60), nullable=False, default="other")  # invoice|bol|packing_list|customs|proof|other
+    doc_type = Column(String(60), nullable=False, default="other")
     file_name = Column(String(255), nullable=False)
     file_url = Column(String(1000), nullable=True)
     uploaded_by = Column(UUID(as_uuid=True), nullable=True)

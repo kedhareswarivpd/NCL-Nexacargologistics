@@ -178,7 +178,7 @@ export default function CargoInsurancePage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form noValidate onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="text-xs uppercase tracking-widest text-on-surface-variant">Shipment ID</label>
               <input value={form.shipment} onChange={(e) => { setForm({ ...form, shipment: e.target.value }); setErrors(p => ({ ...p, shipment: "" })); }}

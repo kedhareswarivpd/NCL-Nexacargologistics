@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "@/components/providers/AppProviders";
 import CursorSwitcher from "@/components/ui/CursorSwitcher";
+import ScrollToTop from "@/components/ui/ScrollToTop";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -29,7 +30,10 @@ export default function RootLayout({
       <body className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}>
         {/* Auth + toast providers. Purely functional — no visual change. */}
         <CursorSwitcher />
-        <AppProviders>{children}</AppProviders>
+        <AppProviders>
+          <ScrollToTop />
+          {children}
+        </AppProviders>
       </body>
     </html>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MapPin, Clock, CheckCircle2, AlertTriangle, RefreshCw, Plus, Trash2, Search, Bell, ArrowLeft } from "lucide-react";
+import { MapPin, Clock, CheckCircle2, AlertTriangle, RefreshCw, Plus, Trash2, Search, Bell, ArrowLeft, Edit, X } from "lucide-react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { deliveriesApi } from "@/lib/services";
@@ -30,6 +30,22 @@ export default function DeliveriesPage() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ delivery_code: "", driver: "", location: "", progress: "0", eta: "" });
   const [saving, setSaving] = useState(false);
+  const [editTarget, setEditTarget] = useState<any | null>(null);
+  const [editForm, setEditForm] = useState({ location: "", progress: "", eta: "", status: "" });
+  const [editSaving, setEditSaving] = useState(false);
+
+  function openEdit(d: any) {
+    setEditTarget(d);
+    setEditForm({ location: d.location ?? "", progress: String(d.progress ?? 0), eta: d.eta ?? "", status: d.status ?? "Pending" });
+  }
+
+  async function saveEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editTarget) return;
+    setEditSaving(true);
+    try { await deliveriesApi.update(editTarget.id, { ...editForm, progress: parseInt(editForm.progress) }); setEditTarget(null); load(); } catch { /* ignore */ }
+    setEditSaving(false);
+  }
 
   async function load() {
     setLoading(true);
@@ -146,7 +162,7 @@ export default function DeliveriesPage() {
       {showForm && (
         <>
     <h2 className="text-sm font-semibold uppercase tracking-wide...">Delivery</h2>
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form noValidate onSubmit={handleSubmit} className="space-y-4">
      
 
   
@@ -183,7 +199,8 @@ export default function DeliveriesPage() {
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${STATUS_STYLES[d.status] ?? ""}`}>{d.status}</span>
-                  <button onClick={() => handleDelete(d.id)} className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-error/10 text-error transition-all"><Trash2 className="h-4 w-4" /></button>
+                  <button onClick={(e) => { e.stopPropagation(); openEdit(d); }} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary opacity-0 group-hover:opacity-100 transition-all" title="Edit"><Edit className="h-4 w-4" /></button>
+                  <button onClick={(e) => { e.stopPropagation(); handleDelete(d.id); }} className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-error/10 text-error transition-all"><Trash2 className="h-4 w-4" /></button>
                 </div>
               </div>
               <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden mb-2">
@@ -196,6 +213,30 @@ export default function DeliveriesPage() {
             </Card>
           ))}
           {filtered.length === 0 && <Card className="p-8 text-center text-on-surface-variant text-sm">No deliveries found.</Card>}
+        </div>
+      )}
+      {editTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-surface-container shadow-2xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
+              <h2 className="text-base font-bold text-on-surface">Edit Delivery</h2>
+              <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
+            </div>
+            <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Location</label><input value={editForm.location} onChange={e => setEditForm(p => ({...p, location: e.target.value}))} className={inputCls} /></div>
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Progress (%)</label><input type="number" min="0" max="100" value={editForm.progress} onChange={e => setEditForm(p => ({...p, progress: e.target.value}))} className={inputCls} /></div>
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">ETA</label><input value={editForm.eta} onChange={e => setEditForm(p => ({...p, eta: e.target.value}))} className={inputCls} /></div>
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
+                <select value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className={inputCls}>
+                  <option>Pending</option><option>In Transit</option><option>Delayed</option><option>Delivered</option>
+                </select>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="submit" disabled={editSaving} className="flex-1 py-2.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] disabled:opacity-50">{editSaving ? "Saving…" : "Save Changes"}</button>
+                <button type="button" onClick={() => setEditTarget(null)} className="px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-on-surface-variant hover:bg-white/10">Cancel</button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Search, AlertTriangle, TrendingDown, Package, ScanBarcode, ArrowLeft } from "lucide-react";
+import { Search, AlertTriangle, TrendingDown, Package, ScanBarcode, ArrowLeft, Edit, X, Plus } from "lucide-react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { warehouseApi } from "@/lib/services";
@@ -21,6 +21,26 @@ export default function InventoryPage() {
   const [scanning, setScanning] = useState(false);
   const barcodeBuffer = useRef("");
   const barcodeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [editTarget, setEditTarget] = useState<InventoryItem | null>(null);
+  const [editForm, setEditForm] = useState({ name: "", qty: "", reorder_at: "", zone: "", category: "" });
+  const [editSaving, setEditSaving] = useState(false);
+
+  function openEdit(item: InventoryItem) {
+    setEditTarget(item);
+    setEditForm({ name: item.name, qty: String(item.qty), reorder_at: String(item.reorder_at ?? ""), zone: item.zone ?? "", category: item.category ?? "" });
+  }
+
+  async function saveEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editTarget) return;
+    setEditSaving(true);
+    try {
+      await warehouseApi.updateInventory(editTarget.id, { name: editForm.name, qty: Number(editForm.qty), reorder_at: editForm.reorder_at ? Number(editForm.reorder_at) : undefined, zone: editForm.zone, category: editForm.category });
+      setEditTarget(null);
+      const data = await warehouseApi.inventory(); setItems(data ?? []);
+    } catch { /* ignore */ }
+    setEditSaving(false);
+  }
 
   useEffect(() => {
     (async () => {
@@ -144,9 +164,10 @@ export default function InventoryPage() {
                 <td className="px-4 py-3 font-mono text-on-surface-variant">{item.reorder_at}</td>
                 <td className="px-4 py-3 font-mono text-xs text-on-surface-variant">{item.barcode ?? "—"}</td>
                 <td className="px-4 py-3">
-                  <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${STATUS_STYLES[item.status]}`}>
-                    {item.status}
-                  </span>
+                  <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${STATUS_STYLES[item.status]}`}>{item.status}</span>
+                </td>
+                <td className="px-4 py-3 text-right">
+                  <button onClick={() => openEdit(item)} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary transition-colors" title="Edit"><Edit className="h-4 w-4" /></button>
                 </td>
               </tr>
             ))}
@@ -160,6 +181,30 @@ export default function InventoryPage() {
           </tbody>
         </table>
       </Card>
+      {/* Edit Inventory Modal */}
+      {editTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-surface-container shadow-2xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
+              <h2 className="text-base font-bold text-on-surface">Edit Item — <span className="font-mono text-tertiary">{editTarget.sku}</span></h2>
+              <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
+            </div>
+            <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2"><label className="text-xs uppercase tracking-widest text-on-surface-variant">Name</label><input value={editForm.name} onChange={e => { const filtered = e.target.value.replace(/[0-9]/g, ''); setEditForm(p => ({...p, name: filtered})); }} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Quantity</label><input type="number" value={editForm.qty} onChange={e => setEditForm(p => ({...p, qty: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Reorder At</label><input type="number" value={editForm.reorder_at} onChange={e => setEditForm(p => ({...p, reorder_at: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Zone</label><input value={editForm.zone} onChange={e => setEditForm(p => ({...p, zone: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Category</label><input value={editForm.category} onChange={e => setEditForm(p => ({...p, category: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="submit" disabled={editSaving} className="flex-1 py-2.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] disabled:opacity-50">{editSaving ? "Saving…" : "Save Changes"}</button>
+                <button type="button" onClick={() => setEditTarget(null)} className="px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-on-surface-variant hover:bg-white/10">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -3,14 +3,15 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { User as UserIcon, AtSign, Lock, Building2, ArrowRight, Loader2 } from "lucide-react";
+import { User as UserIcon, AtSign, Building2, ArrowRight, Loader2 } from "lucide-react";
 import { FormField } from "@/components/ui/FormField";
 import { PhoneField } from "@/components/ui/PhoneField";
+import { PasswordField } from "@/components/ui/PasswordField";
 import { Button } from "@/components/ui/button";
 import { useForm } from "@/hooks/useForm";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
-import { required, isEmail, isStrongPassword, matches, passwordScore, isPhone } from "@/lib/validation";
+import { required, isGmailEmail, isStrongPassword, matches, passwordScore, isPhone } from "@/lib/validation";
 import { cn } from "@/lib/utils";
 
 const STRENGTH = ["Too short", "Weak", "Fair", "Good", "Strong"];
@@ -25,7 +26,7 @@ export default function RegisterPage() {
     initialValues: { name: "", email: "", company: "", phone: "", password: "", confirmPassword: "" },
     validators: {
       name: [required("Name")],
-      email: [required("Email"), isEmail],
+      email: [required("Email"), isGmailEmail],
       phone: [isPhone],
       password: [required("Password"), isStrongPassword],
       confirmPassword: [required("Confirmation"), matches("password")],
@@ -68,7 +69,20 @@ export default function RegisterPage() {
       )}
 
       <form className="space-y-4" onSubmit={form.handleSubmit} noValidate>
-        <FormField label="Full name" autoComplete="name" placeholder="John Doe" icon={UserIcon} {...form.fieldProps("name")} />
+        <FormField 
+          label="Full name" 
+          autoComplete="name" 
+          placeholder="John Doe" 
+          icon={UserIcon} 
+          {...form.fieldProps("name")}
+          onChange={(e) => {
+            const filtered = e.target.value.replace(/[0-9]/g, '');
+            form.setValues({ ...form.values, name: filtered });
+            if (form.touched.name) {
+              form.handleChange({ ...e, target: { ...e.target, value: filtered } } as React.ChangeEvent<HTMLInputElement>);
+            }
+          }}
+        />
         <FormField label="Email" type="email" autoComplete="email" placeholder="john@company.com" icon={AtSign} {...form.fieldProps("email")} />
         <FormField label="Company (optional)" placeholder="Acme Freight Inc." icon={Building2} {...form.fieldProps("company")} />
         <PhoneField
@@ -83,7 +97,7 @@ export default function RegisterPage() {
         />
 
         <div>
-          <FormField label="Password" type="password" autoComplete="new-password" placeholder="Create a strong password" icon={Lock} {...form.fieldProps("password")} />
+          <PasswordField label="Password" autoComplete="new-password" placeholder="Create a strong password" {...form.fieldProps("password")} />
           {/* Live strength meter */}
           {form.values.password.length > 0 && (
             <div className="mt-2">
@@ -103,7 +117,7 @@ export default function RegisterPage() {
           )}
         </div>
 
-        <FormField label="Confirm password" type="password" autoComplete="new-password" placeholder="Re-enter your password" icon={Lock} {...form.fieldProps("confirmPassword")} />
+        <PasswordField label="Confirm password" autoComplete="new-password" placeholder="Re-enter your password" {...form.fieldProps("confirmPassword")} />
 
         <Button
           type="submit"

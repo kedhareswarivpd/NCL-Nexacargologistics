@@ -186,7 +186,7 @@ export default function DriverDashboard() {
         <Link href={user?.role === "admin" ? "/admin" : "/"} className="inline-flex items-center gap-2 mb-4 px-5 py-2.5 rounded-xl bg-[#00C2FF] hover:bg-[#00a8e0] transition-colors w-fit shadow-[0_4px_16px_rgba(0,194,255,0.35)]">
           <ArrowLeft className="h-4 w-4 text-[#0B1F3A]" />
           <span className="text-sm font-bold text-[#0B1F3A]">
-            {user?.role === "admin" ? "← Back to Admin" : "← Back to Home"}
+            {user?.role === "admin" ? "Back to Admin" : "Back to Home"}
           </span>
         </Link>
         <p className="text-xs uppercase tracking-widest text-tertiary">Driver Dashboard</p>

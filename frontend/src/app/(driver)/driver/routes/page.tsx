@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { MapPin, Clock, Package, Navigation, CheckCircle2, ArrowLeft } from "lucide-react";
+import { MapPin, Clock, Package, Navigation, CheckCircle2, ArrowLeft, Edit, X } from "lucide-react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { driverApi } from "@/lib/services";
@@ -19,6 +19,26 @@ const STOP_STATUS: Record<string, "pending" | "active" | "done"> = {
 export default function RoutesPage() {
   const [deliveries, setDeliveries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editTarget, setEditTarget] = useState<any | null>(null);
+  const [editForm, setEditForm] = useState({ status: "", location: "", eta: "" });
+  const [editSaving, setEditSaving] = useState(false);
+
+  function openEdit(d: any) {
+    setEditTarget(d);
+    setEditForm({ status: d.status ?? "", location: d.location ?? "", eta: d.eta ?? "" });
+  }
+
+  async function saveEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editTarget) return;
+    setEditSaving(true);
+    try {
+      await driverApi.updateDelivery(editTarget.id, editForm);
+      setEditTarget(null);
+      driverApi.deliveries().then(d => setDeliveries(d ?? [])).catch(() => {});
+    } catch { }
+    setEditSaving(false);
+  }
 
   useEffect(() => {
     driverApi.deliveries()
@@ -110,7 +130,10 @@ export default function RoutesPage() {
                       <p className="text-xs text-on-surface-variant">{stop.address} · {stop.scheduled_time}</p>
                     </div>
                   </div>
-                  <MapPin className={`w-4 h-4 shrink-0 ${stop.status === "active" ? "text-tertiary" : "text-on-surface-variant"}`} />
+                  <div className="flex items-center gap-2">
+                    <MapPin className={`w-4 h-4 shrink-0 ${stop.status === "active" ? "text-tertiary" : "text-on-surface-variant"}`} />
+                    <button onClick={() => openEdit(deliveries.find(d => d.id === stop.id))} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary transition-colors" title="Edit"><Edit className="h-3.5 w-3.5" /></button>
+                  </div>
                 </div>
               ))
             )}
@@ -136,6 +159,30 @@ export default function RoutesPage() {
           </Card>
         </div>
       </div>
+      {editTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-surface-container shadow-2xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
+              <h2 className="text-base font-bold text-on-surface">Edit Delivery</h2>
+              <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
+            </div>
+            <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
+              <div>
+                <label className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
+                <select value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
+                  <option>Pending</option><option>Picked Up</option><option>In Transit</option><option>Out for Delivery</option><option>Delivered</option><option>Failed</option>
+                </select>
+              </div>
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Location</label><input value={editForm.location} onChange={e => setEditForm(p => ({...p, location: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">ETA</label><input value={editForm.eta} onChange={e => setEditForm(p => ({...p, eta: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+              <div className="flex gap-3 pt-2">
+                <button type="submit" disabled={editSaving} className="flex-1 py-2.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] disabled:opacity-50">{editSaving ? "Saving…" : "Save Changes"}</button>
+                <button type="button" onClick={() => setEditTarget(null)} className="px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-on-surface-variant hover:bg-white/10">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

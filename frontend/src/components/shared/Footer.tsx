@@ -109,7 +109,7 @@ export function Footer() {
       `}</style>
 
       {/* ── Live Tracking Map ── */}
-      <div className="border-b border-white/5 px-6 py-8 relative z-10">
+      <div className="border-b border-white/5 px-8 md:px-12 py-8 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-3 mb-5">
             <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
@@ -135,7 +135,7 @@ export function Footer() {
       </div>
 
       {/* ── Main links grid ── */}
-      <div className="py-12 px-6 flex flex-col sm:flex-row justify-between gap-8 max-w-7xl mx-auto w-full relative z-10">
+      <div className="py-12 px-8 md:px-12 flex flex-col sm:flex-row justify-between gap-8 max-w-7xl mx-auto w-full relative z-10">
         <div className="w-full sm:w-[280px] shrink-0">
           <h5 className="text-sm font-bold text-white uppercase tracking-widest mb-6 mt-0">NexaCargo Global</h5>
           <p className="font-body-sm text-sm text-on-surface-variant max-w-xs mb-4">
@@ -149,10 +149,10 @@ export function Footer() {
             <Link href="/about" title="About NexaCargo" className="text-on-surface-variant hover:text-[#00C2FF] transition-colors">
               <Globe className="w-5 h-5" />
             </Link>
-            <a href="mailto:support@nexacargo.com" title="Email Us" className="text-on-surface-variant hover:text-[#00C2FF] transition-colors">
+            <a href="mailto:info@nexacargo.com" title="Email Us" className="text-on-surface-variant hover:text-[#00C2FF] transition-colors">
               <Mail className="w-5 h-5" />
             </a>
-            <a href="tel:+18006392226" title="Call Us" className="text-on-surface-variant hover:text-[#00C2FF] transition-colors">
+            <a href="tel:+8801711456789" title="Call Us" className="text-on-surface-variant hover:text-[#00C2FF] transition-colors">
               <Phone className="w-5 h-5" />
             </a>
           </div>
@@ -186,7 +186,7 @@ export function Footer() {
       </div>
 
       {/* ── Bottom bar ── */}
-      <div className="px-6 pb-10 max-w-7xl mx-auto w-full relative z-10">
+      <div className="px-8 md:px-12 pb-10 max-w-7xl mx-auto w-full relative z-10">
         <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
           <span className="font-body-sm text-sm text-on-surface-variant">© 2026 NexaCargo Global Logistics. All rights reserved.</span>
           <div className="flex gap-8">

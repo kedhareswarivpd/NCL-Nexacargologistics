@@ -132,7 +132,7 @@ function TrackShipmentsContent() {
       </div>
 
       {/* Search */}
-      <form onSubmit={handleSearch} className="flex flex-col gap-2">
+      <form noValidate onSubmit={handleSearch} className="flex flex-col gap-2">
         <div className="flex gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-on-surface-variant" />

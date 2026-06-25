@@ -1,7 +1,3 @@
-"""
-API package — assembles every domain router under a single `/api/v1` parent router.
-"""
-
 from fastapi import APIRouter
 
 from app.core.config import settings

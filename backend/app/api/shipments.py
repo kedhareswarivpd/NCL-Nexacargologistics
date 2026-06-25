@@ -1,8 +1,3 @@
-"""
-Shipments API — create/list/update shipments, status history & documents.
-Covers the customer booking flow and the logistics shipment-management flow.
-"""
-
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -26,12 +21,11 @@ from app.utils.helpers import generate_tracking_id, serialize
 
 router = APIRouter(prefix="/shipments", tags=["shipments"])
 
-# Roles allowed to mutate shipment state during processing.
 ops_guard = require_roles(UserRole.LOGISTICS, UserRole.WAREHOUSE, UserRole.CUSTOMS, UserRole.DRIVER)
 
 
 def _can_view_all(role: str) -> bool:
-    return role in UserRole.STAFF  # any non-customer role
+    return role in UserRole.STAFF
 
 
 @router.get("")
@@ -62,7 +56,6 @@ async def create_shipment(
     data["tracking_id"] = generate_tracking_id()
 
     if current_user.role == UserRole.CUSTOMER:
-        # Customers always book under their own identity.
         data["customer_id"] = current_user.id
         data.setdefault("customer_name", current_user.name)
         data.setdefault("customer_email", current_user.email)
@@ -73,7 +66,6 @@ async def create_shipment(
         data["quote_id"] = uuid.UUID(data["quote_id"])
 
     shipment = await crud.create_item(db, Shipment, data)
-    # Seed status history.
     db.add(ShipmentStatusHistory(
         shipment_id=shipment.id,
         status=shipment.status,
@@ -167,7 +159,6 @@ async def shipment_tracking(
     db: AsyncSession = Depends(get_db),
     current_user: Profile = Depends(get_current_user),
 ):
-    """Tracking snapshot (current position + status timeline) for a shipment id."""
     shipment = await crud.get_item(db, Shipment, shipment_id)
     if not shipment:
         raise HTTPException(status_code=404, detail="Shipment not found")
@@ -193,7 +184,6 @@ async def cancel_shipment(
     db: AsyncSession = Depends(get_db),
     current_user: Profile = Depends(get_current_user),
 ):
-    """Cancel a shipment. Customers may cancel their own only before dispatch."""
     shipment = await crud.get_item(db, Shipment, shipment_id)
     if not shipment:
         raise HTTPException(status_code=404, detail="Shipment not found")

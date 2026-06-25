@@ -50,6 +50,29 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, { user: null, status: "loading" });
 
+  // Auto-logout after 30 minutes of inactivity
+  useEffect(() => {
+    if (state.status !== "authenticated") return;
+    const TIMEOUT = 30 * 60 * 1000;
+    let timer: ReturnType<typeof setTimeout>;
+    const reset = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        logoutUser();
+        dispatch({ type: "LOGOUT" });
+        localStorage.removeItem("nexacargo_session");
+        window.location.href = "/login";
+      }, TIMEOUT);
+    };
+    const events = ["mousemove", "keydown", "mousedown", "touchstart", "scroll"];
+    events.forEach(e => window.addEventListener(e, reset, { passive: true }));
+    reset();
+    return () => {
+      clearTimeout(timer);
+      events.forEach(e => window.removeEventListener(e, reset));
+    };
+  }, [state.status]);
+
   // Rehydrate session from localStorage on mount
   useEffect(() => {
     if (typeof window !== "undefined") {

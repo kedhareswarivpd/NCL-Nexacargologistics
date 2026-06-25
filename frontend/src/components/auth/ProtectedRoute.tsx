@@ -8,6 +8,9 @@
  * /login with a `next` param so they return to where they were headed.
  *
  * Optionally restrict to specific roles via `allow`.
+ * When a logged-in user tries to access a portal they don't belong to,
+ * they are automatically signed out first before being redirected to /login,
+ * ensuring a clean session switch between portals.
  */
 
 import * as React from "react";
@@ -15,7 +18,6 @@ import { useRouter, usePathname } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import type { UserRole } from "@/lib/types";
-import { ROLE_HOME } from "@/lib/types";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -23,7 +25,7 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children, allow }: ProtectedRouteProps) {
-  const { status, user } = useAuth();
+  const { status, user, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -32,16 +34,19 @@ export function ProtectedRoute({ children, allow }: ProtectedRouteProps) {
   React.useEffect(() => {
     if (status === "unauthenticated") {
       router.replace(`/login?next=${encodeURIComponent(pathname)}`);
-    } else if (roleDenied && user) {
-      router.replace(ROLE_HOME[user.role]);
+    } else if (status === "authenticated" && roleDenied && user) {
+      // User is logged in but doesn't belong to this portal →
+      // sign them out automatically so they can log in fresh.
+      logout();
+      router.replace(`/login?next=${encodeURIComponent(pathname)}`);
     }
-  }, [status, pathname, router, roleDenied, user]);
+  }, [status, pathname, router, roleDenied, user, logout]);
 
-  if (status === "loading" || roleDenied) {
+  if (status === "loading" || (status === "authenticated" && roleDenied)) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center" role="status" aria-live="polite">
         <Loader2 className="h-6 w-6 animate-spin text-tertiary" aria-hidden="true" />
-        <span className="sr-only">Checking your session…</span>
+        <span className="sr-only">Signing you out…</span>
       </div>
     );
   }

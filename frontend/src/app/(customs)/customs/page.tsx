@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FileText, Globe, CheckCircle2, AlertTriangle, Clock, ChevronRight, ArrowLeft } from "lucide-react";
+import { FileText, Globe, CheckCircle2, AlertTriangle, Clock, ChevronRight, ArrowLeft, Edit, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Card } from "@/components/ui/card";
 import { customsApi } from "@/lib/services";
@@ -26,6 +26,28 @@ export default function CustomsDashboardPage() {
   const [clearances, setClearances] = useState<any[]>([]);
   const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0, onHold: 0 });
   const [loading, setLoading] = useState(true);
+  const [editTarget, setEditTarget] = useState<any | null>(null);
+  const [editForm, setEditForm] = useState({ status: "", notes: "" });
+  const [editSaving, setEditSaving] = useState(false);
+
+  function openEdit(c: any) {
+    setEditTarget(c);
+    setEditForm({ status: c.status ?? "", notes: c.notes ?? "" });
+  }
+
+  async function saveEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editTarget) return;
+    setEditSaving(true);
+    try {
+      await customsApi.update(editTarget.id, editForm);
+      setEditTarget(null);
+      const data = await customsApi.entries();
+      const rows = (data ?? []).slice(0, 5);
+      setClearances(rows);
+    } catch { }
+    setEditSaving(false);
+  }
 
   useEffect(() => {
     async function load() {
@@ -59,7 +81,6 @@ export default function CustomsDashboardPage() {
         <p className="text-sm text-on-surface-variant mt-1">Customs clearance and compliance management.</p>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: "Total Clearances", value: stats.total, Icon: FileText, color: "text-tertiary bg-tertiary/10" },
@@ -76,7 +97,6 @@ export default function CustomsDashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Clearances */}
         <div className="lg:col-span-2 space-y-3 animate-fade-up" style={{ animationDelay: "0.32s" }}>
           <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">Recent Clearances</h2>
           <Card className="overflow-hidden">
@@ -91,6 +111,7 @@ export default function CustomsDashboardPage() {
                     <th className="px-4 py-3">Port</th>
                     <th className="px-4 py-3">Status</th>
                     <th className="px-4 py-3">Updated</th>
+                    <th className="px-4 py-3 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
@@ -103,10 +124,13 @@ export default function CustomsDashboardPage() {
                         <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${STATUS_STYLES[c.status] ?? ""}`}>{c.status}</span>
                       </td>
                       <td className="px-4 py-3 text-on-surface-variant">{c.updated_at ? new Date(c.updated_at).toLocaleDateString() : "—"}</td>
+                      <td className="px-4 py-3 text-right">
+                        <button onClick={() => openEdit(c)} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary transition-colors" title="Edit"><Edit className="h-4 w-4" /></button>
+                      </td>
                     </tr>
                   ))}
                   {clearances.length === 0 && (
-                    <tr><td colSpan={5} className="px-4 py-8 text-center text-on-surface-variant text-sm">No customs clearances found.</td></tr>
+                    <tr><td colSpan={6} className="px-4 py-8 text-center text-on-surface-variant text-sm">No customs clearances found.</td></tr>
                   )}
                 </tbody>
               </table>
@@ -114,7 +138,6 @@ export default function CustomsDashboardPage() {
           </Card>
         </div>
 
-        {/* Quick Links */}
         <div className="space-y-3 animate-slide-right" style={{ animationDelay: "0.24s" }}>
           <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">Quick Access</h2>
           <Card className="divide-y divide-white/5">
@@ -133,6 +156,36 @@ export default function CustomsDashboardPage() {
           </Card>
         </div>
       </div>
+
+      {editTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-surface-container shadow-2xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
+              <h2 className="text-base font-bold text-on-surface">Edit Clearance</h2>
+              <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
+            </div>
+            <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
+              <div>
+                <label className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
+                <select value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
+                  <option value="pending">Pending</option>
+                  <option value="under_review">Under Review</option>
+                  <option value="cleared">Cleared</option>
+                  <option value="held">Held</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-xs uppercase tracking-widest text-on-surface-variant">Notes</label>
+                <input value={editForm.notes} onChange={e => setEditForm(p => ({...p, notes: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="submit" disabled={editSaving} className="flex-1 py-2.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] disabled:opacity-50">{editSaving ? "Saving…" : "Save Changes"}</button>
+                <button type="button" onClick={() => setEditTarget(null)} className="px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-on-surface-variant hover:bg-white/10">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

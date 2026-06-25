@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { GitBranch, MapPin, Users, Package, CheckCircle2, AlertTriangle, Plus, Trash2, ArrowLeft } from "lucide-react";
+import { GitBranch, MapPin, Users, Package, CheckCircle2, AlertTriangle, Plus, Trash2, ArrowLeft, Edit, X } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import Link from "next/link";
@@ -58,11 +58,32 @@ export default function BranchManagementPage() {
   const [branchErrors, setBranchErrors] = useState<Record<string, string>>({});
   const [branches, setBranches] = useState<ReturnType<typeof mapBranch>[]>([]);
   const [saving, setSaving] = useState(false);
+  const [editTarget, setEditTarget] = useState<ReturnType<typeof mapBranch> | null>(null);
+  const [editForm, setEditForm] = useState({ name: "", location: "", status: "" });
+  const [editSaving, setEditSaving] = useState(false);
 
   async function load() {
     try { setBranches(((await adminApi.branches()) ?? []).map(mapBranch)); } catch { setBranches([]); }
   }
   useEffect(() => { load(); }, []);
+
+  function openEdit(b: ReturnType<typeof mapBranch>) {
+    setEditTarget(b);
+    setEditForm({ name: b.name, location: b.location, status: b.status === "Operational" ? "active" : "inactive" });
+  }
+
+  async function saveEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editTarget) return;
+    setEditSaving(true);
+    const [city, country] = editForm.location.split(",").map(s => s.trim());
+    try {
+      await adminApi.updateBranch(editTarget.id, { name: editForm.name, city: city || editForm.location, country: country || "", status: editForm.status });
+      setEditTarget(null);
+      load();
+    } catch { /* ignore */ }
+    setEditSaving(false);
+  }
 
   async function handleBranchSave() {
     const e: Record<string, string> = {};
@@ -110,7 +131,7 @@ export default function BranchManagementPage() {
         <motion.div variants={itemVariants}>
           <Link href="/admin" className="inline-flex items-center gap-2 mb-5 px-5 py-2.5 rounded-xl bg-[#00C2FF] hover:bg-[#00a8e0] transition-colors w-fit shadow-[0_4px_16px_rgba(0,194,255,0.35)]">
             <ArrowLeft className="h-4 w-4 text-[#0B1F3A]" />
-            <span className="text-sm font-bold text-[#0B1F3A]">← Back to Admin Dashboard</span>
+            <span className="text-sm font-bold text-[#0B1F3A]">Back to Admin Dashboard</span>
           </Link>
           <p className="text-xs uppercase tracking-widest text-tertiary">Admin Portal</p>
           <h1 className="text-3xl font-bold text-on-surface mt-1">Branch Management</h1>
@@ -236,6 +257,9 @@ export default function BranchManagementPage() {
                   </div>
                 </div>
                 <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button onClick={() => openEdit(b)} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 text-tertiary text-xs hover:bg-tertiary/10 transition-colors">
+                    <Edit className="h-3.5 w-3.5" /> Edit
+                  </button>
                   <button onClick={() => removeBranch(b.id)} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 text-error text-xs hover:bg-error/10 transition-colors">
                     <Trash2 className="h-3.5 w-3.5" /> Remove
                   </button>
@@ -245,6 +269,30 @@ export default function BranchManagementPage() {
           ))}
         </AnimatePresence>
       </motion.div>
+      {/* Edit Branch Modal */}
+      {editTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-surface-container shadow-2xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
+              <h2 className="text-base font-bold text-on-surface">Edit Branch</h2>
+              <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
+            </div>
+            <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Branch Name</label><input value={editForm.name} onChange={e => { const filtered = e.target.value.replace(/[0-9]/g, ''); setEditForm(p => ({...p, name: filtered})); }} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Location (City, Country)</label><input value={editForm.location} onChange={e => setEditForm(p => ({...p, location: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
+                <select value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
+                  <option value="active">Operational</option><option value="inactive">Maintenance</option>
+                </select>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="submit" disabled={editSaving} className="flex-1 py-2.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] disabled:opacity-50">{editSaving ? "Saving…" : "Save Changes"}</button>
+                <button type="button" onClick={() => setEditTarget(null)} className="px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-on-surface-variant hover:bg-white/10">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 }

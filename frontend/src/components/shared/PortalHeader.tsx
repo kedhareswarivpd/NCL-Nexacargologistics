@@ -182,7 +182,9 @@ export function PortalHeader({ userRole = "Premium Member" }: { userRole?: strin
               className="hover:bg-white/10 rounded-full p-2 transition-all hover:scale-110 active:scale-95 relative"
             >
               <Bell className="text-on-surface w-5 h-5" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-tertiary rounded-full animate-pulse" />
+              {role !== "admin" && (
+                <span className="absolute top-2 right-2 w-2 h-2 bg-tertiary rounded-full animate-pulse" />
+              )}
             </button>
 
             {bellOpen && (

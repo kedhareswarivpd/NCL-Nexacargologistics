@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search, Package, Plus, Trash2, Edit, RefreshCw, ArrowLeft } from "lucide-react";
+import { Search, Package, Plus, Trash2, Edit, RefreshCw, ArrowLeft, X } from "lucide-react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { shipmentsApi } from "@/lib/services";
@@ -22,6 +22,9 @@ export default function ShipmentsPage() {
   const [form, setForm] = useState({ origin: "", destination: "", cargo_type: "", weight: "", customer_name: "", eta: "" });
   const [saving, setSaving] = useState(false);
   const [shipmentErrors, setShipmentErrors] = useState<Record<string, string>>({});
+  const [editTarget, setEditTarget] = useState<any | null>(null);
+  const [editForm, setEditForm] = useState({ origin: "", destination: "", cargo_type: "", weight: "", customer_name: "", eta: "", status: "" });
+  const [editSaving, setEditSaving] = useState(false);
 
   async function load() {
     setLoading(true);
@@ -53,6 +56,23 @@ export default function ShipmentsPage() {
     }
     setSaving(false);
     load();
+  }
+
+  function openEdit(s: any) {
+    setEditTarget(s);
+    setEditForm({ origin: s.origin ?? "", destination: s.destination ?? "", cargo_type: s.cargo_type ?? "", weight: s.weight ?? "", customer_name: s.customer_name ?? "", eta: s.eta ?? "", status: s.status ?? "" });
+  }
+
+  async function handleEditSave(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editTarget) return;
+    setEditSaving(true);
+    try {
+      await shipmentsApi.update(editTarget.id, editForm);
+      setEditTarget(null);
+      load();
+    } catch { /* ignore */ }
+    setEditSaving(false);
   }
 
   async function handleDelete(id: string) {
@@ -94,7 +114,7 @@ export default function ShipmentsPage() {
       {showForm && (
         <Card className="p-5 space-y-4 border border-tertiary/20">
           <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">New Shipment</h2>
-          <form onSubmit={handleAdd} className="space-y-4">
+          <form noValidate onSubmit={handleAdd} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Origin</label><input value={form.origin} onChange={(e) => { setForm({ ...form, origin: e.target.value }); setShipmentErrors(p => ({...p, origin: ""})); }} placeholder="e.g. Shanghai" className={`${inputCls} ${shipmentErrors.origin ? "border-red-500" : ""}`} />{shipmentErrors.origin && <p className="text-xs text-error mt-1">{shipmentErrors.origin}</p>}</div>
               <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Destination</label><input value={form.destination} onChange={(e) => { setForm({ ...form, destination: e.target.value }); setShipmentErrors(p => ({...p, destination: ""})); }} placeholder="e.g. Rotterdam" className={`${inputCls} ${shipmentErrors.destination ? "border-red-500" : ""}`} />{shipmentErrors.destination && <p className="text-xs text-error mt-1">{shipmentErrors.destination}</p>}</div>
@@ -146,9 +166,14 @@ export default function ShipmentsPage() {
                   <td className="px-4 py-3"><span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${STATUS_STYLES[s.status] ?? ""}`}>{s.status}</span></td>
                   <td className="px-4 py-3 text-on-surface-variant">{s.eta ?? "—"}</td>
                   <td className="px-4 py-3">
-                    <button onClick={() => handleDelete(s.id)} className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-error/10 text-error transition-all">
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                      <button onClick={() => openEdit(s)} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary transition-colors" title="Edit">
+                        <Edit className="h-4 w-4" />
+                      </button>
+                      <button onClick={() => handleDelete(s.id)} className="p-1.5 rounded-lg hover:bg-error/10 text-error transition-colors" title="Delete">
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -159,6 +184,36 @@ export default function ShipmentsPage() {
           </table>
         )}
       </Card>
+      {/* Edit Modal */}
+      {editTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-lg rounded-2xl border border-white/10 bg-surface-container shadow-2xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
+              <h2 className="text-base font-bold text-on-surface">Edit Shipment</h2>
+              <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
+            </div>
+            <form noValidate onSubmit={handleEditSave} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Origin</label><input value={editForm.origin} onChange={e => setEditForm(p => ({...p, origin: e.target.value}))} className={inputCls} /></div>
+                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Destination</label><input value={editForm.destination} onChange={e => setEditForm(p => ({...p, destination: e.target.value}))} className={inputCls} /></div>
+                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Cargo Type</label><input value={editForm.cargo_type} onChange={e => setEditForm(p => ({...p, cargo_type: e.target.value}))} className={inputCls} /></div>
+                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Weight</label><input value={editForm.weight} onChange={e => setEditForm(p => ({...p, weight: e.target.value}))} className={inputCls} /></div>
+                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Customer</label><input value={editForm.customer_name} onChange={e => setEditForm(p => ({...p, customer_name: e.target.value}))} className={inputCls} /></div>
+                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">ETA</label><input type="date" value={editForm.eta} onChange={e => setEditForm(p => ({...p, eta: e.target.value}))} className={inputCls} /></div>
+                <div className="col-span-2"><label className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
+                  <select value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className={inputCls}>
+                    {["Awaiting Dispatch","In Transit","Delivered","Delayed","Cancelled"].map(s => <option key={s}>{s}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="submit" disabled={editSaving} className="flex-1 py-2.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] transition-colors disabled:opacity-50">{editSaving ? "Saving…" : "Save Changes"}</button>
+                <button type="button" onClick={() => setEditTarget(null)} className="px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-on-surface-variant hover:bg-white/10 transition-colors">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

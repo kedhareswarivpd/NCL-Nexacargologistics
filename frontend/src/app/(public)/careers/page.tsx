@@ -1,13 +1,23 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Briefcase, MapPin, Clock, ArrowRight, Users, TrendingUp, Heart, Globe } from "lucide-react";
 import Link from "next/link";
+import { JobApplicationModal } from "@/components/shared/JobApplicationModal";
 
 const fadeUp = { hidden: { opacity: 0, y: 50 }, show: { opacity: 1, y: 0, transition: { duration: 0.7 } } };
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.12 } } };
 
-const JOBS = [
+interface Job {
+  title: string;
+  dept: string;
+  location: string;
+  type: string;
+  level: string;
+}
+
+const JOBS: Job[] = [
   { title: "Senior Logistics Engineer",     dept: "Engineering",  location: "Dubai, UAE",       type: "Full-time", level: "Senior"    },
   { title: "Supply Chain Data Analyst",     dept: "Analytics",    location: "Singapore",         type: "Full-time", level: "Mid-level" },
   { title: "Global Freight Manager",        dept: "Operations",   location: "Rotterdam, NL",     type: "Full-time", level: "Senior"    },
@@ -35,8 +45,16 @@ const DEPT_COLORS: Record<string, string> = {
 };
 
 export default function CareersPage() {
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+
   return (
     <div className="bg-background text-on-surface overflow-x-hidden pt-20">
+
+      {/* Application Modal */}
+      <JobApplicationModal
+        job={selectedJob}
+        onClose={() => setSelectedJob(null)}
+      />
 
       {/* Hero */}
       <section className="relative py-24 px-6 max-w-7xl mx-auto text-center overflow-hidden">
@@ -94,7 +112,7 @@ export default function CareersPage() {
             {JOBS.map((job, i) => (
               <motion.div key={job.title} variants={fadeUp} transition={{ delay: i * 0.05 }}
                 whileHover={{ x: 6, boxShadow: "0 0 24px rgba(0,194,255,0.08)" }}
-                className="glass rounded-xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer transition-all">
+                className="glass rounded-xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all">
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-lg bg-tertiary/10 flex items-center justify-center shrink-0 mt-0.5">
                     <Briefcase className="w-5 h-5 text-tertiary" />
@@ -110,8 +128,12 @@ export default function CareersPage() {
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
                   <span className="text-xs text-on-surface-variant bg-white/5 px-3 py-1 rounded-full">{job.level}</span>
-                  <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-tertiary/15 border border-tertiary/30 text-tertiary text-sm font-semibold hover:bg-tertiary/25 transition-colors">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => setSelectedJob(job)}
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-tertiary/15 border border-tertiary/30 text-tertiary text-sm font-semibold hover:bg-tertiary/25 transition-colors"
+                  >
                     Apply <ArrowRight className="w-3.5 h-3.5" />
                   </motion.button>
                 </div>

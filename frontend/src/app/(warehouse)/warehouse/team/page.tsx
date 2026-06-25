@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Package, MapPin, Phone, Mail, Award, Star, Clock, Shield, ArrowLeft } from "lucide-react";
+import { Package, MapPin, Phone, Mail, Award, Star, Clock, Shield, ArrowLeft, Edit, X } from "lucide-react";
 import Link from "next/link";
 import { usersApi } from "@/lib/services";
 
@@ -49,6 +49,20 @@ const SHIFTS = ["All", "Day Shift", "Evening Shift", "Night Shift"];
 
 export default function WarehouseTeamPage() {
   const [members, setMembers] = useState(WAREHOUSE_STAFF);
+  const [editTarget, setEditTarget] = useState<any | null>(null);
+  const [editForm, setEditForm] = useState({ name: "", role: "", phone: "", email: "", zone: "", shift: "" });
+
+  function openEdit(m: any) {
+    setEditTarget(m);
+    setEditForm({ name: m.name, role: m.role, phone: m.phone, email: m.email, zone: m.zone, shift: m.shift });
+  }
+
+  function saveEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editTarget) return;
+    setMembers(prev => prev.map(m => m.id === editTarget.id ? { ...m, ...editForm } : m));
+    setEditTarget(null);
+  }
   useEffect(() => {
     usersApi.list({ role: "warehouse" })
       .then((staff: any[]) => { if (staff && staff.length) setMembers(staff.map(mapStaff)); })
@@ -160,10 +174,37 @@ export default function WarehouseTeamPage() {
                 <Mail className="h-3 w-3 shrink-0" />
                 <span className="truncate">{member.email}</span>
               </div>
+              <button onClick={() => openEdit(member)} className="mt-1 flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 text-green-400 text-xs hover:bg-green-400/10 transition-colors w-full justify-center">
+                <Edit className="h-3 w-3" /> Edit
+              </button>
             </div>
           </Card>
         ))}
       </div>
+      {editTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-surface-container shadow-2xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
+              <h2 className="text-base font-bold text-on-surface">Edit Staff Member</h2>
+              <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
+            </div>
+            <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2"><label className="text-xs uppercase tracking-widest text-on-surface-variant">Name</label><input value={editForm.name} onChange={e => { const filtered = e.target.value.replace(/[0-9]/g, ''); setEditForm(p => ({...p, name: filtered})); }} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Role</label><input value={editForm.role} onChange={e => setEditForm(p => ({...p, role: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Zone</label><input value={editForm.zone} onChange={e => setEditForm(p => ({...p, zone: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Shift</label><input value={editForm.shift} onChange={e => setEditForm(p => ({...p, shift: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Phone</label><input value={editForm.phone} onChange={e => setEditForm(p => ({...p, phone: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+                <div className="col-span-2"><label className="text-xs uppercase tracking-widest text-on-surface-variant">Email</label><input value={editForm.email} onChange={e => setEditForm(p => ({...p, email: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="submit" className="flex-1 py-2.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0]">Save Changes</button>
+                <button type="button" onClick={() => setEditTarget(null)} className="px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-on-surface-variant hover:bg-white/10">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

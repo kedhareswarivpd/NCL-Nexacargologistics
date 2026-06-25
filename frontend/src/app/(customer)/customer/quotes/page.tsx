@@ -377,6 +377,7 @@ export default function RequestQuotesPage() {
     if (!form.destination.trim()) e.destination = "Please fill out this field";
     if (!form.mode)               e.mode        = "Please select a transport mode";
     if (!form.weight.trim())      e.weight      = "Please fill out this field";
+    if (Number(form.weight) > 10000) e.weight = "Maximum weight allowed is 10000 kg (10 tons)";
     if (!form.date.trim())        e.date        = "Please fill out this field";
     return e;
   };
@@ -416,7 +417,7 @@ export default function RequestQuotesPage() {
     <div className="space-y-6 page-enter">
       <Link href="/customer" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#00C2FF] hover:bg-[#00a8e0] transition-colors w-fit shadow-[0_4px_16px_rgba(0,194,255,0.35)]">
         <ArrowLeft className="h-4 w-4 text-[#0B1F3A]" />
-        <span className="text-sm font-bold text-[#0B1F3A]">← Back to Dashboard</span>
+        <span className="text-sm font-bold text-[#0B1F3A]">Back to Dashboard</span>
       </Link>
       <div>
         <p className="text-xs uppercase tracking-widest text-tertiary">Customer Portal</p>
@@ -464,7 +465,7 @@ export default function RequestQuotesPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form noValidate onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="relative">
               <label className="text-xs uppercase tracking-widest text-on-surface-variant">Origin Port / City</label>
@@ -623,7 +624,14 @@ export default function RequestQuotesPage() {
             </div>
             <div>
               <label className="text-xs uppercase tracking-widest text-on-surface-variant">Cargo Weight (kg)</label>
-              <input type="number" value={form.weight} onChange={(e) => { setForm({ ...form, weight: e.target.value }); setErrors(p => ({ ...p, weight: "" })); }}
+              <input type="number" max="10000" value={form.weight} onChange={(e) => { 
+                const val = e.target.value;
+                const numVal = Number(val);
+                if (val === "" || numVal <= 10000) {
+                  setForm({ ...form, weight: val }); 
+                  setErrors(p => ({ ...p, weight: "" })); 
+                }
+              }}
                 placeholder="e.g. 5000" className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 ${errors.weight ? "border-red-500" : "border-white/10"}`} />
               {errors.weight && <p className="text-xs text-red-400 mt-1">{errors.weight}</p>}
             </div>

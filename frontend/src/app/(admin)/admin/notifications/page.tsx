@@ -135,7 +135,7 @@ export default function NotificationsPage() {
         <motion.div variants={itemVariants}>
           <Link href="/admin" className="inline-flex items-center gap-2 mb-5 px-5 py-2.5 rounded-xl bg-[#00C2FF] hover:bg-[#00a8e0] transition-colors w-fit shadow-[0_4px_16px_rgba(0,194,255,0.35)]">
             <ArrowLeft className="h-4 w-4 text-[#0B1F3A]" />
-            <span className="text-sm font-bold text-[#0B1F3A]">← Back to Admin Dashboard</span>
+            <span className="text-sm font-bold text-[#0B1F3A]">Back to Admin Dashboard</span>
           </Link>
           <p className="text-xs uppercase tracking-widest text-tertiary">Admin Portal</p>
           <h1 className="text-3xl font-bold text-on-surface mt-1">Notifications</h1>
@@ -197,9 +197,9 @@ export default function NotificationsPage() {
           >
             <Card className="p-5 space-y-4 border border-tertiary/20 bg-white/[0.01]">
               <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">New Notification</h2>
-              <form onSubmit={handleSend} className="space-y-4">
+              <form noValidate onSubmit={handleSend} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Recipient Name</label><input required value={form.recipient_name} onChange={(e) => setForm({ ...form, recipient_name: e.target.value })} placeholder="e.g. John Smith" className={inputCls} /></div>
+                  <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Recipient Name</label><input required value={form.recipient_name} onChange={(e) => { const filtered = e.target.value.replace(/[0-9]/g, ''); setForm({ ...form, recipient_name: filtered }); }} placeholder="e.g. John Smith" className={inputCls} /></div>
                   <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Email</label><input type="email" value={form.recipient_email} onChange={(e) => setForm({ ...form, recipient_email: e.target.value })} placeholder="john@example.com" className={inputCls} /></div>
                   <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Phone</label><input value={form.recipient_phone} onChange={(e) => setForm({ ...form, recipient_phone: e.target.value })} placeholder="+1234567890" className={inputCls} /></div>
                   <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Subject</label><input value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} placeholder="Shipment Update" className={inputCls} /></div>

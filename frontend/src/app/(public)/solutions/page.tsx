@@ -61,7 +61,7 @@ export default function IndustrySolutionsPage() {
               </span>
               <h3 className="font-headline-lg text-2xl font-bold text-white mb-3">Fashion Moves Fast. So Do We.</h3>
               <p className="text-sm text-on-surface-variant mb-4">Seasonal collections have tight windows. We get your garments to market on time, every season.</p>
-              <span className="inline-flex items-center gap-2 text-tertiary text-sm font-semibold group-hover:gap-4 transition-all">
+              <span className="inline-flex items-center gap-2 text-tertiary text-sm font-semibold group-hover:gap-4 transition-all opacity-60">
                 Explore Solutions <ArrowRight className="w-4 h-4" />
               </span>
             </div>
@@ -85,7 +85,7 @@ export default function IndustrySolutionsPage() {
               </span>
               <h3 className="font-headline-lg text-2xl font-bold text-white mb-3">Temperature Control You Can Trust.</h3>
               <p className="text-sm text-on-surface-variant mb-4">GDP-compliant cold-chain from pickup to delivery with full regulatory documentation.</p>
-              <span className="inline-flex items-center gap-2 text-tertiary text-sm font-semibold group-hover:gap-4 transition-all">
+              <span className="inline-flex items-center gap-2 text-tertiary text-sm font-semibold group-hover:gap-4 transition-all opacity-60">
                 Explore Solutions <ArrowRight className="w-4 h-4" />
               </span>
             </div>
@@ -109,7 +109,7 @@ export default function IndustrySolutionsPage() {
               </span>
               <h3 className="font-headline-lg text-2xl font-bold text-white mb-3">Deliveries That Keep Up With Orders.</h3>
               <p className="text-sm text-on-surface-variant mb-4">Scalable fulfilment and last-mile network for peak-season demand spikes.</p>
-              <span className="inline-flex items-center gap-2 text-tertiary text-sm font-semibold group-hover:gap-4 transition-all">
+              <span className="inline-flex items-center gap-2 text-tertiary text-sm font-semibold group-hover:gap-4 transition-all opacity-60">
                 Explore Solutions <ArrowRight className="w-4 h-4" />
               </span>
             </div>
@@ -133,7 +133,7 @@ export default function IndustrySolutionsPage() {
               </span>
               <h3 className="font-headline-lg text-2xl font-bold text-white mb-3">From the Factory to the Shelf.</h3>
               <p className="text-sm text-on-surface-variant mb-4">Connect your production line to retail points with reliable omnichannel distribution.</p>
-              <span className="inline-flex items-center gap-2 text-tertiary text-sm font-semibold group-hover:gap-4 transition-all">
+              <span className="inline-flex items-center gap-2 text-tertiary text-sm font-semibold group-hover:gap-4 transition-all opacity-60">
                 Explore Solutions <ArrowRight className="w-4 h-4" />
               </span>
             </div>
@@ -157,7 +157,7 @@ export default function IndustrySolutionsPage() {
               </span>
               <h3 className="font-headline-lg text-2xl font-bold text-white mb-3">Selling Abroad Shouldn't Be This Hard.</h3>
               <p className="text-sm text-on-surface-variant mb-4">Customs, documentation and multi-modal shipping for regional manufacturers going global.</p>
-              <span className="inline-flex items-center gap-2 text-tertiary text-sm font-semibold group-hover:gap-4 transition-all">
+              <span className="inline-flex items-center gap-2 text-tertiary text-sm font-semibold group-hover:gap-4 transition-all opacity-60">
                 Explore Solutions <ArrowRight className="w-4 h-4" />
               </span>
             </div>

@@ -49,7 +49,18 @@ export function ContactForm() {
 
   return (
     <form className="grid grid-cols-1 gap-6 md:grid-cols-2" onSubmit={form.handleSubmit} noValidate>
-      <FormField label="Full name" placeholder="John Doe" {...form.fieldProps("name")} />
+      <FormField 
+        label="Full name" 
+        placeholder="John Doe" 
+        {...form.fieldProps("name")}
+        onChange={(e) => {
+          const filtered = e.target.value.replace(/[0-9]/g, '');
+          form.setValues({ ...form.values, name: filtered });
+          if (form.touched.name) {
+            form.handleChange({ ...e, target: { ...e.target, value: filtered } } as React.ChangeEvent<HTMLInputElement>);
+          }
+        }}
+      />
       <FormField label="Email address" type="email" placeholder="john@company.com" {...form.fieldProps("email")} />
       <div className="md:col-span-2">
         <FormField label="Company (optional)" placeholder="Enterprise Inc." {...form.fieldProps("company")} />

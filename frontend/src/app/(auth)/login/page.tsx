@@ -3,8 +3,9 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AtSign, Lock, ArrowRight, Loader2 } from "lucide-react";
+import { AtSign, ArrowRight, Loader2 } from "lucide-react";
 import { FormField } from "@/components/ui/FormField";
+import { PasswordField } from "@/components/ui/PasswordField";
 import { Button } from "@/components/ui/button";
 import { useForm } from "@/hooks/useForm";
 import { useAuth } from "@/context/AuthContext";
@@ -13,11 +14,18 @@ import { isEmail, required } from "@/lib/validation";
 import { ROLE_HOME } from "@/lib/types";
 
 function LoginForm() {
-  const { login, logout } = useAuth();
+  const { login, logout, status } = useAuth();
   const toast = useToast();
   const router = useRouter();
   const params = useSearchParams();
   const [formError, setFormError] = React.useState<string | null>(null);
+  const hasSubmittedLogin = React.useRef(false);
+
+  React.useEffect(() => {
+    if (status === "authenticated" && !hasSubmittedLogin.current) {
+      logout();
+    }
+  }, [status, logout]);
 
   const form = useForm({
     initialValues: { email: "", password: "" },
@@ -27,11 +35,13 @@ function LoginForm() {
     },
     onSubmit: async (values) => {
       setFormError(null);
+      hasSubmittedLogin.current = true;
       try {
         const user = await login({ email: values.email, password: values.password });
         
         if (user.role === "admin") {
           logout();
+          hasSubmittedLogin.current = false;
           const adminError = "Access Denied: Administrators must log in through the secure Admin Portal.";
           setFormError(adminError);
           toast.error("Admin login denied on this page.");
@@ -40,8 +50,9 @@ function LoginForm() {
 
         toast.success(`Welcome back, ${user.name.split(" ")[0]}.`);
         const next = params.get("next");
-        router.replace(next || ROLE_HOME[user.role]);
+        router.push(next || ROLE_HOME[user.role]);
       } catch (err) {
+        hasSubmittedLogin.current = false;
         const message = err instanceof Error ? err.message : "Something went wrong.";
         setFormError(message);
         toast.error(message);
@@ -73,12 +84,10 @@ function LoginForm() {
           {...form.fieldProps("email")}
         />
         <div>
-          <FormField
+          <PasswordField
             label="Password"
-            type="password"
             autoComplete="current-password"
             placeholder="••••••••"
-            icon={Lock}
             {...form.fieldProps("password")}
           />
           <div className="mt-2 text-right">

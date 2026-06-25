@@ -81,7 +81,7 @@ export default function ContactPage() {
               <div className="flex flex-col gap-6">
                 {[
                   { Icon: Phone, label: "Phone", value: "+1 (800) NEXA-LOG" },
-                  { Icon: Mail,  label: "Email", value: "support@nexacargo.com" },
+                  { Icon: Mail,  label: "Email", value: "info@nexacargo.com" },
                 ].map(({ Icon, label, value }) => (
                   <motion.div key={label} className="flex items-center gap-6"
                     whileHover={{ x: 6 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>

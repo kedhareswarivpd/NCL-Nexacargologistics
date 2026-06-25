@@ -1,10 +1,3 @@
-"""
-Common FastAPI dependencies — role-based access guards.
-
-Roles come from the `profiles.role` column (synced from Supabase). Admin is a
-super-role that passes every guard.
-"""
-
 from fastapi import Depends, HTTPException, status
 
 from app.middleware.auth import get_current_user
@@ -12,8 +5,6 @@ from app.models.profile import Profile, UserRole
 
 
 def require_roles(*allowed: str):
-    """Factory that builds a dependency allowing the given roles (admin always allowed)."""
-
     allowed_set = set(allowed) | {UserRole.ADMIN}
 
     async def _guard(current_user: Profile = Depends(get_current_user)) -> Profile:
@@ -27,7 +18,6 @@ def require_roles(*allowed: str):
     return _guard
 
 
-# Convenience guards used across routers.
 get_admin_user = require_roles(UserRole.ADMIN)
 get_finance_user = require_roles(UserRole.FINANCE)
 get_logistics_user = require_roles(UserRole.LOGISTICS)

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, UserPlus, Ban, Trash2, CheckCircle2, Clock, XCircle, ArrowLeft } from "lucide-react";
+import { Search, UserPlus, Ban, Trash2, CheckCircle2, Clock, XCircle, ArrowLeft, Edit, X } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import Link from "next/link";
@@ -71,6 +71,9 @@ export default function UserManagementPage() {
   const [users, setUsers] = useState<ReturnType<typeof mapUser>[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [editTarget, setEditTarget] = useState<ReturnType<typeof mapUser> | null>(null);
+  const [editForm, setEditForm] = useState({ name: "", role: "", status: "" });
+  const [editSaving, setEditSaving] = useState(false);
 
   async function load() {
     setLoading(true);
@@ -87,6 +90,24 @@ export default function UserManagementPage() {
     setLoading(false);
   }
   useEffect(() => { load(); }, []);
+
+  function openEdit(u: ReturnType<typeof mapUser>) {
+    setEditTarget(u);
+    setEditForm({ name: u.name, role: u.role.toLowerCase(), status: u.status.toLowerCase() });
+  }
+
+  async function saveEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editTarget) return;
+    setEditSaving(true);
+    try {
+      await usersApi.update(editTarget.id, { name: editForm.name, role: editForm.role, status: editForm.status });
+      toast.success("User updated.");
+      setEditTarget(null);
+      load();
+    } catch (err) { toast.error(apiError(err)); }
+    setEditSaving(false);
+  }
 
   async function toggleSuspend(u: ReturnType<typeof mapUser>) {
     try {
@@ -130,7 +151,7 @@ export default function UserManagementPage() {
       <motion.div variants={itemVariants}>
         <Link href="/admin" className="inline-flex items-center gap-2 mb-5 px-5 py-2.5 rounded-xl bg-[#00C2FF] hover:bg-[#00a8e0] transition-colors w-fit shadow-[0_4px_16px_rgba(0,194,255,0.35)]">
           <ArrowLeft className="h-4 w-4 text-[#0B1F3A]" />
-          <span className="text-sm font-bold text-[#0B1F3A]">← Back to Admin Dashboard</span>
+          <span className="text-sm font-bold text-[#0B1F3A]">Back to Admin Dashboard</span>
         </Link>
         <p className="text-xs uppercase tracking-widest text-tertiary">Admin Portal</p>
         <h1 className="text-3xl font-bold text-on-surface mt-1">User Management</h1>
@@ -261,6 +282,7 @@ export default function UserManagementPage() {
                       <td className="px-4 py-3 text-on-surface-variant text-xs">{u.last}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button onClick={() => openEdit(u)} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary transition-colors" title="Edit"><Edit className="h-4 w-4" /></button>
                           <button onClick={() => toggleSuspend(u)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant transition-colors" title={u.status === "Active" ? "Suspend" : "Reactivate"}><Ban className="h-4 w-4" /></button>
                           <button onClick={() => removeUser(u.id)} className="p-1.5 rounded-lg hover:bg-error/10 text-error transition-colors" title="Delete"><Trash2 className="h-4 w-4" /></button>
                         </div>
@@ -286,6 +308,34 @@ export default function UserManagementPage() {
           </table>
         </Card>
       </motion.div>
+      {/* Edit User Modal */}
+      {editTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-surface-container shadow-2xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
+              <h2 className="text-base font-bold text-on-surface">Edit User</h2>
+              <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
+            </div>
+            <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Name</label><input value={editForm.name} onChange={e => { const filtered = e.target.value.replace(/[0-9]/g, ''); setEditForm(p => ({...p, name: filtered})); }} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Role</label>
+                <select value={editForm.role} onChange={e => setEditForm(p => ({...p, role: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
+                  {["customer","admin","logistics","finance","warehouse","driver","support","customs"].map(r => <option key={r}>{r}</option>)}
+                </select>
+              </div>
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
+                <select value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
+                  <option value="active">Active</option><option value="suspended">Suspended</option><option value="invited">Pending</option>
+                </select>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="submit" disabled={editSaving} className="flex-1 py-2.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] disabled:opacity-50">{editSaving ? "Saving…" : "Save Changes"}</button>
+                <button type="button" onClick={() => setEditTarget(null)} className="px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-on-surface-variant hover:bg-white/10">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 }

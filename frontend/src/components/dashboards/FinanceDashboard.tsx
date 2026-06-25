@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import {
   Banknote, TrendingUp, TrendingDown, Receipt,
-  Clock, CheckCircle2, AlertCircle, ArrowUpRight, FileText, ArrowLeft,
+  Clock, CheckCircle2, AlertCircle, ArrowUpRight, FileText, ArrowLeft, Edit, X,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Card } from "@/components/ui/card";
@@ -45,6 +45,26 @@ export default function FinanceDashboard() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [monthly, setMonthly] = useState<MonthlyRevenue[]>([]);
   const [revenue, setRevenue] = useState<{ total_revenue: number; outstanding: number; overdue_invoices: number } | null>(null);
+  const [editTarget, setEditTarget] = useState<Invoice | null>(null);
+  const [editForm, setEditForm] = useState({ status: "", due_date: "" });
+  const [editSaving, setEditSaving] = useState(false);
+
+  function openEdit(inv: Invoice) {
+    setEditTarget(inv);
+    setEditForm({ status: inv.status, due_date: inv.due_date ?? "" });
+  }
+
+  async function saveEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editTarget) return;
+    setEditSaving(true);
+    try {
+      await financeApi.updateInvoice(editTarget.id, editForm);
+      setEditTarget(null);
+      financeApi.invoices().then(d => setInvoices(d ?? [])).catch(() => {});
+    } catch { }
+    setEditSaving(false);
+  }
 
   useEffect(() => {
     financeApi.invoices().then((data) => setInvoices(data ?? [])).catch(() => setInvoices([]));
@@ -93,7 +113,7 @@ export default function FinanceDashboard() {
         <Link href={user?.role === "admin" ? "/admin" : "/"} className="inline-flex items-center gap-2 mb-4 px-5 py-2.5 rounded-xl bg-[#00C2FF] hover:bg-[#00a8e0] transition-colors w-fit shadow-[0_4px_16px_rgba(0,194,255,0.35)]">
           <ArrowLeft className="h-4 w-4 text-[#0B1F3A]" />
           <span className="text-sm font-bold text-[#0B1F3A]">
-            {user?.role === "admin" ? "← Back to Admin" : "← Back to Home"}
+            {user?.role === "admin" ? "Back to Admin" : "Back to Home"}
           </span>
         </Link>
         <p className="font-label-caps text-xs uppercase tracking-widest text-tertiary">Finance Dashboard</p>
@@ -204,6 +224,7 @@ export default function FinanceDashboard() {
                 <th className="px-4 py-3">Amount</th>
                 <th className="px-4 py-3">Due Date</th>
                 <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
@@ -221,6 +242,9 @@ export default function FinanceDashboard() {
                     <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${STATUS_STYLES[inv.status] ?? ""}`}>
                       {inv.status}
                     </span>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <button onClick={() => openEdit(inv)} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary transition-colors" title="Edit"><Edit className="h-4 w-4" /></button>
                   </td>
                 </tr>
               ))}
@@ -256,6 +280,32 @@ export default function FinanceDashboard() {
           )}
         </div>
       </section>
+      {editTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-surface-container shadow-2xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
+              <h2 className="text-base font-bold text-on-surface">Edit Invoice</h2>
+              <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
+            </div>
+            <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
+              <div>
+                <label className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
+                <select value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
+                  <option>Pending</option><option>Paid</option><option>Overdue</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-xs uppercase tracking-widest text-on-surface-variant">Due Date</label>
+                <input type="date" value={editForm.due_date} onChange={e => setEditForm(p => ({...p, due_date: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="submit" disabled={editSaving} className="flex-1 py-2.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] disabled:opacity-50">{editSaving ? "Saving…" : "Save Changes"}</button>
+                <button type="button" onClick={() => setEditTarget(null)} className="px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-on-surface-variant hover:bg-white/10">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search, Plus, Trash2, RefreshCw, Container, ArrowLeft } from "lucide-react";
+import { Search, Plus, Trash2, RefreshCw, Container, ArrowLeft, Edit, X } from "lucide-react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { containersApi } from "@/lib/services";
@@ -19,6 +19,22 @@ export default function ContainersPage() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ container_no: "", type: "FCL 20FT", location: "", capacity: "" });
   const [saving, setSaving] = useState(false);
+  const [editTarget, setEditTarget] = useState<any | null>(null);
+  const [editForm, setEditForm] = useState({ type: "", location: "", capacity: "", status: "" });
+  const [editSaving, setEditSaving] = useState(false);
+
+  function openEdit(c: any) {
+    setEditTarget(c);
+    setEditForm({ type: c.type ?? "", location: c.location ?? "", capacity: c.capacity ?? "", status: c.status ?? "Available" });
+  }
+
+  async function saveEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editTarget) return;
+    setEditSaving(true);
+    try { await containersApi.update(editTarget.id, editForm); setEditTarget(null); load(); } catch { /* ignore */ }
+    setEditSaving(false);
+  }
 
   async function load() {
     setLoading(true);
@@ -89,7 +105,7 @@ export default function ContainersPage() {
       {showForm && (
         <Card className="p-5 space-y-4 border border-tertiary/20">
           <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">New Container</h2>
-          <form onSubmit={handleAdd} className="space-y-4">
+          <form noValidate onSubmit={handleAdd} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
               <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Container No</label><input required value={form.container_no} onChange={(e) => setForm({ ...form, container_no: e.target.value })} placeholder="e.g. CNTR-5001" className={inputCls} /></div>
               <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Type</label>
@@ -129,7 +145,12 @@ export default function ContainersPage() {
                   <td className="px-4 py-3 text-on-surface-variant">{c.location ?? "—"}</td>
                   <td className="px-4 py-3 text-on-surface-variant">{c.capacity ?? "—"}</td>
                   <td className="px-4 py-3"><span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${STATUS_STYLES[c.status] ?? ""}`}>{c.status}</span></td>
-                  <td className="px-4 py-3"><button onClick={() => handleDelete(c.id)} className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-error/10 text-error transition-all"><Trash2 className="h-4 w-4" /></button></td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                      <button onClick={() => openEdit(c)} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary transition-colors" title="Edit"><Edit className="h-4 w-4" /></button>
+                      <button onClick={() => handleDelete(c.id)} className="p-1.5 rounded-lg hover:bg-error/10 text-error transition-colors" title="Delete"><Trash2 className="h-4 w-4" /></button>
+                    </div>
+                  </td>
                 </tr>
               ))}
               {filtered.length === 0 && <tr><td colSpan={6} className="px-4 py-8 text-center text-on-surface-variant text-sm">No containers found.</td></tr>}
@@ -137,6 +158,34 @@ export default function ContainersPage() {
           </table>
         )}
       </Card>
+      {editTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-surface-container shadow-2xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
+              <h2 className="text-base font-bold text-on-surface">Edit Container</h2>
+              <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
+            </div>
+            <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Type</label>
+                <select value={editForm.type} onChange={e => setEditForm(p => ({...p, type: e.target.value}))} className={inputCls}>
+                  <option>FCL 20FT</option><option>FCL 40FT</option><option>FCL 40HQ</option><option>LCL</option><option>Reefer 20FT</option>
+                </select>
+              </div>
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Location</label><input value={editForm.location} onChange={e => setEditForm(p => ({...p, location: e.target.value}))} className={inputCls} /></div>
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Capacity</label><input value={editForm.capacity} onChange={e => setEditForm(p => ({...p, capacity: e.target.value}))} className={inputCls} /></div>
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
+                <select value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className={inputCls}>
+                  <option>Available</option><option>In Use</option><option>Maintenance</option>
+                </select>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="submit" disabled={editSaving} className="flex-1 py-2.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] disabled:opacity-50">{editSaving ? "Saving…" : "Save Changes"}</button>
+                <button type="button" onClick={() => setEditTarget(null)} className="px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-on-surface-variant hover:bg-white/10">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

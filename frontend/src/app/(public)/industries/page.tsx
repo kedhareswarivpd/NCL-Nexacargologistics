@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Shirt, Syringe, ShoppingCart, Package, Globe, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Shirt, Syringe, ShoppingCart, Package, Globe, ArrowRight, CheckCircle2, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
@@ -42,6 +42,20 @@ function Counter({ to, suffix = "", decimals = 0, duration = 2 }: { to: number; 
 }
 
 export default function IndustrySolutionsPage() {
+  const handleDownload = () => {
+    import("jspdf").then(({ jsPDF }) => {
+      const doc = new jsPDF();
+      doc.setFontSize(20);
+      doc.text("NexaCargo — Industry Solutions Brochure", 14, 20);
+      doc.setFontSize(12);
+      doc.text("NexaCargo provides tailored logistics solutions across:", 14, 36);
+      const lines = ["• Textile & Apparel", "• Pharma & Healthcare", "• FMCG Distribution", "• E-Commerce & Retail", "• Export & Manufacturing"];
+      lines.forEach((line, i) => doc.text(line, 14, 48 + i * 10));
+      doc.text("Contact us: info@nexacargo.com", 14, 110);
+      doc.text("Website: https://nexacargo.com", 14, 120);
+      doc.save("NexaCargo_Industry_Brochure.pdf");
+    });
+  };
   return (
     <div className="bg-background text-on-surface overflow-x-hidden pt-20">
       <main className="max-w-7xl mx-auto px-6 pt-12 pb-24">
@@ -84,10 +98,10 @@ export default function IndustrySolutionsPage() {
         </motion.header>
 
         {/* Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
 
           {/* Textile */}
-          <Link href="/industries/textile">
+          <Link href="/industries/textile" className="md:col-span-2">
           <motion.section
             initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.15 }} variants={scaleReveal}
             className="h-[420px] relative group overflow-hidden rounded-xl glass cursor-pointer"
@@ -98,12 +112,12 @@ export default function IndustrySolutionsPage() {
               whileHover={{ scale: 1.06 }} transition={{ duration: 0.7 }} />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
             <div className="absolute bottom-0 left-0 p-8 w-full">
-              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-tertiary font-label-caps text-xs tracking-widest uppercase mb-4">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-white font-label-caps text-xs tracking-widest uppercase mb-4 font-bold">
                 <Shirt className="w-4 h-4" /> TEXTILE & APPAREL
               </span>
               <h3 className="font-headline-lg text-2xl font-bold text-white mb-3">Fashion Moves Fast. So Do We.</h3>
               <p className="text-sm text-on-surface-variant mb-4">Seasonal collections have tight windows. We get your garments to market on time, every season.</p>
-              <span className="inline-flex items-center gap-2 text-tertiary text-sm font-semibold group-hover:gap-4 transition-all">
+              <span className="inline-flex items-center gap-2 text-white text-sm font-semibold group-hover:gap-4 transition-all">
                 Explore Solutions <ArrowRight className="w-4 h-4" />
               </span>
             </div>
@@ -111,7 +125,7 @@ export default function IndustrySolutionsPage() {
           </Link>
 
           {/* Pharma */}
-          <Link href="/industries/pharma">
+          <Link href="/industries/pharma" className="md:col-span-2">
           <motion.section
             initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.15 }} variants={fadeUp}
             className="h-[420px] relative group overflow-hidden rounded-xl glass cursor-pointer"
@@ -122,12 +136,12 @@ export default function IndustrySolutionsPage() {
               whileHover={{ scale: 1.06 }} transition={{ duration: 0.7 }} />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
             <div className="absolute bottom-0 left-0 p-8 w-full">
-              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-tertiary font-label-caps text-xs tracking-widest uppercase mb-4">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-white font-label-caps text-xs tracking-widest uppercase mb-4 font-bold">
                 <Syringe className="w-4 h-4" /> PHARMA
               </span>
               <h3 className="font-headline-lg text-2xl font-bold text-white mb-3">Temperature Control You Can Trust.</h3>
               <p className="text-sm text-on-surface-variant mb-4">GDP-compliant cold-chain from pickup to delivery with full regulatory documentation.</p>
-              <span className="inline-flex items-center gap-2 text-tertiary text-sm font-semibold group-hover:gap-4 transition-all">
+              <span className="inline-flex items-center gap-2 text-white text-sm font-semibold group-hover:gap-4 transition-all">
                 Explore Solutions <ArrowRight className="w-4 h-4" />
               </span>
             </div>
@@ -135,7 +149,7 @@ export default function IndustrySolutionsPage() {
           </Link>
 
           {/* FMCG */}
-          <Link href="/industries/fmcg">
+          <Link href="/industries/fmcg" className="md:col-span-2">
           <motion.section
             initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.15 }} variants={scaleReveal}
             className="h-[420px] relative group overflow-hidden rounded-xl glass cursor-pointer"
@@ -146,12 +160,12 @@ export default function IndustrySolutionsPage() {
               whileHover={{ scale: 1.06 }} transition={{ duration: 0.7 }} />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
             <div className="absolute bottom-0 left-0 p-8 w-full">
-              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-tertiary font-label-caps text-xs tracking-widest uppercase mb-4">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-white font-label-caps text-xs tracking-widest uppercase mb-4 font-bold">
                 <Package className="w-4 h-4" /> FMCG
               </span>
               <h3 className="font-headline-lg text-2xl font-bold text-white mb-3">From the Factory to the Shelf.</h3>
               <p className="text-sm text-on-surface-variant mb-4">Connect your production line to retail points with reliable omnichannel distribution.</p>
-              <span className="inline-flex items-center gap-2 text-tertiary text-sm font-semibold group-hover:gap-4 transition-all">
+              <span className="inline-flex items-center gap-2 text-white text-sm font-semibold group-hover:gap-4 transition-all">
                 Explore Solutions <ArrowRight className="w-4 h-4" />
               </span>
             </div>
@@ -159,7 +173,7 @@ export default function IndustrySolutionsPage() {
           </Link>
 
           {/* E-commerce */}
-          <Link href="/industries/ecommerce">
+          <Link href="/industries/ecommerce" className="md:col-span-2 md:col-start-2">
           <motion.section
             initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.15 }} variants={scaleReveal}
             className="h-[420px] relative group overflow-hidden rounded-xl glass cursor-pointer"
@@ -170,12 +184,12 @@ export default function IndustrySolutionsPage() {
               whileHover={{ scale: 1.06 }} transition={{ duration: 0.7 }} />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
             <div className="absolute bottom-0 left-0 p-8 w-full">
-              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-tertiary font-label-caps text-xs tracking-widest uppercase mb-4">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-white font-label-caps text-xs tracking-widest uppercase mb-4 font-bold">
                 <ShoppingCart className="w-4 h-4" /> E-COMMERCE
               </span>
               <h3 className="font-headline-lg text-2xl font-bold text-white mb-3">Deliveries That Keep Up With Orders.</h3>
               <p className="text-sm text-on-surface-variant mb-4">Scalable fulfilment and last-mile network for peak-season demand spikes.</p>
-              <span className="inline-flex items-center gap-2 text-tertiary text-sm font-semibold group-hover:gap-4 transition-all">
+              <span className="inline-flex items-center gap-2 text-white text-sm font-semibold group-hover:gap-4 transition-all">
                 Explore Solutions <ArrowRight className="w-4 h-4" />
               </span>
             </div>
@@ -184,7 +198,7 @@ export default function IndustrySolutionsPage() {
 
 
           {/* Export */}
-          <Link href="/industries/export">
+          <Link href="/industries/export" className="md:col-span-2">
           <motion.section
             initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.1 }} variants={fadeUp}
             className="h-[420px] relative group overflow-hidden rounded-xl glass cursor-pointer"
@@ -195,12 +209,12 @@ export default function IndustrySolutionsPage() {
               whileHover={{ scale: 1.06 }} transition={{ duration: 0.7 }} />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
             <div className="absolute bottom-0 left-0 p-8 w-full">
-              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-tertiary font-label-caps text-xs tracking-widest uppercase mb-4">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-white font-label-caps text-xs tracking-widest uppercase mb-4 font-bold">
                 <Globe className="w-4 h-4" /> EXPORT SECTOR
               </span>
               <h3 className="font-headline-lg text-2xl font-bold text-white mb-3">Selling Abroad Shouldn't Be This Hard.</h3>
               <p className="text-sm text-on-surface-variant mb-4">Customs, documentation and multi-modal shipping for regional manufacturers going global.</p>
-              <span className="inline-flex items-center gap-2 text-tertiary text-sm font-semibold group-hover:gap-4 transition-all">
+              <span className="inline-flex items-center gap-2 text-white text-sm font-semibold group-hover:gap-4 transition-all">
                 Explore Solutions <ArrowRight className="w-4 h-4" />
               </span>
             </div>
@@ -247,9 +261,10 @@ export default function IndustrySolutionsPage() {
               </Link>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
-              <Link href="/industries/brochure">
-                <Button size="lg" variant="secondary" className="text-base px-8 bg-white/5">Download Brochure</Button>
-              </Link>
+              <button onClick={handleDownload}
+                className="inline-flex items-center gap-2 text-base px-8 py-3 rounded-xl bg-white/5 border border-white/20 text-white font-semibold hover:bg-white/10 transition-all">
+                <Download className="w-4 h-4" /> Download Brochure
+              </button>
             </motion.div>
           </div>
         </motion.section>

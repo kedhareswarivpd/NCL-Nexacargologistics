@@ -8,11 +8,15 @@
 
 import { AuthProvider } from "@/context/AuthContext";
 import { ToastProvider } from "@/context/ToastContext";
+import { SplashScreen } from "@/components/ui/SplashScreen";
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <ToastProvider>
-      <AuthProvider>{children}</AuthProvider>
+      <AuthProvider>
+        <SplashScreen />
+        {children}
+      </AuthProvider>
     </ToastProvider>
   );
 }

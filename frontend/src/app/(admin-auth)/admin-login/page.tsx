@@ -3,8 +3,9 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AtSign, Lock, ArrowRight, Loader2, ShieldCheck } from "lucide-react";
+import { AtSign, ArrowRight, Loader2, ShieldCheck } from "lucide-react";
 import { FormField } from "@/components/ui/FormField";
+import { PasswordField } from "@/components/ui/PasswordField";
 import { Button } from "@/components/ui/button";
 import { useForm } from "@/hooks/useForm";
 import { useAuth } from "@/context/AuthContext";
@@ -12,11 +13,18 @@ import { useToast } from "@/context/ToastContext";
 import { isEmail, required } from "@/lib/validation";
 
 function AdminLoginForm() {
-  const { login, logout } = useAuth();
+  const { login, logout, status } = useAuth();
   const toast = useToast();
   const router = useRouter();
   const params = useSearchParams();
   const [formError, setFormError] = React.useState<string | null>(null);
+  const hasSubmittedLogin = React.useRef(false);
+
+  React.useEffect(() => {
+    if (status === "authenticated" && !hasSubmittedLogin.current) {
+      logout();
+    }
+  }, [status, logout]);
 
   const form = useForm({
     initialValues: { email: "", password: "" },
@@ -26,11 +34,13 @@ function AdminLoginForm() {
     },
     onSubmit: async (values) => {
       setFormError(null);
+      hasSubmittedLogin.current = true;
       try {
         const user = await login({ email: values.email, password: values.password });
 
         if (user.role !== "admin") {
           logout();
+          hasSubmittedLogin.current = false;
           const message = "Only administrators can access this portal.";
           setFormError(message);
           toast.error(message);
@@ -38,8 +48,9 @@ function AdminLoginForm() {
         }
 
         toast.success(`Welcome back, ${user.name.split(" ")[0]}.`);
-        router.replace(params.get("next") || "/admin");
+        router.push(params.get("next") || "/admin");
       } catch (err) {
+        hasSubmittedLogin.current = false;
         const message = err instanceof Error ? err.message : "Something went wrong.";
         setFormError(message);
         toast.error(message);
@@ -94,12 +105,10 @@ function AdminLoginForm() {
                   icon={AtSign}
                   {...form.fieldProps("email")}
                 />
-                <FormField
+                <PasswordField
                   label="Password"
-                  type="password"
                   autoComplete="current-password"
                   placeholder="••••••••"
-                  icon={Lock}
                   {...form.fieldProps("password")}
                 />
 

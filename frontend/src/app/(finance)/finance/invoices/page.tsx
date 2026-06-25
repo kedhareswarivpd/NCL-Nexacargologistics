@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search, Receipt, Clock, CheckCircle2, AlertTriangle, Plus, X, ArrowLeft } from "lucide-react";
+import { Search, Receipt, Clock, CheckCircle2, AlertTriangle, Plus, X, ArrowLeft, Edit } from "lucide-react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { financeApi } from "@/lib/services";
@@ -33,6 +33,9 @@ export default function InvoicesPage() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [editTarget, setEditTarget] = useState<Invoice | null>(null);
+  const [editForm, setEditForm] = useState({ status: "", due_date: "", description: "" });
+  const [editSaving, setEditSaving] = useState(false);
 
   async function load() {
     try {
@@ -44,6 +47,23 @@ export default function InvoicesPage() {
   }
 
   useEffect(() => { load(); }, []);
+
+  function openEdit(inv: Invoice) {
+    setEditTarget(inv);
+    setEditForm({ status: inv.status, due_date: inv.due_date ?? "", description: inv.description ?? "" });
+  }
+
+  async function saveEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editTarget) return;
+    setEditSaving(true);
+    try {
+      await financeApi.updateInvoice(editTarget.id, editForm);
+      setEditTarget(null);
+      load();
+    } catch { /* ignore */ }
+    setEditSaving(false);
+  }
 
   async function handleGenerate(e: React.FormEvent) {
     e.preventDefault();
@@ -110,7 +130,7 @@ export default function InvoicesPage() {
             <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">New Invoice</h2>
             <button onClick={() => setShowForm(false)}><X className="h-4 w-4 text-on-surface-variant" /></button>
           </div>
-          <form onSubmit={handleGenerate} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <form noValidate onSubmit={handleGenerate} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="text-xs uppercase tracking-widest text-on-surface-variant">Client Name</label>
               <input
@@ -220,9 +240,10 @@ export default function InvoicesPage() {
                 <td className="px-4 py-3 text-on-surface-variant">{inv.issue_date ?? "—"}</td>
                 <td className="px-4 py-3 text-on-surface-variant">{inv.due_date ?? "—"}</td>
                 <td className="px-4 py-3">
-                  <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${STATUS_STYLES[inv.status]}`}>
-                    {inv.status}
-                  </span>
+                  <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${STATUS_STYLES[inv.status]}`}>{inv.status}</span>
+                </td>
+                <td className="px-4 py-3 text-right">
+                  <button onClick={() => openEdit(inv)} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary transition-colors" title="Edit"><Edit className="h-4 w-4" /></button>
                 </td>
               </tr>
             ))}
@@ -248,6 +269,30 @@ export default function InvoicesPage() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+      {/* Edit Invoice Modal */}
+      {editTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-surface-container shadow-2xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
+              <h2 className="text-base font-bold text-on-surface">Edit Invoice</h2>
+              <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
+            </div>
+            <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
+                <select value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
+                  <option>Pending</option><option>Paid</option><option>Overdue</option>
+                </select>
+              </div>
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Due Date</label><input type="date" value={editForm.due_date} onChange={e => setEditForm(p => ({...p, due_date: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Description</label><input value={editForm.description} onChange={e => setEditForm(p => ({...p, description: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+              <div className="flex gap-3 pt-2">
+                <button type="submit" disabled={editSaving} className="flex-1 py-2.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] disabled:opacity-50">{editSaving ? "Saving…" : "Save Changes"}</button>
+                <button type="button" onClick={() => setEditTarget(null)} className="px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-on-surface-variant hover:bg-white/10">Cancel</button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

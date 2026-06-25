@@ -110,7 +110,7 @@ export function generateInvoicePDF(data: InvoicePDFData) {
   doc.setTextColor(...navy);
   doc.text("DESCRIPTION", 55, y + 18);
   doc.text("PAYMENT METHOD", W / 2, y + 18);
-  doc.text("AMOUNT (INR)", W - 55, y + 18, { align: "right" });
+  doc.text("AMOUNT (USD)", W - 55, y + 18, { align: "right" });
 
   // Table row
   y += 28;
@@ -126,7 +126,7 @@ export function generateInvoicePDF(data: InvoicePDFData) {
   doc.text(data.paymentMethod, W / 2, y);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(...blue);
-  doc.text(`Rs. ${data.amount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`, W - 55, y, { align: "right" });
+  doc.text(`$ ${data.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`, W - 55, y, { align: "right" });
 
   // Row bottom border
   y += 12;
@@ -142,7 +142,7 @@ export function generateInvoicePDF(data: InvoicePDFData) {
   doc.text("—", W / 2, y);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(100, 116, 139);
-  doc.text("Rs. 0.00", W - 55, y, { align: "right" });
+  doc.text("$ 0.00", W - 55, y, { align: "right" });
 
   y += 12;
   doc.setDrawColor(226, 232, 240);
@@ -160,7 +160,7 @@ export function generateInvoicePDF(data: InvoicePDFData) {
   doc.setFontSize(16);
   doc.setTextColor(0, 194, 255);
   doc.text(
-    `Rs. ${data.amount.toLocaleString("en-IN", { minimumFractionDigits: 2 })} INR`,
+    `$ ${data.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD`,
     W - 130, y + 36, { align: "center" }
   );
 
@@ -187,7 +187,7 @@ export function generateInvoicePDF(data: InvoicePDFData) {
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
   doc.setTextColor(180, 200, 220);
-  doc.text("NexaCargo Global Logistics Platform  ·  support@nexacargo.com  ·  +1 (800) 639-2226", W / 2, footerY + 15, { align: "center" });
+  doc.text("NexaCargo Global Logistics Platform  ·  info@nexacargo.com  ·  +8801711456789", W / 2, footerY + 15, { align: "center" });
   doc.text("© 2025 NexaCargo. All rights reserved.", W / 2, footerY + 27, { align: "center" });
 
   doc.save(`NexaCargo-Invoice-${data.invoiceId}.pdf`);

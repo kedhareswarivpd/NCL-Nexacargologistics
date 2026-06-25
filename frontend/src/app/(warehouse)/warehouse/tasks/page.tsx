@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search, ScanBarcode, CheckCircle2, Clock, AlertTriangle, ArrowLeft } from "lucide-react";
+import { Search, ScanBarcode, CheckCircle2, Clock, AlertTriangle, ArrowLeft, Edit, X } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { warehouseApi } from "@/lib/services";
 import type { WarehouseTask } from "@/lib/types";
@@ -24,6 +24,26 @@ const STATUS_STYLES: Record<string, string> = {
 export default function TasksPage() {
   const [tasks, setTasks] = useState<WarehouseTask[]>([]);
   const [search, setSearch] = useState("");
+  const [editTarget, setEditTarget] = useState<WarehouseTask | null>(null);
+  const [editForm, setEditForm] = useState({ description: "", status: "", assigned_to: "" });
+  const [editSaving, setEditSaving] = useState(false);
+
+  function openEdit(t: WarehouseTask) {
+    setEditTarget(t);
+    setEditForm({ description: t.description, status: t.status, assigned_to: t.assigned_to ?? "" });
+  }
+
+  async function saveEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editTarget) return;
+    setEditSaving(true);
+    try {
+      await warehouseApi.updateTask(editTarget.id, editForm);
+      setEditTarget(null);
+      const data = await warehouseApi.tasks(); setTasks(data ?? []);
+    } catch { /* ignore */ }
+    setEditSaving(false);
+  }
 
   useEffect(() => {
     (async () => {
@@ -107,12 +127,9 @@ export default function TasksPage() {
               </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${STATUS_STYLES[t.status]}`}>
-                {t.status}
-              </span>
-              <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${PRIORITY_STYLES[t.priority ?? ""]}`}>
-                {t.priority}
-              </span>
+              <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${STATUS_STYLES[t.status]}`}>{t.status}</span>
+              <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${PRIORITY_STYLES[t.priority ?? ""]}`}>{t.priority}</span>
+              <button onClick={() => openEdit(t)} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary transition-colors" title="Edit"><Edit className="h-3.5 w-3.5" /></button>
             </div>
           </div>
         ))}
@@ -120,6 +137,29 @@ export default function TasksPage() {
           <p className="px-4 py-8 text-center text-on-surface-variant text-sm">No tasks match your search.</p>
         )}
       </Card>
+      {editTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-surface-container shadow-2xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
+              <h2 className="text-base font-bold text-on-surface">Edit Task</h2>
+              <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
+            </div>
+            <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Description</label><input value={editForm.description} onChange={e => setEditForm(p => ({...p, description: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
+                <select value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
+                  <option>Pending</option><option>In Progress</option><option>Done</option>
+                </select>
+              </div>
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Assigned To</label><input value={editForm.assigned_to} onChange={e => setEditForm(p => ({...p, assigned_to: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+              <div className="flex gap-3 pt-2">
+                <button type="submit" disabled={editSaving} className="flex-1 py-2.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] disabled:opacity-50">{editSaving ? "Saving…" : "Save Changes"}</button>
+                <button type="button" onClick={() => setEditTarget(null)} className="px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-on-surface-variant hover:bg-white/10">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

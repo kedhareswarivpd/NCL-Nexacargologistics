@@ -1,7 +1,3 @@
-"""
-Shared column helpers for models.
-"""
-
 import uuid
 from datetime import datetime, timezone
 

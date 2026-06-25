@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Handshake, Globe, TrendingUp, Shield, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Handshake, Globe, TrendingUp, Shield, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
 const fadeUp = { hidden: { opacity: 0, y: 50 }, show: { opacity: 1, y: 0, transition: { duration: 0.7 } } };
@@ -64,14 +64,7 @@ export default function PartnersPage() {
           <motion.p variants={fadeUp} className="font-body-lg text-on-surface-variant max-w-2xl mx-auto mb-10">
             NexaCargo's global reach is powered by a carefully curated network of carrier, technology, compliance, and strategic partners.
           </motion.p>
-          <motion.div variants={fadeUp} className="flex flex-wrap gap-4 justify-center">
-            <a href="#become-partner">
-              <motion.button whileHover={{ scale:1.05, y:-2 }} whileTap={{ scale:0.97 }}
-                className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-[#1E88E5] to-[#00C2FF] text-white font-bold flex items-center gap-2 shadow-[0_0_30px_rgba(0,194,255,0.3)]">
-                Become a Partner <ArrowRight className="w-4 h-4" />
-              </motion.button>
-            </a>
-          </motion.div>
+
         </motion.div>
       </section>
 

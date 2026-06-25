@@ -1,7 +1,3 @@
-"""
-Simple request logging middleware.
-"""
-
 import time
 import logging
 from starlette.middleware.base import BaseHTTPMiddleware

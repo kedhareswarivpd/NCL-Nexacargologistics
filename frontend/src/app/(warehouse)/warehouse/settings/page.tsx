@@ -133,7 +133,7 @@ export default function SettingsPage() {
           <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">Security</h2>
         </div>
         {pwSaved && <p className="text-xs text-green-400 bg-green-400/10 rounded-lg px-3 py-2">Password updated successfully.</p>}
-        <form onSubmit={handlePasswordSave} className="space-y-4">
+        <form noValidate onSubmit={handlePasswordSave} className="space-y-4">
           <div>
             <label className="text-xs uppercase tracking-widest text-on-surface-variant">Current Password</label>
             <input type="password" value={pwForm.current} onChange={e => { setPwForm(p => ({...p, current: e.target.value})); setPwErrors(p => ({...p, current: ""})); }} placeholder="••••••••" className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface focus:outline-none focus:border-tertiary/50 ${pwErrors.current ? "border-red-500" : "border-white/10"}`} />

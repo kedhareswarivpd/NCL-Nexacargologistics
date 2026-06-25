@@ -44,10 +44,6 @@ export default function TrackPage() {
     initialValues: { tracking: "" },
     validators: { tracking: [required("Tracking number")] },
     onSubmit: async (values) => {
-      if (!isAuthenticated) {
-        toast.error("Please login first to track your shipment.");
-        return;
-      }
       await new Promise((r) => setTimeout(r, 800));
       router.push(`/customer/track?tracking_id=${encodeURIComponent(values.tracking.trim())}`);
     },
@@ -90,9 +86,9 @@ export default function TrackPage() {
             </div>
             <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.96 }}>
               <Button type="submit" size="lg" disabled={form.submitting}
-                className="h-12 gap-2 bg-[#005db7] text-white hover:bg-[#005db7]/80 sm:mt-[26px]"
+                className="h-12 gap-2 bg-[#005db7] text-white hover:bg-[#005db7]/80 sm:mt-[26px] flex items-center justify-center"
               >
-                {form.submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : "Track"}
+                {form.submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Search className="h-4 w-4" /> Track Shipment</>}
               </Button>
             </motion.div>
           </motion.form>

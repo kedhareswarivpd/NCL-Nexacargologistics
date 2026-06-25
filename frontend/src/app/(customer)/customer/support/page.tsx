@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { HeadphonesIcon, Send, CheckCircle2, MessageSquare, Clock, Zap, Phone, Mail, BookOpen, ArrowLeft } from "lucide-react";
+import { HeadphonesIcon, Send, CheckCircle2, MessageSquare, Clock, Zap, Phone, Mail, BookOpen, ArrowLeft, Edit, X } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { supportApi } from "@/lib/services";
@@ -16,8 +16,8 @@ const TICKET_STATUS_STYLES: Record<string, string> = {
 
 const SUPPORT_CHANNELS = [
   { icon: MessageSquare, label: "Live Chat",     desc: "Chat with our team in real-time",  availability: "24/7",            color: "text-tertiary bg-tertiary/10",                         action: "Start Chat" },
-  { icon: Mail,          label: "Email Support", desc: "support@nexacargo.com",            availability: "< 24h response",  color: "text-secondary bg-secondary/10",                       action: "Send Email" },
-  { icon: Phone,         label: "Phone Support", desc: "+1 (800) 639-2226",               availability: "Mon–Fri 9am–6pm", color: "text-green-400 bg-green-400/10",                        action: "Call Now" },
+  { icon: Mail,          label: "Email Support", desc: "info@nexacargo.com",            availability: "< 24h response",  color: "text-secondary bg-secondary/10",                       action: "Send Email" },
+  { icon: Phone,         label: "Phone Support", desc: "+8801711456789",               availability: "Mon–Fri 9am–6pm", color: "text-green-400 bg-green-400/10",                        action: "Call Now" },
   { icon: BookOpen,      label: "Help Center",   desc: "Browse FAQs and guides",          availability: "Always available", color: "text-on-tertiary-container bg-on-tertiary-container/10", action: "Browse Guides" },
 ];
 
@@ -36,6 +36,22 @@ export default function SupportTicketsPage() {
   const [tickets, setTickets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [editTarget, setEditTarget] = useState<any | null>(null);
+  const [editForm, setEditForm] = useState({ subject: "", priority: "", category: "" });
+  const [editSaving, setEditSaving] = useState(false);
+
+  function openEdit(t: any) {
+    setEditTarget(t);
+    setEditForm({ subject: t.subject ?? "", priority: t.priority ?? "medium", category: t.category ?? "" });
+  }
+
+  async function saveEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editTarget) return;
+    setEditSaving(true);
+    try { await supportApi.update(editTarget.id, editForm); setEditTarget(null); load(); } catch { /* ignore */ }
+    setEditSaving(false);
+  }
 
   async function load() {
     setLoading(true);
@@ -129,7 +145,7 @@ export default function SupportTicketsPage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form noValidate onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="text-xs uppercase tracking-widest text-on-surface-variant">Subject</label>
               <input value={form.subject} onChange={(e) => { setForm({ ...form, subject: e.target.value }); setErrors(p => ({ ...p, subject: "" })); }}
@@ -217,25 +233,50 @@ export default function SupportTicketsPage() {
             ) : (
               <Card className="divide-y divide-white/5">
                 {tickets.map((t) => (
-                  <div key={t.id} className="p-4 flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-[10px] text-tertiary">{t.ticket_ref}</span>
-                        <p className="text-sm font-semibold text-on-surface truncate">{t.subject}</p>
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-[10px] text-tertiary">{t.ticket_ref}</span>
+                          <p className="text-sm font-semibold text-on-surface truncate">{t.subject}</p>
+                        </div>
+                        {t.description && <p className="text-xs text-on-surface-variant mt-1 line-clamp-2">{t.description}</p>}
+                        <p className="text-[11px] text-on-surface-variant/70 mt-1 capitalize">{t.category} · {t.priority} priority</p>
                       </div>
-                      {t.description && <p className="text-xs text-on-surface-variant mt-1 line-clamp-2">{t.description}</p>}
-                      <p className="text-[11px] text-on-surface-variant/70 mt-1 capitalize">{t.category} · {t.priority} priority</p>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold capitalize ${TICKET_STATUS_STYLES[t.status] ?? "bg-white/5"}`}>
+                          {String(t.status).replace("_", " ")}
+                        </span>
+                        <button onClick={() => openEdit(t)} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary transition-colors" title="Edit"><Edit className="h-3.5 w-3.5" /></button>
+                      </div>
                     </div>
-                    <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold capitalize ${TICKET_STATUS_STYLES[t.status] ?? "bg-white/5"}`}>
-                      {String(t.status).replace("_", " ")}
-                    </span>
-                  </div>
                 ))}
               </Card>
             )}
           </div>
         </div>
       </div>
+      {editTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-surface-container shadow-2xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
+              <h2 className="text-base font-bold text-on-surface">Edit Ticket</h2>
+              <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
+            </div>
+            <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Subject</label><input value={editForm.subject} onChange={e => setEditForm(p => ({...p, subject: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Priority</label>
+                <select value={editForm.priority} onChange={e => setEditForm(p => ({...p, priority: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
+                  <option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option>
+                </select>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="submit" disabled={editSaving} className="flex-1 py-2.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] disabled:opacity-50">{editSaving ? "Saving…" : "Save Changes"}</button>
+                <button type="button" onClick={() => setEditTarget(null)} className="px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-on-surface-variant hover:bg-white/10">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

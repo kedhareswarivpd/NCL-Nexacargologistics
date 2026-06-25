@@ -127,7 +127,7 @@ export default function ServicesPage() {
             </ul>
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} className="w-fit">
               <Button className="flex items-center gap-2 px-6 h-11" onClick={() => router.push("/services/air-freight")}>
-                Explore Air Freight <ArrowRight className="w-4 h-4" />
+                See Air Fleet Options <ArrowRight className="w-4 h-4" />
               </Button>
             </motion.div>
           </motion.div>

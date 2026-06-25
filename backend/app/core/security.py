@@ -1,18 +1,3 @@
-"""
-Authentication token handling.
-
-The backend supports two kinds of access token, side by side:
-
-1. **Backend-issued JWTs** — minted by `/api/auth/login` and `/api/auth/register`,
-   signed HS256 with `settings.JWT_SECRET` and tagged with `iss=JWT_ISSUER`.
-2. **Supabase JWTs** — obtained by the Supabase client on the frontend. Verified
-   locally via `SUPABASE_JWT_SECRET`, or remotely via `/auth/v1/user`.
-
-`verify_access_token` tries (1) then falls back to (2). All verifiers return a
-normalised claims dict: {id, email, role, name, phone, company, metadata}.
-Password hashing for backend-issued auth also lives here.
-"""
-
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
@@ -24,14 +9,9 @@ from app.core.config import settings
 
 
 class TokenError(Exception):
-    """Raised when an access token cannot be verified."""
+    pass
 
 
-# --------------------------------------------------------------------------
-# Password hashing (backend-issued auth)
-# --------------------------------------------------------------------------
-# bcrypt operates on at most 72 bytes; longer inputs must be truncated by the
-# caller (bcrypt>=4.1 raises instead of silently truncating).
 def _pw_bytes(password: str) -> bytes:
     return password.encode("utf-8")[:72]
 
@@ -46,13 +26,9 @@ def verify_password(password: str, password_hash: Optional[str]) -> bool:
     try:
         return bcrypt.checkpw(_pw_bytes(password), password_hash.encode("utf-8"))
     except (ValueError, TypeError):
-        # Malformed / non-bcrypt hash.
         return False
 
 
-# --------------------------------------------------------------------------
-# Backend-issued JWTs
-# --------------------------------------------------------------------------
 def create_access_token(
     *,
     subject: str,
@@ -61,7 +37,6 @@ def create_access_token(
     name: Optional[str] = None,
     expires_minutes: Optional[int] = None,
 ) -> str:
-    """Mint an HS256 access token for a locally-authenticated user."""
     if not settings.JWT_SECRET:
         raise TokenError("Backend JWT auth is not configured (JWT_SECRET is empty)")
     now = datetime.now(timezone.utc)
@@ -79,7 +54,6 @@ def create_access_token(
 
 
 def create_password_reset_token(subject: str, expires_minutes: int = 30) -> str:
-    """Mint a short-lived token usable only for resetting a password."""
     if not settings.JWT_SECRET:
         raise TokenError("Backend JWT auth is not configured (JWT_SECRET is empty)")
     now = datetime.now(timezone.utc)
@@ -94,7 +68,6 @@ def create_password_reset_token(subject: str, expires_minutes: int = 30) -> str:
 
 
 def verify_password_reset_token(token: str) -> str:
-    """Return the subject (user id) of a valid password-reset token, else raise."""
     if not settings.JWT_SECRET:
         raise TokenError("Backend JWT auth is not configured")
     try:
@@ -124,7 +97,6 @@ def _verify_backend(token: str) -> Optional[dict]:
             options={"verify_aud": False},
         )
     except JWTError:
-        # Not a (valid) backend token — caller falls back to Supabase.
         return None
     return {
         "id": payload.get("sub"),
@@ -142,7 +114,6 @@ def _normalise(payload: dict) -> dict:
     return {
         "id": payload.get("sub") or payload.get("id"),
         "email": payload.get("email"),
-        # app-level role lives in user_metadata.role; fall back to 'customer'.
         "role": (meta.get("role") or "customer"),
         "name": meta.get("name"),
         "phone": meta.get("phone"),
@@ -183,7 +154,6 @@ async def _verify_remote(token: str) -> Optional[dict]:
 
 
 async def verify_supabase_token(token: str) -> dict:
-    """Return normalised claims for a valid Supabase access token, else raise."""
     claims = _verify_local(token)
     if claims is None:
         claims = await _verify_remote(token)
@@ -193,7 +163,6 @@ async def verify_supabase_token(token: str) -> dict:
 
 
 async def verify_access_token(token: str) -> dict:
-    """Verify a token from either source: backend-issued first, then Supabase."""
     claims = _verify_backend(token)
     if claims and claims.get("id"):
         return claims

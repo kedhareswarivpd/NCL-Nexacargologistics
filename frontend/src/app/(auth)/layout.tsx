@@ -14,16 +14,18 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_30%_20%,rgba(26,74,138,0.35),transparent_60%)]" />
         <div className="absolute inset-0 z-0 bg-[linear-gradient(180deg,transparent,rgba(10,22,40,0.6))]" />
         <div className="relative z-10 w-full max-w-xl">
-          <Link
-            href="/"
-            className="font-display-lg mb-10 inline-block text-3xl font-bold tracking-tight text-primary"
-          >
-            NexaCargo
-          </Link>
-          <div className="mb-8 inline-block">
-            <span className="font-label-caps rounded-full border border-tertiary/20 bg-tertiary/10 px-4 py-1.5 text-[10px] uppercase tracking-[0.2em] text-tertiary backdrop-blur-sm">
+          <div className="mb-4 inline-block">
+            <span className="font-label-caps rounded-full border border-tertiary/20 bg-tertiary/10 px-4 py-1.5 text-[10px] uppercase tracking-[0.2em] text-tertiary backdrop-blur-sm font-bold">
               Global Logistics Platform
             </span>
+          </div>
+          <div>
+            <Link
+              href="/"
+              className="font-display-lg mb-10 inline-block text-3xl font-bold tracking-tight text-primary"
+            >
+              NexaCargo
+            </Link>
           </div>
           <h1 className="font-display-lg mb-6 text-5xl font-bold leading-[1.1] text-on-surface">
             Master the Global <span className="text-tertiary">Flow</span> of Goods.
@@ -53,9 +55,11 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       </section>
 
       {/* Form panel */}
-      <section className="relative flex flex-1 flex-col items-center justify-center bg-surface/30 px-6 py-16">
-        <div className="w-full max-w-[400px]">{children}</div>
-        <footer className="absolute bottom-8 flex w-full max-w-[400px] flex-wrap items-center justify-between px-4 md:px-0">
+      <section className="relative flex flex-1 flex-col items-center justify-between bg-surface/30 px-6 py-16">
+        <div className="flex-1 flex flex-col justify-center w-full max-w-[400px]">
+          {children}
+        </div>
+        <footer className="mt-8 flex w-full max-w-[400px] flex-wrap items-center justify-between px-6">
           <span className="text-[10px] font-medium tracking-tight text-on-surface-variant">
             © {new Date().getFullYear()} NexaCargo Logistics Ltd.
           </span>

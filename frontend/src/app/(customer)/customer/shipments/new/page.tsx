@@ -359,7 +359,7 @@ function BookShipmentContent() {
                 <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">Additional Shipment Details</h2>
               </div>
 
-              <form onSubmit={handleBook} className="space-y-5">
+              <form noValidate onSubmit={handleBook} className="space-y-5">
                 <div>
                   <label className="text-xs uppercase tracking-widest text-on-surface-variant">Cargo Description</label>
                   <textarea

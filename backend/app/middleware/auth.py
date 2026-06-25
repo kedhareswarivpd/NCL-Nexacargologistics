@@ -1,9 +1,3 @@
-"""
-Auth dependency — verifies the access token (Authorization: Bearer ...), from
-either the backend's own JWTs or Supabase, and resolves it to a local
-`profiles` row, creating one on first sight.
-"""
-
 import uuid
 
 from fastapi import Request, HTTPException, status, Depends
@@ -46,7 +40,6 @@ async def get_current_user(
     profile = result.scalar_one_or_none()
 
     if profile is None:
-        # First request for a freshly-registered Supabase user — provision a row.
         profile = Profile(
             id=user_id,
             email=claims.get("email") or "",
@@ -58,7 +51,6 @@ async def get_current_user(
         db.add(profile)
         await db.flush()
     else:
-        # Keep email in sync; trust DB for role (admin may have changed it).
         if claims.get("email") and profile.email != claims["email"]:
             profile.email = claims["email"]
 

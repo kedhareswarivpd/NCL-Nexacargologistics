@@ -78,7 +78,18 @@ const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } };
 export default function BrochurePage() {
   const [downloaded, setDownloaded] = useState<string[]>([]);
 
-  const handleDownload = (industry: string) => {
+  const handleDownload = (industry: string, pages: number, size: string) => {
+    import("jspdf").then(({ jsPDF }) => {
+      const doc = new jsPDF();
+      doc.setFontSize(20);
+      doc.text(`NexaCargo — ${industry}`, 14, 20);
+      doc.setFontSize(12);
+      doc.text(`Pages: ${pages}  |  File size: ${size}`, 14, 34);
+      doc.text(BROCHURES.find(b => b.industry === industry)?.desc ?? "", 14, 46, { maxWidth: 180 });
+      doc.text("Contact us: info@nexacargo.com", 14, 80);
+      doc.text("Website: https://nexacargo.com", 14, 90);
+      doc.save(`NexaCargo_${industry.replace(/[^a-z0-9]/gi, "_")}_Brochure.pdf`);
+    });
     setDownloaded(p => [...p, industry]);
     setTimeout(() => setDownloaded(p => p.filter(i => i !== industry)), 3000);
   };
@@ -116,7 +127,7 @@ export default function BrochurePage() {
                     <span className="flex items-center gap-1"><FileText className="w-3 h-3" /> {pages} pages</span>
                     <span>{size}</span>
                   </div>
-                  <button onClick={() => handleDownload(industry)}
+                  <button onClick={() => handleDownload(industry, pages, size)}
                     className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 ${
                       isDone
                         ? "bg-green-500/15 border border-green-500/30 text-green-400"

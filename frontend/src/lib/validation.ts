@@ -25,6 +25,28 @@ export const isEmail: Validator = (value) =>
     ? undefined
     : "Enter a valid email address.";
 
+/** Gmail email with alphabets and numbers required. */
+export const isGmailEmail: Validator = (value) => {
+  const trimmed = value.trim();
+  // Check valid email format
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+    return "Enter a valid email address.";
+  }
+  // Check if it contains gmail
+  if (!trimmed.toLowerCase().includes("gmail")) {
+    return "Email must be a Gmail address.";
+  }
+  // Check if local part (before @) has both letters and numbers
+  const localPart = trimmed.split("@")[0];
+  if (!/[a-zA-Z]/.test(localPart)) {
+    return "Email must contain alphabets.";
+  }
+  if (!/[0-9]/.test(localPart)) {
+    return "Email must contain numbers.";
+  }
+  return undefined;
+};
+
 /**
  * Password strength: at least 8 chars, with letters and numbers.
  * Kept intentionally pragmatic — strong enough to be meaningful without

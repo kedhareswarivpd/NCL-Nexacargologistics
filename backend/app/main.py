@@ -1,10 +1,3 @@
-"""
-NexaCargo FastAPI backend entrypoint.
-
-Auth is delegated to Supabase (frontend obtains tokens; this API verifies them).
-All business endpoints live under the `/api` prefix.
-"""
-
 import logging
 
 from fastapi import FastAPI
@@ -38,3 +31,9 @@ async def health():
 @app.get("/")
 async def root():
     return {"message": "NexaCargo API", "docs": "/docs", "health": "/health"}
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)

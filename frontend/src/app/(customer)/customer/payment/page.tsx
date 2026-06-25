@@ -304,7 +304,7 @@ export default function PaymentPage() {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form noValidate onSubmit={handleSubmit} className="space-y-4">
 
               {/* ── CARD FORM ── */}
               {method === "card" && (

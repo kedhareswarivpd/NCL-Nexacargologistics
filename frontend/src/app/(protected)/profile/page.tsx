@@ -99,7 +99,18 @@ export default function ProfilePage() {
 
         {editing ? (
           <form className="space-y-4" onSubmit={form.handleSubmit} noValidate>
-            <FormField label="Full name" icon={UserIcon} {...form.fieldProps("name")} />
+            <FormField 
+              label="Full name" 
+              icon={UserIcon} 
+              {...form.fieldProps("name")}
+              onChange={(e) => {
+                const filtered = e.target.value.replace(/[0-9]/g, '');
+                form.setValues({ ...form.values, name: filtered });
+                if (form.touched.name) {
+                  form.handleChange({ ...e, target: { ...e.target, value: filtered } } as React.ChangeEvent<HTMLInputElement>);
+                }
+              }}
+            />
             <FormField label="Company" icon={Building2} placeholder="Company name" {...form.fieldProps("company")} />
             <PhoneField
               name="phone"

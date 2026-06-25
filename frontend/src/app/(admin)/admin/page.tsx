@@ -3,7 +3,7 @@
 import {
   Users, GitBranch, ShieldCheck, BarChart2, ChevronRight,
   Activity, Truck, Warehouse,
-  Navigation, TrendingUp, Package, Globe, Clock, Plane,
+  Navigation, TrendingUp, Package, Globe, Clock,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
@@ -144,14 +144,7 @@ export default function AdminDashboardPage() {
             >
               <Globe className="w-14 h-14" strokeWidth={1} />
             </motion.div>
-            {/* Flight (Plane) Orbit */}
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-              className="absolute inset-0 z-20"
-            >
-              <Plane className="w-4 h-4 text-secondary absolute -top-1 left-1/2 -translate-x-1/2 -rotate-45" />
-            </motion.div>
+
             {/* Cargo (Package) Orbit */}
             <motion.div
               animate={{ rotate: -360 }}

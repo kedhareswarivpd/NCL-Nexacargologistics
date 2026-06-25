@@ -8,7 +8,7 @@ import { AdminSidebar } from "@/components/shared/AdminSidebar";
 import { PortalHeader } from "@/components/shared/PortalHeader";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { status, user } = useAuth();
+  const { status, user, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -16,17 +16,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     if (status === "unauthenticated") {
       router.replace(`/admin-login?next=${encodeURIComponent(pathname)}`);
     } else if (status === "authenticated" && user && user.role !== "admin") {
-      // Authenticated but wrong role → send to their own dashboard
-      const roleHome: Record<string, string> = {
-        customer: "/customer",
-        logistics: "/logistics",
-        warehouse: "/warehouse",
-        driver: "/driver",
-        finance: "/finance",
-      };
-      router.replace(roleHome[user.role] ?? "/login");
+      // Authenticated but wrong role → sign out automatically, redirect to admin login
+      logout();
+      router.replace(`/admin-login?next=${encodeURIComponent(pathname)}`);
     }
-  }, [status, user, router, pathname]);
+  }, [status, user, router, pathname, logout]);
 
   if (status === "loading") {
     return (

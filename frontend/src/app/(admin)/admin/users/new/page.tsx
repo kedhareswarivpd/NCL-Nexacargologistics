@@ -87,7 +87,7 @@ export default function AddUserPage() {
           className="inline-flex items-center gap-2 mb-5 px-5 py-2.5 rounded-xl bg-[#00C2FF] hover:bg-[#00a8e0] transition-colors w-fit shadow-[0_4px_16px_rgba(0,194,255,0.35)]"
         >
           <ArrowLeft className="h-4 w-4 text-[#0B1F3A]" />
-          <span className="text-sm font-bold text-[#0B1F3A]">← Back to User Management</span>
+          <span className="text-sm font-bold text-[#0B1F3A]">Back to User Management</span>
         </Link>
         <p className="text-xs uppercase tracking-widest text-tertiary">Admin Portal</p>
         <h1 className="text-3xl font-bold text-on-surface mt-1">Add New User</h1>
@@ -96,13 +96,13 @@ export default function AddUserPage() {
 
       {/* Form */}
       <Card className="p-6 border border-white/5 bg-white/[0.01]">
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form noValidate onSubmit={handleSubmit} className="space-y-5">
 
           {/* Name + Email */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className={labelCls}>Full Name *</label>
-              <input value={form.name} onChange={(e) => set("name", e.target.value)}
+              <input value={form.name} onChange={(e) => { const filtered = e.target.value.replace(/[0-9]/g, ''); set("name", filtered); }}
                 placeholder="e.g. Marcus Johnson"
                 className={`${inputCls} ${fieldErrors.name ? "border-red-500" : ""}`} />
               {fieldErrors.name && <p className="text-xs text-error mt-1">{fieldErrors.name}</p>}

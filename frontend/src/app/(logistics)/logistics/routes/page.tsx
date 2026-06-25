@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search, Plus, Trash2, RefreshCw, Route, MapPin, Clock, ArrowLeft } from "lucide-react";
+import { Search, Plus, Trash2, RefreshCw, Route, MapPin, Clock, ArrowLeft, Edit, X } from "lucide-react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { routesApi } from "@/lib/services";
@@ -21,6 +21,22 @@ export default function RoutesPage() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ route_code: "", origin: "", destination: "", distance: "", duration: "", driver: "", vehicle: "" });
   const [saving, setSaving] = useState(false);
+  const [editTarget, setEditTarget] = useState<any | null>(null);
+  const [editForm, setEditForm] = useState({ origin: "", destination: "", distance: "", duration: "", status: "" });
+  const [editSaving, setEditSaving] = useState(false);
+
+  function openEdit(r: any) {
+    setEditTarget(r);
+    setEditForm({ origin: r.origin ?? "", destination: r.destination ?? "", distance: r.distance ?? "", duration: r.duration ?? "", status: r.status ?? "Active" });
+  }
+
+  async function saveEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editTarget) return;
+    setEditSaving(true);
+    try { await routesApi.update(editTarget.id, editForm); setEditTarget(null); load(); } catch { /* ignore */ }
+    setEditSaving(false);
+  }
 
   async function load() {
     setLoading(true);
@@ -100,7 +116,7 @@ export default function RoutesPage() {
       {showForm && (
         <Card className="p-5 space-y-4 border border-tertiary/20">
           <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">New Route</h2>
-          <form onSubmit={handleAdd} className="space-y-4">
+          <form noValidate onSubmit={handleAdd} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="text-xs uppercase tracking-widest text-on-surface-variant">Route Code</label>
@@ -151,14 +167,46 @@ export default function RoutesPage() {
               </div>
               {r.driver && <p className="text-xs text-on-surface-variant">Driver: <span className="text-on-surface">{r.driver}</span></p>}
               {r.vehicle && <p className="text-xs text-on-surface-variant">Vehicle: <span className="text-on-surface">{r.vehicle}</span></p>}
-              <button onClick={() => handleDelete(r.id)} className="opacity-0 group-hover:opacity-100 flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 text-error text-xs hover:bg-error/10 transition-all">
-                <Trash2 className="h-3.5 w-3.5" /> Remove
-              </button>
+              <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                <button onClick={() => openEdit(r)} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 text-tertiary text-xs hover:bg-tertiary/10 transition-colors">
+                  <Edit className="h-3.5 w-3.5" /> Edit
+                </button>
+                <button onClick={() => handleDelete(r.id)} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 text-error text-xs hover:bg-error/10 transition-all">
+                  <Trash2 className="h-3.5 w-3.5" /> Remove
+                </button>
+              </div>
             </Card>
           ))
         }
         {!loading && filtered.length === 0 && <p className="text-sm text-on-surface-variant col-span-3 text-center py-8">No routes found.</p>}
       </div>
+      {editTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-surface-container shadow-2xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
+              <h2 className="text-base font-bold text-on-surface">Edit Route</h2>
+              <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
+            </div>
+            <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Origin</label><input value={editForm.origin} onChange={e => setEditForm(p => ({...p, origin: e.target.value}))} className={inputCls} /></div>
+                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Destination</label><input value={editForm.destination} onChange={e => setEditForm(p => ({...p, destination: e.target.value}))} className={inputCls} /></div>
+                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Distance</label><input value={editForm.distance} onChange={e => setEditForm(p => ({...p, distance: e.target.value}))} className={inputCls} /></div>
+                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Duration</label><input value={editForm.duration} onChange={e => setEditForm(p => ({...p, duration: e.target.value}))} className={inputCls} /></div>
+                <div className="col-span-2"><label className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
+                  <select value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className={inputCls}>
+                    <option>Active</option><option>Scheduled</option><option>Delayed</option><option>Completed</option>
+                  </select>
+                </div>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="submit" disabled={editSaving} className="flex-1 py-2.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] disabled:opacity-50">{editSaving ? "Saving…" : "Save Changes"}</button>
+                <button type="button" onClick={() => setEditTarget(null)} className="px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-on-surface-variant hover:bg-white/10">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
