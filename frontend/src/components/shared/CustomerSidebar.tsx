@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, MapPin, FileSignature, Receipt, HeadphonesIcon, Shield, CreditCard, HelpCircle, LogOut, Package, Play } from "lucide-react";
+import { LayoutDashboard, MapPin, FileSignature, Receipt, HeadphonesIcon, Shield, CreditCard, HelpCircle, LogOut, Package, Play, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
@@ -17,6 +17,7 @@ const navItems = [
   { icon: CreditCard,      label: "Payments",        href: "/customer/payment",   enabled: true },
   { icon: Shield,          label: "Cargo Insurance", href: "/customer/insurance", enabled: true },
   { icon: HeadphonesIcon,  label: "Support Tickets", href: "/customer/support",   enabled: true },
+  { icon: Star,            label: "Feedback",        href: "/customer/feedback",  enabled: true },
 ];
 
 export function CustomerSidebar() {

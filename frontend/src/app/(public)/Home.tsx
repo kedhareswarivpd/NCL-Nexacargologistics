@@ -12,6 +12,7 @@ import {
 import { motion, useInView } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
+import { reviewsApi } from "@/lib/services";
 
 /* ── Animated Counter ── */
 function Counter({ to, suffix = "", duration = 2 }: { to: number; suffix?: string; duration?: number }) {
@@ -52,16 +53,44 @@ const INDUSTRIES = [
   { name: "Energy & Utilities", icon: "⚡" },
 ];
 
-const TESTIMONIALS = [
-  { name: "Sarah Chen", role: "VP Supply Chain, TechNova", text: "Switching to NexaCargo was one of the best decisions we made. Our deliveries are faster, costs are down, and we can actually see where our cargo is at any moment.", rating: 5 },
-  { name: "David Müller", role: "Head of Logistics, AutoPrime", text: "The warehouse tools are genuinely impressive. We used to struggle with pick errors — that's pretty much gone now. The team was also very helpful during onboarding.", rating: 5 },
-  { name: "Priya Sharma", role: "COO, MedSupply Asia", text: "For pharmaceutical shipments, you can't afford mistakes. NexaCargo gave us the temperature monitoring and documentation we needed to stay compliant without the stress.", rating: 5 },
+const FALLBACK_REVIEWS = [
+  { customer_name: "Sarah Chen", customer_role: "VP Supply Chain, TechNova", comment: "Switching to NexaCargo was one of the best decisions we made. Our deliveries are faster, costs are down, and we can actually see where our cargo is at any moment.", rating: 5 },
+  { customer_name: "David Müller", customer_role: "Head of Logistics, AutoPrime", comment: "The warehouse tools are genuinely impressive. We used to struggle with pick errors — that's pretty much gone now. The team was also very helpful during onboarding.", rating: 5 },
+  { customer_name: "Priya Sharma", customer_role: "COO, MedSupply Asia", comment: "For pharmaceutical shipments, you can't afford mistakes. NexaCargo gave us the temperature monitoring and documentation we needed to stay compliant without the stress.", rating: 5 },
 ];
 
 export default function LandingPage() {
   const { isAuthenticated, user } = useAuth();
   const toast = useToast();
   const router = useRouter();
+  const [reviews, setReviews] = useState<any[]>(FALLBACK_REVIEWS);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    reviewsApi.list().then(data => {
+      if (data?.length) setReviews(data);
+    }).catch(() => {});
+  }, []);
+
+  // Auto-scroll left to right
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    let animId: number;
+    let paused = false;
+    const speed = 0.6;
+    const scroll = () => {
+      if (!paused) {
+        el.scrollLeft += speed;
+        if (el.scrollLeft >= el.scrollWidth - el.clientWidth) el.scrollLeft = 0;
+      }
+      animId = requestAnimationFrame(scroll);
+    };
+    animId = requestAnimationFrame(scroll);
+    el.addEventListener("mouseenter", () => { paused = true; });
+    el.addEventListener("mouseleave", () => { paused = false; });
+    return () => cancelAnimationFrame(animId);
+  }, [reviews]);
 
   return (
     <div className="bg-[#0B1F3A] text-white overflow-x-hidden">
@@ -201,7 +230,7 @@ export default function LandingPage() {
                 </button>
               </Link>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
               {[
                 { icon: Search, label: "Track Shipment", href: "/customer/track", color: "text-[#00C2FF]", bg: "bg-[#00C2FF]/10", border: "border-[#00C2FF]/20" },
                 { icon: FileText, label: "Request Quote", href: "/customer/quotes", color: "text-blue-400", bg: "bg-blue-400/10", border: "border-blue-400/20" },
@@ -209,6 +238,7 @@ export default function LandingPage() {
                 { icon: ShieldCheck, label: "Insurance", href: "/customer/insurance", color: "text-green-400", bg: "bg-green-400/10", border: "border-green-400/20" },
                 { icon: Receipt, label: "Payments", href: "/customer/payment", color: "text-purple-400", bg: "bg-purple-400/10", border: "border-purple-400/20" },
                 { icon: MessageSquare, label: "Support", href: "/customer/support", color: "text-pink-400", bg: "bg-pink-400/10", border: "border-pink-400/20" },
+                { icon: Star, label: "Feedback", href: "/customer/feedback", color: "text-yellow-400", bg: "bg-yellow-400/10", border: "border-yellow-400/20" },
               ].map(({ icon: Icon, label, href, color, bg, border }) => (
                 <Link key={label} href={href}>
                   <motion.div
@@ -339,7 +369,7 @@ export default function LandingPage() {
       {/* ════════════════════════════════════════════
           TESTIMONIALS
       ════════════════════════════════════════════ */}
-      <section className="py-24 bg-[#0d2040]">
+      <section className="py-24 bg-[#0d2040] overflow-hidden">
         <div className="container mx-auto px-6">
           <div className="text-center mb-14">
             <span className="inline-block px-4 py-1.5 rounded-full border border-[#00C2FF]/30 bg-[#00C2FF]/10 text-[#00C2FF] text-sm font-bold uppercase tracking-widest mb-4">
@@ -347,30 +377,34 @@ export default function LandingPage() {
             </span>
             <h2 className="text-4xl font-bold text-white mt-3">What Our Clients Actually Say</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {TESTIMONIALS.map(({ name, role, text, rating }, i) => (
-              <motion.div
-                key={name}
-                initial={{ opacity: 0, y: 40, scale: 0.95 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ type: "spring", stiffness: 100, damping: 15, delay: i * 0.1 }}
-                whileHover={{ y: -12, scale: 1.03, boxShadow: "0 25px 50px rgba(0,194,255,0.15)", borderColor: "rgba(0,194,255,0.3)" }}
-                className="rounded-2xl border border-white/8 bg-white/[0.03] p-8 transition-all duration-300"
-              >
-                <div className="flex gap-1 mb-5">
-                  {Array.from({ length: rating }).map((_, j) => (
-                    <Star key={j} className="w-4 h-4 fill-[#00C2FF] text-[#00C2FF]" />
-                  ))}
-                </div>
-                <p className="text-blue-100/80 leading-relaxed mb-6 text-sm">"{text}"</p>
-                <div>
-                  <p className="font-bold text-white text-sm">{name}</p>
-                  <p className="text-xs text-[#00C2FF] mt-0.5">{role}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+        </div>
+        {/* Scrolling carousel — no scrollbar, auto-scrolls left to right */}
+        <div
+          ref={scrollRef}
+          className="flex gap-6 overflow-x-auto px-6 pb-4"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          {/* Duplicate for seamless loop */}
+          {[...reviews, ...reviews].map((r: any, i: number) => (
+            <div
+              key={i}
+              className="flex-shrink-0 w-[340px] rounded-2xl border border-white/8 bg-white/[0.03] p-8 transition-all duration-300 hover:border-[#00C2FF]/30 hover:shadow-[0_0_30px_rgba(0,194,255,0.1)]"
+            >
+              <div className="flex gap-1 mb-5">
+                {Array.from({ length: r.rating ?? 5 }).map((_: any, j: number) => (
+                  <Star key={j} className="w-4 h-4 fill-[#00C2FF] text-[#00C2FF]" />
+                ))}
+              </div>
+              <p className="text-blue-100/80 leading-relaxed mb-6 text-sm">"{r.comment ?? r.text}"</p>
+              <div>
+                <p className="font-bold text-white text-sm">{r.customer_name ?? r.name}</p>
+                <p className="text-xs text-[#00C2FF] mt-0.5">
+                  {r.customer_role ?? r.role}
+                  {r.customer_company ? `, ${r.customer_company}` : ""}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 

@@ -10,6 +10,12 @@ import { api } from "./api";
 type Dict = Record<string, unknown>;
 const data = <T = any>(p: Promise<{ data: T }>) => p.then((r) => r.data);
 
+// ----------------------------- Reviews -----------------------------
+export const reviewsApi = {
+  list: () => data(api.get("/reviews")),
+  create: (body: Dict) => data(api.post("/reviews", body)),
+};
+
 // ----------------------------- Quotes -----------------------------
 export const quotesApi = {
   list: () => data(api.get("/quotes")),
