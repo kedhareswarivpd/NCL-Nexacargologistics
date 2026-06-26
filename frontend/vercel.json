@@ -2,5 +2,10 @@
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "installCommand": "npm install",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "env": {
+    "NEXT_PUBLIC_API_URL": "https://ncl-nexacargologistics-2.onrender.com/api/v1",
+    "NEXT_PUBLIC_SUPABASE_URL": "https://sgwywgrabomkbegnsref.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNnd3l3Z3JhYm9ta2JlZ25zcmVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NjI0NTcsImV4cCI6MjA5NjAzODQ1N30.R2cgG-Kv_iBkOPZ5wQ5cdPsJuou4TEj9x3uD3UGBoIw"
+  }
 }

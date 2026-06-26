@@ -9,7 +9,7 @@ import { supabase } from "./supabase";
  */
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "https://ncl-nexacargologistics-2.onrender.com/api/v1",
-  timeout: 15000,
+  timeout: 60000, // Render free tier can take up to 50s to cold-start
 });
 
 api.interceptors.request.use(async (config) => {
