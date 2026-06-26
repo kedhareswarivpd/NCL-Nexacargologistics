@@ -8,7 +8,7 @@ import { supabase } from "./supabase";
  * access token as a Bearer header on every request. The backend verifies it.
  */
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://ncl-nexacargologistics-2.onrender.com/api/v1",
   timeout: 15000,
 });
 
