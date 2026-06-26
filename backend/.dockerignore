@@ -1,0 +1,17 @@
+.env
+.env.*
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info
+.venv
+venv
+.git
+.gitignore
+migrations
+*.sql
+*.log
+uploads
+tests
