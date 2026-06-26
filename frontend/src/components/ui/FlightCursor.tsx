@@ -21,7 +21,7 @@ export default function FlightCursor() {
     <>
       <style>{`* { cursor: none !important; }`}</style>
 
-      {/* ── Main crosshair + plane cursor ── */
+      {/* Main crosshair + plane cursor */}
       <div
         style={{
           position: "fixed",
