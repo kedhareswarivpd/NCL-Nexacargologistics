@@ -38,23 +38,20 @@ export function PublicNavbar() {
   return (
     <nav
       className={cn(
-        "fixed top-0 z-50 flex w-full items-center justify-between px-6 backdrop-blur-xl border-b shadow-sm transition-all duration-300",
+        "fixed top-0 z-50 flex w-full items-center justify-between px-6 backdrop-blur-xl border-b transition-all duration-300",
         scrolled
-          ? "h-24 bg-white border-gray-200 shadow-[0_4px_20px_rgba(0,0,0,0.08)]"
-          : "h-24 bg-white/95 border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
+          ? "h-16 bg-white border-gray-200 shadow-[0_4px_20px_rgba(0,0,0,0.12)]"
+          : "h-16 bg-white border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.08)]"
       )}
     >
       <div className="flex items-center gap-12">
-        <Link href="/" className="flex items-center gap-3">
-  <img
-    src="/logo.jpeg"
-    alt="NexaCargo Logo"
-    className="h-24 w-auto object-contain"
-  />
-  <span className="font-display-lg text-2xl font-bold tracking-tight text-[#0B1F3A]">
-
-  </span>
-</Link>
+        <Link href="/" className="flex items-center gap-2">
+          <img
+            src="/logo.jpeg"
+            alt="NexaCargo Logo"
+            className="h-10 w-auto object-contain"
+          />
+        </Link>
         <div className="hidden gap-8 md:flex">
           {NAV_LINKS.map((item) => (
             <Link

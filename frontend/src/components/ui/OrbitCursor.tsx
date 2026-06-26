@@ -1,55 +1,17 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function OrbitCursor() {
   const [pos, setPos] = useState({ x: -200, y: -200 });
-  const [trail, setTrail] = useState({ x: -200, y: -200 });
-  const mouse = useRef({ x: -200, y: -200 });
-  const raf = useRef(0);
 
   useEffect(() => {
-    const onMove = (e: MouseEvent) => {
-      mouse.current = { x: e.clientX, y: e.clientY };
-      setPos({ x: e.clientX, y: e.clientY });
-    };
-
-    const loop = () => {
-      setTrail((prev) => ({
-        x: prev.x + (mouse.current.x - prev.x) * 0.14,
-        y: prev.y + (mouse.current.y - prev.y) * 0.14,
-      }));
-      raf.current = window.requestAnimationFrame(loop);
-    };
-
+    const onMove = (e: MouseEvent) => setPos({ x: e.clientX, y: e.clientY });
     window.addEventListener("mousemove", onMove);
-    raf.current = window.requestAnimationFrame(loop);
-
-    return () => {
-      window.removeEventListener("mousemove", onMove);
-      window.cancelAnimationFrame(raf.current);
-    };
+    return () => window.removeEventListener("mousemove", onMove);
   }, []);
 
   return (
     <>
       <style>{`* { cursor: none !important; }`}</style>
-
-      <div
-        style={{
-          position: "fixed",
-          left: trail.x,
-          top: trail.y,
-          transform: "translate(-50%, -50%)",
-          width: 18,
-          height: 18,
-          borderRadius: "9999px",
-          background: "radial-gradient(circle, rgba(0,194,255,0.85), rgba(99,102,241,0.4))",
-          boxShadow: "0 0 28px 12px rgba(0,194,255,0.55)",
-          pointerEvents: "none",
-          zIndex: 9998,
-        }}
-      />
 
       <div
         style={{

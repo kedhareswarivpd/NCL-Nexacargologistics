@@ -98,7 +98,7 @@ export default function LandingPage() {
       {/* ════════════════════════════════════════════
           HERO SECTION
       ════════════════════════════════════════════ */}
-      <section className="relative min-h-screen flex items-center justify-center pt-20 pb-20 overflow-hidden">
+      <section className="relative min-h-screen flex items-center justify-center pt-16 pb-20 overflow-hidden">
 
         {/* Background video layer */}
         <div className="absolute inset-0 z-0 overflow-hidden">
@@ -151,7 +151,7 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}
                 className="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto lg:mx-0 mb-12"
               >
-                <Link href={isAuthenticated ? "/customer/quotes" : "/contact"} className="flex">
+                <Link href={isAuthenticated ? "/customer/quotes" : "/register"} className="flex">
                   <button
                     type="button"
                     className="px-8 py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-all duration-200 bg-gradient-to-r from-[#1E88E5] to-[#00C2FF] text-white shadow-[0_0_30px_rgba(0,194,255,0.35)] hover:shadow-[0_0_50px_rgba(0,194,255,0.55)] hover:-translate-y-0.5 cursor-pointer whitespace-nowrap w-full sm:w-auto"
@@ -315,7 +315,7 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ type: "spring", stiffness: 100, damping: 15, delay: i * 0.08 }}
                 whileHover={{ y: -8, scale: 1.05, boxShadow: "0 15px 30px rgba(0,194,255,0.15)", borderColor: "rgba(0,194,255,0.3)" }}
-                className="group rounded-2xl border border-white/8 bg-white/[0.03] p-6 cursor-default transition-all duration-300"
+                className="group rounded-2xl border border-white/8 bg-white/[0.03] p-3 sm:p-6 cursor-default transition-all duration-300 overflow-hidden"
                 style={{ animation: "card-glow 4s ease-in-out infinite" }}
               >
                 <div className="flex justify-center mb-3">
@@ -327,7 +327,7 @@ export default function LandingPage() {
                     <Icon className="w-5 h-5 text-[#00C2FF]" />
                   </motion.div>
                 </div>
-                <p className="text-4xl font-bold text-white mb-1" style={{ textShadow: "0 0 20px rgba(0,194,255,0.4)" }}>
+                <p className="text-lg sm:text-4xl font-bold text-white mb-1 leading-tight" style={{ textShadow: "0 0 20px rgba(0,194,255,0.4)" }}>
                   <Counter to={val} suffix={suffix} />
                 </p>
                 <p className="text-sm text-blue-200/50 uppercase tracking-widest">{label}</p>

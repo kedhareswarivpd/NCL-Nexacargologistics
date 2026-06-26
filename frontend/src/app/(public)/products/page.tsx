@@ -10,7 +10,7 @@ export default function TechnologyProductsPage() {
   const heroY = useTransform(scrollY, [0, 800], [0, 150]);
 
   return (
-    <div className="bg-background text-on-surface overflow-x-hidden pt-20">
+    <div className="bg-background text-on-surface overflow-x-hidden pt-16">
       <main className="pt-12 pb-24 px-6 max-w-7xl mx-auto">
         {/* Hero Section */}
         <section className="relative min-h-[614px] flex items-center justify-center overflow-hidden mb-12 rounded-3xl">
@@ -44,7 +44,7 @@ export default function TechnologyProductsPage() {
             <p className="font-body-lg text-lg text-on-surface-variant mb-12 max-w-2xl mx-auto">Enterprise-grade SaaS solutions designed to optimize every link in your global supply chain with real-time intelligence and seamless automation.</p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link href="/products/demo"><Button size="lg" className="px-8 h-12 text-base">Request Demo</Button></Link>
-              <Button size="lg" variant="secondary" className="px-8 h-12 text-base bg-white/5 border-transparent hover:bg-white/10">View Pricing</Button>
+              <Link href="/products/pricing"><Button size="lg" variant="secondary" className="px-8 h-12 text-base bg-white/5 border-transparent hover:bg-white/10">View Pricing</Button></Link>
             </div>
           </div>
         </section>
@@ -207,7 +207,7 @@ export default function TechnologyProductsPage() {
             <p className="font-body-lg text-lg text-on-surface-variant mb-12 max-w-xl mx-auto">Join 5,000+ global enterprises scaling their logistics with NexaCargo technology.</p>
             <div className="flex flex-wrap justify-center gap-6">
               <Link href="/products/demo"><Button size="lg" className="px-8 h-14 text-lg">Get Started Today</Button></Link>
-              <Button size="lg" variant="secondary" className="px-8 h-14 text-lg bg-transparent border-white/10 hover:bg-white/5">Schedule a Consult</Button>
+              <Link href="/industries/consultation"><Button size="lg" variant="secondary" className="px-8 h-14 text-lg bg-transparent border-white/10 hover:bg-white/5">Schedule a Consult</Button></Link>
             </div>
           </div>
         </section>

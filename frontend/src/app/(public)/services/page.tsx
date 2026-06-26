@@ -51,7 +51,7 @@ function Counter({ to, suffix = "", decimals = 0, duration = 2 }: { to: number; 
 export default function ServicesPage() {
   const router = useRouter();
   return (
-    <div className="bg-[#0B1F3A] text-on-surface overflow-x-hidden pt-20">
+    <div className="bg-[#0B1F3A] text-on-surface overflow-x-hidden pt-16">
 
       {/* ── Shared background: animated grid + particles + radial glow ── */}
       <div className="fixed inset-0 -z-10 pointer-events-none">
@@ -125,9 +125,9 @@ export default function ServicesPage() {
                 </li>
               ))}
             </ul>
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} className="w-fit">
-              <Button className="flex items-center gap-2 px-6 h-11" onClick={() => router.push("/services/air-freight")}>
-                See Air Fleet Options <ArrowRight className="w-4 h-4" />
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} className="w-fit max-w-full">
+              <Button className="flex items-center gap-2 px-6 h-11 whitespace-normal text-left" onClick={() => router.push("/services/air-freight")}>
+                See Air Fleet Options <ArrowRight className="w-4 h-4 shrink-0" />
               </Button>
             </motion.div>
           </motion.div>
@@ -163,9 +163,9 @@ export default function ServicesPage() {
                 </li>
               ))}
             </ul>
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} className="w-fit">
-              <Button variant="outline" className="flex items-center gap-2 px-6 h-11" onClick={() => router.push("/services/sea-freight")}>
-                View Sea Routes <ArrowRight className="w-4 h-4" />
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} className="w-fit max-w-full">
+              <Button variant="outline" className="flex items-center gap-2 px-6 h-11 whitespace-normal text-left" onClick={() => router.push("/services/sea-freight")}>
+                View Sea Routes <ArrowRight className="w-4 h-4 shrink-0" />
               </Button>
             </motion.div>
           </motion.div>

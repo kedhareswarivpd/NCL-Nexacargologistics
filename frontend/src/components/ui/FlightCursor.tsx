@@ -1,37 +1,19 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function FlightCursor() {
-  const [pos, setPos]       = useState({ x: -200, y: -200 });
-  const [trail, setTrail]   = useState({ x: -200, y: -200 });
+  const [pos, setPos] = useState({ x: -200, y: -200 });
   const [clicked, setClicked] = useState(false);
-  const mouse = useRef({ x: -200, y: -200 });
-  const raf   = useRef<number>(0);
 
   useEffect(() => {
-    const onMove = (e: MouseEvent) => {
-      mouse.current = { x: e.clientX, y: e.clientY };
-      setPos({ x: e.clientX, y: e.clientY });
-    };
-    const onDown = () => { setClicked(true);  setTimeout(() => setClicked(false), 300); };
-
-    // smooth trailing dot
-    const loop = () => {
-      setTrail((prev) => ({
-        x: prev.x + (mouse.current.x - prev.x) * 0.12,
-        y: prev.y + (mouse.current.y - prev.y) * 0.12,
-      }));
-      raf.current = requestAnimationFrame(loop);
-    };
-
+    const onMove = (e: MouseEvent) => setPos({ x: e.clientX, y: e.clientY });
+    const onDown = () => { setClicked(true); setTimeout(() => setClicked(false), 300); };
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mousedown", onDown);
-    raf.current = requestAnimationFrame(loop);
     return () => {
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mousedown", onDown);
-      cancelAnimationFrame(raf.current);
     };
   }, []);
 
@@ -39,25 +21,7 @@ export default function FlightCursor() {
     <>
       <style>{`* { cursor: none !important; }`}</style>
 
-      {/* ── Trailing glow dot ── */}
-      <div
-        style={{
-          position: "fixed",
-          left: trail.x,
-          top: trail.y,
-          transform: "translate(-50%, -50%)",
-          width: 8,
-          height: 8,
-          borderRadius: "50%",
-          background: "rgba(0,194,255,0.9)",
-          boxShadow: "0 0 18px 8px rgba(0,194,255,0.6)",
-          pointerEvents: "none",
-          zIndex: 9998,
-          transition: "opacity 0.2s",
-        }}
-      />
-
-      {/* ── Main crosshair + plane cursor ── */}
+      {/* ── Main crosshair + plane cursor ── */
       <div
         style={{
           position: "fixed",
