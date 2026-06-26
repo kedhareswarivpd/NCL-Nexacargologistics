@@ -11,7 +11,7 @@ export default function OrbitCursor() {
 
   return (
     <>
-      <style>{`* { cursor: none !important; }`}</style>
+      <style>{`@media (pointer: fine) { * { cursor: none !important; } }`}</style>
 
       <div
         style={{

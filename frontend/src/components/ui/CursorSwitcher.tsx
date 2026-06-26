@@ -33,6 +33,14 @@ function useCursorMode(): ["flight" | "orbit", () => void] {
 
 export default function CursorSwitcher() {
   const [mode] = useCursorMode();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.matchMedia("(pointer: coarse)").matches);
+    check();
+  }, []);
+
+  if (isMobile) return null;
   return mode === "flight" ? <FlightCursor /> : <OrbitCursor />;
 }
 

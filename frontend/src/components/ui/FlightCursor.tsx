@@ -31,7 +31,7 @@ export default function FlightCursor() {
         zIndex: 9999,
       }}
     >
-      <style>{`* { cursor: none !important; }`}</style>
+      <style>{`@media (pointer: fine) { * { cursor: none !important; } }`}</style>
       <svg
         width="48"
         height="48"
