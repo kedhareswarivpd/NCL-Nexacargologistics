@@ -53,7 +53,7 @@ export default function FlightCursor() {
         <line x1="38" y1="10" x2="34.5" y2="13.5" stroke="rgba(0,194,255,0.85)" strokeWidth="1.2" strokeLinecap="round" />
         <line x1="10" y1="38" x2="13.5" y2="34.5" stroke="rgba(0,194,255,0.85)" strokeWidth="1.2" strokeLinecap="round" />
         <line x1="38" y1="38" x2="34.5" y2="34.5" stroke="rgba(0,194,255,0.85)" strokeWidth="1.2" strokeLinecap="round" />
-        <circle cx="24" cy="24" r="2.5" fill="rgba(0,229,255,1)" />
+
         <g transform="translate(24,24) rotate(-45)">
           <path d="M0,-9 C1,-6 1.5,-2 1.5,0 L0,1.5 L-1.5,0 C-1.5,-2 -1,-6 0,-9Z" fill="white" />
           <path d="M-1.2,-2 L-7,2 L-1.2,1Z" fill="white" opacity="0.95" />
