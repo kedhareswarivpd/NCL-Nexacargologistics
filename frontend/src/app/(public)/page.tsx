@@ -1,17 +1,18 @@
 "use client";
 import { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 import Home from "./Home";
 
 export default function Page() {
-  const { isAuthenticated, status, logout } = useAuth();
+  const { isAuthenticated, status } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
-    // Wait until auth state has fully resolved before checking
     if (status === "authenticated" && isAuthenticated) {
-      logout();
+      router.replace("/customer");
     }
-  }, [status, isAuthenticated, logout]);
+  }, [status, isAuthenticated, router]);
 
   return <Home />;
 }

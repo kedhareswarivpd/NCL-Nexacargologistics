@@ -14,18 +14,20 @@ import { isEmail, required } from "@/lib/validation";
 import { ROLE_HOME } from "@/lib/types";
 
 function LoginForm() {
-  const { login, logout, status } = useAuth();
+  const { login, logout, status, user } = useAuth();
   const toast = useToast();
   const router = useRouter();
   const params = useSearchParams();
   const [formError, setFormError] = React.useState<string | null>(null);
   const hasSubmittedLogin = React.useRef(false);
 
+  // If already authenticated on page load, redirect to their role's home
   React.useEffect(() => {
-    if (status === "authenticated" && !hasSubmittedLogin.current) {
-      logout();
+    if (status === "authenticated" && user && !hasSubmittedLogin.current) {
+      const next = params.get("next");
+      router.replace(next || ROLE_HOME[user.role]);
     }
-  }, [status, logout]);
+  }, [status, user, router, params]);
 
   const form = useForm({
     initialValues: { email: "", password: "" },
