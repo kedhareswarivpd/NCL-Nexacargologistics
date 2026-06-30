@@ -1,3 +1,4 @@
+import re
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -21,7 +22,8 @@ class Settings(BaseSettings):
     JWT_ISSUER: str = "nexacargo-api"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24
 
-    CORS_ORIGINS: str = "http://localhost:3000"
+    # Comma-separated explicit origins. Vercel/localhost handled by regex below.
+    CORS_ORIGINS: str = "*"
 
     UPLOAD_DIR: str = "uploads"
 
@@ -36,6 +38,23 @@ class Settings(BaseSettings):
         if self.CORS_ORIGINS.strip() == "*":
             return ["*"]
         return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]
+
+
+# Always-allowed origin patterns regardless of env var
+CORS_ORIGIN_PATTERNS: list[re.Pattern] = [
+    re.compile(r"^http://localhost:\d+$"),
+    re.compile(r"^http://127\.0\.0\.1:\d+$"),
+    re.compile(r"^https://.*\.vercel\.app$"),
+    re.compile(r"^https://ncl-nexacargologistics-2\.onrender\.com$"),
+]
+
+
+def is_origin_allowed(origin: str, allowed_list: list[str]) -> bool:
+    if "*" in allowed_list:
+        return True
+    if origin in allowed_list:
+        return True
+    return any(p.match(origin) for p in CORS_ORIGIN_PATTERNS)
 
 
 settings = Settings()
