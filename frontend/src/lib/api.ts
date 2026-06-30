@@ -7,9 +7,15 @@ import { supabase } from "./supabase";
  * Authentication is delegated to Supabase: we attach the current Supabase
  * access token as a Bearer header on every request. The backend verifies it.
  */
+// In the browser, route through the Next.js proxy to avoid CORS.
+// On the server (SSR), call the backend directly.
+const baseURL = typeof window !== "undefined"
+  ? "/api/proxy"
+  : (process.env.NEXT_PUBLIC_API_URL || "https://ncl-nexacargologistics-2.onrender.com/api/v1");
+
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://ncl-nexacargologistics-2.onrender.com/api/v1",
-  timeout: 60000, // Render free tier can take up to 50s to cold-start
+  baseURL,
+  timeout: 60000,
 });
 
 api.interceptors.request.use(async (config) => {
