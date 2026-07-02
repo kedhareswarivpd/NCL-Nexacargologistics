@@ -18,7 +18,9 @@ function LoginForm() {
   const toast = useToast();
   const router = useRouter();
   const params = useSearchParams();
-  const [formError, setFormError] = React.useState<string | null>(null);
+  const [formError, setFormError] = React.useState<string | null>(
+    params.get("reason") === "session_expired" ? "Your session has expired. Please sign in again." : null
+  );
   const hasSubmittedLogin = React.useRef(false);
 
   // If already authenticated on page load, redirect to their role's home

@@ -44,7 +44,6 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    // On 401, try refreshing the token once and retry
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       const { data } = await supabase.auth.refreshSession();
@@ -52,12 +51,14 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${data.session.access_token}`;
         return api(originalRequest);
       }
-      // Refresh failed — redirect to login
+      // Refresh token expired — force re-login
+      await supabase.auth.signOut();
+      localStorage.removeItem("nexacargo_session");
       if (typeof window !== "undefined") {
         const path = window.location.pathname;
         const isAuthPage = path.startsWith("/login") || path.startsWith("/register") || path.startsWith("/admin-login");
         if (!isAuthPage) {
-          window.location.href = `/login?next=${encodeURIComponent(path)}`;
+          window.location.href = `/login?next=${encodeURIComponent(path)}&reason=session_expired`;
         }
       }
     }
