@@ -130,7 +130,18 @@ export async function logoutUser(): Promise<void> {
 }
 
 export async function getCurrentUser(): Promise<User | null> {
-  const { data: { session } } = await supabase.auth.getSession();
+  let { data: { session } } = await supabase.auth.getSession();
+
+  // Refresh if expiring within 60 seconds
+  if (session) {
+    const expiresAt = session.expires_at ?? 0;
+    const nowSecs = Math.floor(Date.now() / 1000);
+    if (expiresAt - nowSecs < 60) {
+      const { data: refreshed } = await supabase.auth.refreshSession();
+      if (refreshed.session) session = refreshed.session;
+    }
+  }
+
   if (!session?.user) return null;
 
   const { data: profiles } = await supabase

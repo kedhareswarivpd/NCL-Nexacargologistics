@@ -19,7 +19,16 @@ export const api = axios.create({
 });
 
 api.interceptors.request.use(async (config) => {
-  const { data } = await supabase.auth.getSession();
+  let { data } = await supabase.auth.getSession();
+  // If token is expiring within 60 seconds, refresh it proactively
+  if (data.session) {
+    const expiresAt = data.session.expires_at ?? 0;
+    const nowSecs = Math.floor(Date.now() / 1000);
+    if (expiresAt - nowSecs < 60) {
+      const { data: refreshed } = await supabase.auth.refreshSession();
+      if (refreshed.session) data = refreshed;
+    }
+  }
   const token = data.session?.access_token;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -29,14 +38,23 @@ api.interceptors.request.use(async (config) => {
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401 && typeof window !== "undefined") {
-      const path = window.location.pathname;
-      const isAuthPage = path.startsWith("/login") || path.startsWith("/register") || path.startsWith("/admin-login");
-      // Only redirect if not already on an auth page and not a background session check
-      const isBackgroundCheck = error.config?.url?.includes("/users/me");
-      if (!isAuthPage && !isBackgroundCheck) {
-        window.location.href = `/login?next=${encodeURIComponent(path)}`;
+  async (error) => {
+    const originalRequest = error.config;
+    // On 401, try refreshing the token once and retry
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      const { data } = await supabase.auth.refreshSession();
+      if (data.session?.access_token) {
+        originalRequest.headers.Authorization = `Bearer ${data.session.access_token}`;
+        return api(originalRequest);
+      }
+      // Refresh failed — redirect to login
+      if (typeof window !== "undefined") {
+        const path = window.location.pathname;
+        const isAuthPage = path.startsWith("/login") || path.startsWith("/register") || path.startsWith("/admin-login");
+        if (!isAuthPage) {
+          window.location.href = `/login?next=${encodeURIComponent(path)}`;
+        }
       }
     }
     return Promise.reject(error);
