@@ -93,6 +93,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         localStorage.removeItem("nexacargo_session");
       }
+    }).catch(() => {
+      // Backend unreachable — fall back to cached session or unauthenticated
+      const stored = localStorage.getItem("nexacargo_session");
+      dispatch({ type: "RESTORE", user: stored ? JSON.parse(stored) : null });
     });
   }, []);
 
