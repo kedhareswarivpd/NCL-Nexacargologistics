@@ -87,14 +87,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     getCurrentUser().then(user => {
-      dispatch({ type: "RESTORE", user });
       if (user) {
+        dispatch({ type: "RESTORE", user });
         localStorage.setItem("nexacargo_session", JSON.stringify(user));
       } else {
-        localStorage.removeItem("nexacargo_session");
+        // No active Supabase session — only clear if there's no cached session
+        const stored = localStorage.getItem("nexacargo_session");
+        if (stored) {
+          dispatch({ type: "RESTORE", user: JSON.parse(stored) });
+        } else {
+          dispatch({ type: "RESTORE", user: null });
+        }
       }
     }).catch(() => {
-      // Backend unreachable — fall back to cached session or unauthenticated
+      // Network error — fall back to cached session
       const stored = localStorage.getItem("nexacargo_session");
       dispatch({ type: "RESTORE", user: stored ? JSON.parse(stored) : null });
     });
