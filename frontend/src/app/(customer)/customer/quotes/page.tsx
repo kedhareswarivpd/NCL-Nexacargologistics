@@ -293,6 +293,12 @@ export default function RequestQuotesPage() {
   const [form, setForm] = useState({ origin: "", destination: "", type: "FCL 20FT", mode: "", weight: "", date: "", insurance: "No Insurance", notes: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Clear submit error whenever user edits the form
+  const updateForm = (patch: Partial<typeof form>) => {
+    setForm(p => ({ ...p, ...patch }));
+    setSubmitError(null);
+  };
   const [quotes, setQuotes] = useState<any[]>([]);
   const [saving, setSaving] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
@@ -389,6 +395,7 @@ export default function RequestQuotesPage() {
     const errs = validate();
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setErrors({});
+    setSubmitError(null);
     setSaving(true);
     const noteParts = [
       `Cargo: ${form.type}`,
@@ -477,7 +484,7 @@ export default function RequestQuotesPage() {
               <input
                 value={form.origin}
                 onChange={(e) => {
-                  setForm({ ...form, origin: e.target.value });
+                  updateForm({ origin: e.target.value });
                   setErrors(p => ({ ...p, origin: "" }));
                   setShowOriginSuggestions(true);
                 }}
@@ -493,7 +500,7 @@ export default function RequestQuotesPage() {
                       key={loc.name}
                       onMouseDown={(e) => {
                         e.preventDefault();
-                        setForm(p => ({ ...p, origin: loc.value }));
+                        updateForm({ origin: loc.value });
                         setErrors(p => ({ ...p, origin: "" }));
                         setShowOriginSuggestions(false);
                       }}
@@ -511,7 +518,7 @@ export default function RequestQuotesPage() {
               <input
                 value={form.destination}
                 onChange={(e) => {
-                  setForm({ ...form, destination: e.target.value });
+                  updateForm({ destination: e.target.value });
                   setErrors(p => ({ ...p, destination: "" }));
                   setShowDestSuggestions(true);
                 }}
@@ -527,7 +534,7 @@ export default function RequestQuotesPage() {
                       key={loc.name}
                       onMouseDown={(e) => {
                         e.preventDefault();
-                        setForm(p => ({ ...p, destination: loc.value }));
+                        updateForm({ destination: loc.value });
                         setErrors(p => ({ ...p, destination: "" }));
                         setShowDestSuggestions(false);
                       }}
@@ -572,7 +579,7 @@ export default function RequestQuotesPage() {
                       disabled={!available}
                       onClick={() => {
                         if (available) {
-                          setForm(p => ({ ...p, mode }));
+                          updateForm({ mode });
                           setErrors(p => ({ ...p, mode: "" }));
                         }
                       }}
@@ -617,7 +624,7 @@ export default function RequestQuotesPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="text-xs uppercase tracking-widest text-on-surface-variant">Cargo Type</label>
-              <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}
+              <select value={form.type} onChange={(e) => updateForm({ type: e.target.value })}
                 className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
                 <option>FCL 20FT</option>
                 <option>FCL 40FT</option>
@@ -633,7 +640,7 @@ export default function RequestQuotesPage() {
                 const val = e.target.value;
                 const numVal = Number(val);
                 if (val === "" || numVal <= 10000) {
-                  setForm({ ...form, weight: val }); 
+                  updateForm({ weight: val });
                   setErrors(p => ({ ...p, weight: "" })); 
                 }
               }}
@@ -644,7 +651,7 @@ export default function RequestQuotesPage() {
 
           <div>
             <label className="text-xs uppercase tracking-widest text-on-surface-variant">Preferred Shipment Date</label>
-            <input type="date" value={form.date} onChange={(e) => { setForm({ ...form, date: e.target.value }); setErrors(p => ({ ...p, date: "" })); }}
+            <input type="date" value={form.date} onChange={(e) => { updateForm({ date: e.target.value }); setErrors(p => ({ ...p, date: "" })); }}
               className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface focus:outline-none focus:border-tertiary/50 ${errors.date ? "border-red-500" : "border-white/10"}`} />
             {errors.date && <p className="text-xs text-red-400 mt-1">{errors.date}</p>}
           </div>
@@ -661,7 +668,7 @@ export default function RequestQuotesPage() {
                   <button
                     key={plan.id}
                     type="button"
-                    onClick={() => setForm({ ...form, insurance: plan.name })}
+                    onClick={() => updateForm({ insurance: plan.name })}
                     className={`relative p-4 rounded-xl border text-left transition-all flex flex-col justify-between gap-3 ${
                       isSelected
                         ? "bg-tertiary/5 border-tertiary/50 shadow-[0_0_15px_rgba(66,165,245,0.15)]"
@@ -694,7 +701,7 @@ export default function RequestQuotesPage() {
 
           <div>
             <label className="text-xs uppercase tracking-widest text-on-surface-variant">Additional Notes</label>
-            <textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={3}
+            <textarea value={form.notes} onChange={(e) => updateForm({ notes: e.target.value })} rows={3}
               placeholder="Hazardous goods, temperature requirements, special handling…"
               className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 resize-none" />
           </div>
