@@ -57,8 +57,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let timer: ReturnType<typeof setTimeout>;
     const reset = () => {
       clearTimeout(timer);
-      timer = setTimeout(() => {
-        logoutUser();
+      timer = setTimeout(async () => {
+        await logoutUser();
         dispatch({ type: "LOGOUT" });
         localStorage.removeItem("nexacargo_session");
         window.location.href = "/login";

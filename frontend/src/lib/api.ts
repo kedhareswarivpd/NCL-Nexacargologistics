@@ -31,9 +31,11 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401 && typeof window !== "undefined") {
-      // Session expired/invalid — bounce to login (avoid loop on the auth pages).
       const path = window.location.pathname;
-      if (!path.startsWith("/login") && !path.startsWith("/register") && !path.startsWith("/admin-login")) {
+      const isAuthPage = path.startsWith("/login") || path.startsWith("/register") || path.startsWith("/admin-login");
+      // Only redirect if not already on an auth page and not a background session check
+      const isBackgroundCheck = error.config?.url?.includes("/users/me");
+      if (!isAuthPage && !isBackgroundCheck) {
         window.location.href = `/login?next=${encodeURIComponent(path)}`;
       }
     }

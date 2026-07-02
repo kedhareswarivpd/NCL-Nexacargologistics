@@ -6,12 +6,13 @@ async function handler(req: NextRequest, { params }: { params: Promise<{ path: s
   const { path } = await params;
   const url = `${BACKEND}/${path.join("/")}${req.nextUrl.search}`;
 
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-  };
+  const headers: Record<string, string> = {};
 
   const auth = req.headers.get("authorization");
   if (auth) headers["Authorization"] = auth;
+
+  const contentType = req.headers.get("content-type");
+  if (contentType) headers["Content-Type"] = contentType;
 
   let body: string | undefined;
   if (req.method !== "GET" && req.method !== "HEAD") {
