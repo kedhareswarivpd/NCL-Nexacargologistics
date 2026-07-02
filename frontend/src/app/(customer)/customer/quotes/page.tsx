@@ -7,7 +7,6 @@ import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import { quotesApi } from "@/lib/services";
 import { apiError } from "@/lib/api";
-import { supabase } from "@/lib/supabase";
 
 // Map the UI cargo-type selection onto a transport mode the backend understands.
 function typeToMode(type: string): "air" | "sea" | "road" {
@@ -404,8 +403,6 @@ export default function RequestQuotesPage() {
       form.notes,
     ].filter(Boolean);
     try {
-      // Ensure token is fresh before submitting
-      await supabase.auth.refreshSession();
       await quotesApi.create({
         origin: form.origin.trim(),
         destination: form.destination.trim(),

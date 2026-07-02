@@ -20,14 +20,18 @@ export const api = axios.create({
 
 api.interceptors.request.use(async (config) => {
   let { data } = await supabase.auth.getSession();
-  // If token is expiring within 60 seconds, refresh it proactively
   if (data.session) {
     const expiresAt = data.session.expires_at ?? 0;
     const nowSecs = Math.floor(Date.now() / 1000);
-    if (expiresAt - nowSecs < 60) {
+    // Refresh if already expired OR expiring within 5 minutes
+    if (expiresAt - nowSecs < 300) {
       const { data: refreshed } = await supabase.auth.refreshSession();
       if (refreshed.session) data = refreshed;
     }
+  } else {
+    // No session cached — try a refresh in case the refresh token is still valid
+    const { data: refreshed } = await supabase.auth.refreshSession();
+    if (refreshed.session) data = refreshed;
   }
   const token = data.session?.access_token;
   if (token) {
