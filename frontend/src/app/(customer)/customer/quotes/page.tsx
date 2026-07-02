@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import { quotesApi } from "@/lib/services";
 import { apiError } from "@/lib/api";
+import { supabase } from "@/lib/supabase";
 
 // Map the UI cargo-type selection onto a transport mode the backend understands.
 function typeToMode(type: string): "air" | "sea" | "road" {
@@ -291,6 +292,7 @@ export default function RequestQuotesPage() {
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({ origin: "", destination: "", type: "FCL 20FT", mode: "", weight: "", date: "", insurance: "No Insurance", notes: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [quotes, setQuotes] = useState<any[]>([]);
   const [saving, setSaving] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
@@ -395,6 +397,8 @@ export default function RequestQuotesPage() {
       form.notes,
     ].filter(Boolean);
     try {
+      // Ensure token is fresh before submitting
+      await supabase.auth.refreshSession();
       await quotesApi.create({
         origin: form.origin.trim(),
         destination: form.destination.trim(),
@@ -404,11 +408,12 @@ export default function RequestQuotesPage() {
         notes: noteParts.join(" · "),
       });
       setSubmitted(true);
+      setSubmitError(null);
       setTimeout(() => setSubmitted(false), 5000);
       setForm({ origin: "", destination: "", type: "FCL 20FT", mode: "", weight: "", date: "", insurance: "No Insurance", notes: "" });
       loadQuotes();
     } catch (err) {
-      setErrors({ origin: apiError(err) });
+      setSubmitError(apiError(err));
     }
     setSaving(false);
   };
@@ -693,6 +698,12 @@ export default function RequestQuotesPage() {
               placeholder="Hazardous goods, temperature requirements, special handling…"
               className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 resize-none" />
           </div>
+
+          {submitError && (
+            <div role="alert" className="p-3 rounded-lg bg-error/10 border border-error/30 text-error text-sm">
+              {submitError}
+            </div>
+          )}
 
           <button type="submit" disabled={saving} className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] transition-colors shadow-[0_0_20px_rgba(30,136,229,0.3)] disabled:opacity-50">
             <Send className="h-4 w-4" /> {saving ? "Submitting…" : "Submit Quote Request"}
