@@ -295,7 +295,7 @@ export default function UserManagementPage() {
                 <motion.tr layout>
                   <td colSpan={6} className="px-4 py-8 text-center text-on-surface-variant text-sm">
                     {loading ? (
-                      "Loading users…"
+                      "Loading…"
                     ) : error ? (
                       <span className="text-error font-medium">{error}</span>
                     ) : (

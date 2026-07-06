@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "@/hooks/useForm";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
-import { required, isGmailEmail, isStrongPassword, matches, passwordScore, isPhone } from "@/lib/validation";
+import { required, isEmail, isStrongPassword, matches, passwordScore, isPhone } from "@/lib/validation";
 import { cn } from "@/lib/utils";
 
 const STRENGTH = ["Too short", "Weak", "Fair", "Good", "Strong"];
@@ -26,7 +26,7 @@ export default function RegisterPage() {
     initialValues: { name: "", email: "", company: "", phone: "", password: "", confirmPassword: "" },
     validators: {
       name: [required("Name")],
-      email: [required("Email"), isGmailEmail],
+      email: [required("Email"), isEmail],
       phone: [isPhone],
       password: [required("Password"), isStrongPassword],
       confirmPassword: [required("Confirmation"), matches("password")],

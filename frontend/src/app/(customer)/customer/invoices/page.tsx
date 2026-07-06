@@ -53,9 +53,13 @@ export default function InvoicesPage() {
       invoiceId: inv.invoice_no ?? inv.id,
       shipment: inv.shipment_id ?? "—",
       route: inv.description ?? "—",
+      origin: inv.origin ?? inv.origin_address ?? undefined,
+      destination: inv.destination ?? inv.destination_address ?? undefined,
       amount: inv.total ?? inv.amount ?? 0,
       paymentMethod: inv.status === "Paid" ? "Paid" : "Pending",
       dateTime: inv.issue_date ?? new Date().toISOString(),
+      customerName: inv.customer_name ?? undefined,
+      customerEmail: inv.customer_email ?? undefined,
     });
   }
 

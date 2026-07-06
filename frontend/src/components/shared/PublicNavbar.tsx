@@ -40,16 +40,16 @@ export function PublicNavbar() {
       className={cn(
         "fixed top-0 z-50 flex w-full items-center justify-between px-6 backdrop-blur-xl border-b transition-all duration-300",
         scrolled
-          ? "h-16 bg-white border-gray-200 shadow-[0_4px_20px_rgba(0,0,0,0.12)]"
-          : "h-16 bg-white border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.08)]"
+          ? "h-20 bg-white border-gray-200 shadow-[0_4px_20px_rgba(0,0,0,0.12)]"
+          : "h-20 bg-white border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.08)]"
       )}
     >
       <div className="flex items-center gap-12">
         <Link href="/" className="flex items-center gap-2">
           <img
-            src="/logo.jpeg"
+            src="/logo5.jpeg"
             alt="NexaCargo Logo"
-            className="h-10 w-auto object-contain"
+            className="h-14 w-auto object-contain"
           />
         </Link>
         <div className="hidden gap-8 md:flex">
