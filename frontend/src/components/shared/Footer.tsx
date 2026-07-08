@@ -191,7 +191,7 @@ export function Footer() {
           <span className="font-body-sm text-sm text-on-surface-variant">© 2026 NexaCargo Global Logistics. All rights reserved.</span>
           <div className="flex gap-8">
             <span className="font-label-caps text-[10px] text-on-surface-variant/30 uppercase tracking-widest">ISO 9001:2015 CERTIFIED</span>
-            <span className="font-label-caps text-[10px] text-on-surface-variant/30 uppercase tracking-widest">GDPR COMPLIANT</span>
+            <span className="font-label-caps text-[10px] text-on-surface-variant/30 uppercase tracking-widest"></span>
           </div>
         </div>
       </div>

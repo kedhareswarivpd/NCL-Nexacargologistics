@@ -44,21 +44,21 @@ export function PublicNavbar() {
           : "h-20 bg-white border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.08)]"
       )}
     >
-      <div className="flex items-center gap-12">
-        <Link href="/" className="flex items-center gap-2">
+      <div className="flex items-center gap-20">
+        <Link href="/" className="flex items-center gap-20"> 
           <img
             src="/logo5.jpeg"
             alt="NexaCargo Logo"
-            className="h-14 w-auto object-contain"
+            className="h-20 w-60 object-contain"
           />
         </Link>
-        <div className="hidden gap-8 md:flex">
+        <div className="hidden gap-12 md:flex">
           {NAV_LINKS.map((item) => (
             <Link
               key={item.name}
               href={item.href}
               className={cn(
-                "font-body-lg text-base transition-colors",
+                "font-body-lg text-xl transition-colors",
                 pathname === item.href
                   ? "border-b-2 border-[#1E88E5] pb-1 text-[#1E88E5]"
                   : "text-gray-600 hover:text-[#1E88E5]"
@@ -71,19 +71,19 @@ export function PublicNavbar() {
       </div>
 
       {/* Desktop auth controls */}
-      <div className="hidden items-center gap-3 md:flex">
+      <div className="hidden items-center gap-5 md:flex">
         <CursorToggleButton />
         {isAuthenticated && user ? (
           <>
             <Link href={dashboardHref}>
-              <button className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#1E88E5] to-[#00C2FF] px-6 py-2 font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,194,255,0.4)] active:scale-95 shadow-md">
+              <button className="flex items-center gap-5 rounded-lg bg-gradient-to-r from-[#1E88E5] to-[#00C2FF] px-6 py-2 font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,194,255,0.4)] active:scale-95 shadow-md">
                 <LayoutDashboard className="w-4 h-4" />
                 {dashboardText}
               </button>
             </Link>
             <button
               onClick={() => logout()}
-              className="flex items-center gap-2 rounded-lg border border-gray-200 px-5 py-2 font-bold text-gray-700 transition-all duration-200 hover:-translate-y-0.5 hover:bg-gray-50 hover:text-red-500 active:scale-95"
+              className="flex items-center gap-5 rounded-lg border border-gray-200 px-5 py-2 font-bold text-gray-700 transition-all duration-200 hover:-translate-y-0.5 hover:bg-gray-50 hover:text-red-500 active:scale-95"
             >
               <LogOut className="w-4 h-4" />
               Sign Out
