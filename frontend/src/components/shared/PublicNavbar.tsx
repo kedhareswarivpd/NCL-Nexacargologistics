@@ -47,7 +47,7 @@ export function PublicNavbar() {
       <div className="flex items-center gap-20">
         <Link href="/" className="flex items-center gap-20"> 
           <img
-            src="/logo5.jpeg"
+            src="/logo5.jpg"
             alt="NexaCargo Logo"
             className="h-20 w-60 object-contain"
           />
