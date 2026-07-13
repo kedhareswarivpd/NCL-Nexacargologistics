@@ -6,7 +6,7 @@ import { FormField } from "@/components/ui/FormField";
 import { Button } from "@/components/ui/button";
 import { useForm } from "@/hooks/useForm";
 import { useToast } from "@/context/ToastContext";
-import { required, isEmail } from "@/lib/validation";
+import { required, isEmail, minLength } from "@/lib/validation";
 
 /**
  * Contact form with client-side validation and simulated submission.
@@ -19,9 +19,9 @@ export function ContactForm() {
   const form = useForm({
     initialValues: { name: "", email: "", company: "", message: "" },
     validators: {
-      name: [required("Name")],
+      name: [required("Name"), minLength(2, "Name")],
       email: [required("Email"), isEmail],
-      message: [required("Message")],
+      message: [required("Message"), minLength(10, "Message")],
     },
     onSubmit: async () => {
       // Simulate a network request to a contact endpoint.

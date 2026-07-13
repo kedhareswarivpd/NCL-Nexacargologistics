@@ -24,7 +24,33 @@ export default function FreightQuoteCalculatorPage() {
   const set = (key: keyof typeof fields, value: string | number) =>
     setFields((prev) => ({ ...prev, [key]: value }));
 
+  const [stepErrors, setStepErrors] = useState<Record<string, string>>({});
+
+  const validateStep1 = () => {
+    const e: Record<string, string> = {};
+    if (!fields.origin.trim()) e.origin = "Origin is required.";
+    if (!fields.destination.trim()) e.destination = "Destination is required.";
+    if (fields.origin.trim() && fields.destination.trim() && fields.origin.trim().toLowerCase() === fields.destination.trim().toLowerCase())
+      e.destination = "Destination must differ from origin.";
+    return e;
+  };
+
+  const validateStep2 = () => {
+    const e: Record<string, string> = {};
+    if (!fields.weight || fields.weight <= 0) e.weight = "Weight must be greater than 0.";
+    return e;
+  };
+
   const handleNext = (step: number) => {
+    if (step === 2) {
+      const e = validateStep1();
+      if (Object.keys(e).length) { setStepErrors(e); return; }
+    }
+    if (step === 3) {
+      const e = validateStep2();
+      if (Object.keys(e).length) { setStepErrors(e); return; }
+    }
+    setStepErrors({});
     setCurrentStep(step);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -120,15 +146,17 @@ export default function FreightQuoteCalculatorPage() {
                     <label className="font-label-caps text-xs tracking-widest uppercase text-on-surface-variant ml-2">Origin City/Port</label>
                     <div className="relative">
                       <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-tertiary w-5 h-5" />
-                      <input value={fields.origin} onChange={e => set("origin", e.target.value)} className="w-full h-14 pl-12 pr-6 rounded-lg bg-black/20 border border-white/10 focus:border-tertiary focus:ring-1 focus:ring-tertiary outline-none transition-all text-on-surface" placeholder="e.g. Shanghai, China" type="text" />
+                      <input value={fields.origin} onChange={e => { set("origin", e.target.value); setStepErrors(p => ({ ...p, origin: "" })); }} className={`w-full h-14 pl-12 pr-6 rounded-lg bg-black/20 border focus:ring-1 outline-none transition-all text-on-surface ${stepErrors.origin ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-white/10 focus:border-tertiary focus:ring-tertiary"}`} placeholder="e.g. Shanghai, China" type="text" />
                     </div>
+                    {stepErrors.origin && <p className="text-xs text-red-400 ml-2">{stepErrors.origin}</p>}
                   </div>
                   <div className="space-y-2">
                     <label className="font-label-caps text-xs tracking-widest uppercase text-on-surface-variant ml-2">Destination City/Port</label>
                     <div className="relative">
                       <Flag className="absolute left-4 top-1/2 -translate-y-1/2 text-tertiary w-5 h-5" />
-                      <input value={fields.destination} onChange={e => set("destination", e.target.value)} className="w-full h-14 pl-12 pr-6 rounded-lg bg-black/20 border border-white/10 focus:border-tertiary focus:ring-1 focus:ring-tertiary outline-none transition-all text-on-surface" placeholder="e.g. Los Angeles, USA" type="text" />
+                      <input value={fields.destination} onChange={e => { set("destination", e.target.value); setStepErrors(p => ({ ...p, destination: "" })); }} className={`w-full h-14 pl-12 pr-6 rounded-lg bg-black/20 border focus:ring-1 outline-none transition-all text-on-surface ${stepErrors.destination ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-white/10 focus:border-tertiary focus:ring-tertiary"}`} placeholder="e.g. Los Angeles, USA" type="text" />
                     </div>
+                    {stepErrors.destination && <p className="text-xs text-red-400 ml-2">{stepErrors.destination}</p>}
                   </div>
                 </div>
                 <div className="pt-6 flex justify-end">
@@ -154,7 +182,8 @@ export default function FreightQuoteCalculatorPage() {
                   </div>
                   <div className="space-y-2">
                     <label className="font-label-caps text-xs tracking-widest uppercase text-on-surface-variant ml-2">Weight (KG)</label>
-                    <input value={fields.weight || ""} onChange={e => set("weight", parseFloat(e.target.value) || 0)} className="w-full h-14 px-6 rounded-lg bg-black/20 border border-white/10 focus:border-tertiary focus:ring-1 focus:ring-tertiary outline-none transition-all text-on-surface" placeholder="0" type="number" />
+                    <input value={fields.weight || ""} onChange={e => { set("weight", parseFloat(e.target.value) || 0); setStepErrors(p => ({ ...p, weight: "" })); }} className={`w-full h-14 px-6 rounded-lg bg-black/20 border focus:ring-1 outline-none transition-all text-on-surface ${stepErrors.weight ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-white/10 focus:border-tertiary focus:ring-tertiary"}`} placeholder="0" type="number" />
+                    {stepErrors.weight && <p className="text-xs text-red-400">{stepErrors.weight}</p>}
                   </div>
                   <div className="space-y-2">
                     <label className="font-label-caps text-xs tracking-widest uppercase text-on-surface-variant ml-2">Volume (m³)</label>
