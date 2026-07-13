@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Handshake, Globe, TrendingUp, Shield, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
@@ -43,7 +44,37 @@ const BENEFITS = [
   "Joint case studies and press releases",
 ];
 
+const PARTNERSHIP_TYPES = ["Carrier Partner", "Technology Partner", "Compliance Partner", "Strategic Alliance", "Other"];
+
 export default function PartnersPage() {
+  const [form, setForm] = useState({ company: "", email: "", type: "", message: "" });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
+
+  const set = (key: string, val: string) => {
+    if (key === "company") val = val.replace(/[^a-zA-Z0-9\s&.\-]/g, "");
+    if (key === "message") val = val.replace(/[^a-zA-Z\s]/g, "");
+    setForm(p => ({ ...p, [key]: val }));
+    setErrors(p => ({ ...p, [key]: "" }));
+  };
+
+  const validate = () => {
+    const e: Record<string, string> = {};
+    if (!form.company.trim())  e.company = "Company name is required.";
+    if (!form.email.trim())    e.email   = "Email is required.";
+    else if (!/^[^\s@]+@[^\s@]+\.com$/i.test(form.email.trim())) e.email = "Email must contain @ and end with .com";
+    if (!form.type)            e.type    = "Please select a partnership type.";
+    if (form.message.trim() && form.message.trim().length < 10) e.message = "Message must be at least 10 characters.";
+    return e;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const errs = validate();
+    if (Object.keys(errs).length) { setErrors(errs); return; }
+    setSubmitted(true);
+  };
+
   return (
     <div className="bg-background text-on-surface overflow-x-hidden pt-20">
 
@@ -115,22 +146,58 @@ export default function PartnersPage() {
             viewport={{ once:true }} transition={{ duration:0.7 }}
             className="glass rounded-2xl p-8 space-y-5">
             <h3 className="text-xl font-bold text-on-surface">Partner Application</h3>
-            <div className="space-y-4">
-              {[{ label:"Company Name", ph:"e.g. Acme Logistics" },{ label:"Contact Email", ph:"you@company.com" },{ label:"Partnership Type", ph:"Select..." }].map(({ label, ph })=>(
-                <div key={label}>
-                  <label className="text-xs uppercase tracking-widest text-on-surface-variant mb-1 block">{label}</label>
-                  <input placeholder={ph} className="w-full px-4 py-2.5 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50" />
+            {submitted ? (
+              <motion.div initial={{ opacity:0, y:10 }} animate={{ opacity:1, y:0 }} className="flex flex-col items-center gap-4 py-10 text-center">
+                <div className="w-16 h-16 rounded-full bg-tertiary/10 border border-tertiary/30 flex items-center justify-center">
+                  <CheckCircle2 className="w-8 h-8 text-tertiary" />
                 </div>
-              ))}
+                <h4 className="text-lg font-bold text-on-surface">Application Submitted!</h4>
+                <p className="text-sm text-on-surface-variant">Thank you, <span className="text-white font-semibold">{form.company}</span>. We'll reach out to <span className="text-tertiary">{form.email}</span> shortly.</p>
+                <button onClick={() => { setForm({ company:"", email:"", type:"", message:"" }); setSubmitted(false); }}
+                  className="mt-2 px-5 py-2 rounded-lg bg-white/5 border border-white/10 text-sm text-on-surface-variant hover:bg-white/10 transition-colors">
+                  Submit Another
+                </button>
+              </motion.div>
+            ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Company Name */}
+              <div>
+                <label className="text-xs uppercase tracking-widest text-on-surface-variant mb-1 block">Company Name *</label>
+                <input value={form.company} onChange={e => set("company", e.target.value)} placeholder="e.g. Acme Logistics"
+                  className={`w-full px-4 py-2.5 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 ${errors.company ? "border-red-500" : "border-white/10"}`} />
+                {errors.company && <p className="text-xs text-red-400 mt-1">{errors.company}</p>}
+              </div>
+              {/* Contact Email */}
+              <div>
+                <label className="text-xs uppercase tracking-widest text-on-surface-variant mb-1 block">Contact Email *</label>
+                <input type="email" value={form.email} onChange={e => set("email", e.target.value)} placeholder="you@company.com"
+                  className={`w-full px-4 py-2.5 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 ${errors.email ? "border-red-500" : "border-white/10"}`} />
+                {errors.email && <p className="text-xs text-red-400 mt-1">{errors.email}</p>}
+              </div>
+              {/* Partnership Type */}
+              <div>
+                <label className="text-xs uppercase tracking-widest text-on-surface-variant mb-1 block">Partnership Type *</label>
+                <select value={form.type} onChange={e => set("type", e.target.value)}
+                  className={`w-full px-4 py-2.5 rounded-lg bg-surface-container border text-sm text-on-surface focus:outline-none focus:border-tertiary/50 ${errors.type ? "border-red-500" : "border-white/10"}`}>
+                  <option value="">Select...</option>
+                  {PARTNERSHIP_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                </select>
+                {errors.type && <p className="text-xs text-red-400 mt-1">{errors.type}</p>}
+              </div>
+              {/* Message */}
               <div>
                 <label className="text-xs uppercase tracking-widest text-on-surface-variant mb-1 block">Message</label>
-                <textarea rows={3} placeholder="Tell us about your company and how you'd like to partner..." className="w-full px-4 py-2.5 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 resize-none" />
+                <textarea rows={3} value={form.message} onChange={e => set("message", e.target.value)}
+                  placeholder="Tell us about your company and how you'd like to partner..."
+                  className={`w-full px-4 py-2.5 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 resize-none ${errors.message ? "border-red-500" : "border-white/10"}`} />
+                {errors.message && <p className="text-xs text-red-400 mt-1">{errors.message}</p>}
               </div>
-              <motion.button whileHover={{ scale:1.03, y:-2 }} whileTap={{ scale:0.97 }}
+              <motion.button type="submit" whileHover={{ scale:1.03, y:-2 }} whileTap={{ scale:0.97 }}
                 className="w-full py-3 rounded-xl bg-gradient-to-r from-[#1E88E5] to-[#00C2FF] text-white font-bold shadow-[0_0_25px_rgba(0,194,255,0.25)]">
                 Submit Application
               </motion.button>
-            </div>
+            </form>
+            )}
           </motion.div>
         </div>
       </section>
