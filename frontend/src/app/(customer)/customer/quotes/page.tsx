@@ -476,7 +476,7 @@ export default function RequestQuotesPage() {
       e.destination = "Destination must be different from origin";
     if (!form.mode)               e.mode        = "Please select a transport mode";
     if (!form.weight.trim())      e.weight      = "Please fill out this field";
-    else if (Number(form.weight) <= 0) e.weight = "Weight must be greater than 0";
+    else if (Number(form.weight) <= 50) e.weight = "Weight must be greater than 50 kg";
     else if (Number(form.weight) > 10000) e.weight = "Maximum weight allowed is 10000 kg (10 tons)";
     if (!form.date.trim())        e.date        = "Please fill out this field";
     else if (new Date(form.date) < new Date(new Date().toDateString())) e.date = "Shipment date cannot be in the past";
