@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const BACKEND = "https://ncl-nexacargologistics-3.onrender.com/api/v1";
+const BACKEND = process.env.BACKEND_API_URL || "http://127.0.0.1:8000/api/v1";
 
 async function handler(req: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   let path: string[];

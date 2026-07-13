@@ -29,6 +29,7 @@ from app.api import (
     reports,
     admin,
     reviews,
+    health,
 )
 
 api_router = APIRouter(prefix=settings.API_PREFIX)
@@ -61,6 +62,7 @@ for module in (
     reports,
     admin,
     reviews,
+    health,
 ):
     api_router.include_router(module.router)
 

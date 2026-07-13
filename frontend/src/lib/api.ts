@@ -11,7 +11,7 @@ import { supabase } from "./supabase";
 // On the server (SSR), call the backend directly.
 const baseURL = typeof window !== "undefined"
   ? "/api/proxy"
-  : (process.env.NEXT_PUBLIC_API_URL || "https://ncl-nexacargologistics-3.onrender.com/api/v1");
+  : (process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1");
 
 export const api = axios.create({
   baseURL,
