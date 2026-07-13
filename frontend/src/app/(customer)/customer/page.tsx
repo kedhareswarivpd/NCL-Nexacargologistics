@@ -60,7 +60,7 @@ export default function CustomerDashboardPage() {
   const [stats, setStats] = useState({ shipments: 0, unpaid: 0, tickets: 0, policies: 0 });
 
   useEffect(() => {
-    Promise.allSettled([
+    const load = () => Promise.allSettled([
       shipmentsApi.list(),
       financeApi.invoices(),
       supportApi.tickets(),
@@ -75,6 +75,9 @@ export default function CustomerDashboardPage() {
         policies: val(pol).length,
       });
     });
+
+    // Ping /health first to wake the Render service, then load data.
+    fetch("/api/proxy/health").catch(() => null).finally(load);
   }, []);
 
   const STATS = [

@@ -22,6 +22,7 @@ from app.models.notification import Notification, AuditLog
 from app.models.access import Role
 from app.models.expense import Expense
 from app.models.driver_task import DriverTask
+from app.models.review import Review
 
 __all__ = [
     "Profile",
@@ -52,4 +53,5 @@ __all__ = [
     "Role",
     "Expense",
     "DriverTask",
+    "Review",
 ]
