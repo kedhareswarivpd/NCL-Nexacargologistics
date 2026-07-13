@@ -623,7 +623,10 @@ export default function WorkflowSimulationPage() {
                       <input 
                         type="text" 
                         value={simForm.cargoType} 
-                        onChange={(e) => setSimForm({ ...simForm, cargoType: e.target.value })}
+                        onChange={(e) => {
+                          const v = e.target.value.replace(/[^a-zA-Z\s]/g, "");
+                          setSimForm({ ...simForm, cargoType: v });
+                        }}
                         className={inputCls} 
                         placeholder="e.g. Electronics"
                       />

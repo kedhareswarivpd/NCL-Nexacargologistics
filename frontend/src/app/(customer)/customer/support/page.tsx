@@ -148,7 +148,7 @@ export default function SupportTicketsPage() {
           <form noValidate onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="text-xs uppercase tracking-widest text-on-surface-variant">Subject</label>
-              <input value={form.subject} onChange={(e) => { setForm({ ...form, subject: e.target.value }); setErrors(p => ({ ...p, subject: "" })); }}
+              <input value={form.subject} onChange={(e) => { const v = e.target.value.replace(/[^a-zA-Z\s]/g, ""); setForm({ ...form, subject: v }); setErrors(p => ({ ...p, subject: "" })); }}
                 placeholder="Brief description of your issue"
                 className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 ${errors.subject ? "border-red-500" : "border-white/10"}`} />
               {errors.subject && <p className="text-xs text-error mt-1">{errors.subject}</p>}
@@ -177,7 +177,7 @@ export default function SupportTicketsPage() {
             </div>
             <div>
               <label className="text-xs uppercase tracking-widest text-on-surface-variant">Message</label>
-              <textarea value={form.message} onChange={(e) => { setForm({ ...form, message: e.target.value }); setErrors(p => ({ ...p, message: "" })); }} rows={4}
+              <textarea value={form.message} onChange={(e) => { const v = e.target.value.replace(/[^a-zA-Z\s]/g, ""); setForm({ ...form, message: v }); setErrors(p => ({ ...p, message: "" })); }} rows={4}
                 placeholder="Describe your issue in detail…"
                 className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 resize-none ${errors.message ? "border-red-500" : "border-white/10"}`} />
               {errors.message && <p className="text-xs text-error mt-1">{errors.message}</p>}

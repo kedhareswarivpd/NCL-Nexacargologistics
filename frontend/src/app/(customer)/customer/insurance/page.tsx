@@ -8,6 +8,8 @@ import { insuranceApi } from "@/lib/services";
 import { apiError } from "@/lib/api";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+// SHP-12345  or  12345  (exactly 5 digits)
+const SHIPMENT_ID_RE = /^(SHP-\d{5}|\d{5})$/i;
 const POLICY_STATUS_STYLES: Record<string, string> = {
   requested: "text-amber-400 bg-amber-400/10",
   approved: "text-tertiary bg-tertiary/10",
@@ -69,9 +71,13 @@ export default function CargoInsurancePage() {
 
   const validate = () => {
     const e: Record<string, string> = {};
-    if (!form.shipment.trim()) e.shipment = "Shipment ID is required.";
+    const sid = form.shipment.trim();
+    if (!sid) e.shipment = "Shipment ID is required.";
+    else if (!SHIPMENT_ID_RE.test(sid)) e.shipment = "Use format SHP-12345 or a 5-digit number.";
+    const val = Number(form.value);
     if (!form.value.trim()) e.value = "Cargo value is required.";
-    else if (isNaN(Number(form.value)) || Number(form.value) <= 0) e.value = "Enter a valid positive amount.";
+    else if (isNaN(val) || val <= 0) e.value = "Enter a valid positive amount.";
+    else if (val > 500000) e.value = "Maximum insurable value is $500,000.";
     return e;
   };
 
@@ -181,15 +187,31 @@ export default function CargoInsurancePage() {
           <form noValidate onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="text-xs uppercase tracking-widest text-on-surface-variant">Shipment ID</label>
-              <input value={form.shipment} onChange={(e) => { setForm({ ...form, shipment: e.target.value }); setErrors(p => ({ ...p, shipment: "" })); }}
-                placeholder="e.g. NX-8842-HK"
+              <input
+                value={form.shipment}
+                onChange={(e) => {
+                  // allow only alphanumeric + hyphen, max 9 chars (SHP-12345)
+                  const v = e.target.value.replace(/[^a-zA-Z0-9-]/g, "").slice(0, 9);
+                  setForm({ ...form, shipment: v });
+                  setErrors(p => ({ ...p, shipment: "" }));
+                }}
+                placeholder="e.g. SHP-12345 or 12345"
                 className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 ${errors.shipment ? "border-red-500" : "border-white/10"}`} />
               {errors.shipment && <p className="text-xs text-error mt-1">{errors.shipment}</p>}
             </div>
             <div>
               <label className="text-xs uppercase tracking-widest text-on-surface-variant">Declared Cargo Value (USD)</label>
-              <input type="number" value={form.value} onChange={(e) => { setForm({ ...form, value: e.target.value }); setErrors(p => ({ ...p, value: "" })); }}
-                placeholder="e.g. 80000"
+              <input
+                type="number" min="1" max="500000" step="1"
+                value={form.value}
+                onChange={(e) => {
+                  // strip decimals, cap at 500000
+                  const raw = e.target.value.replace(/[^0-9]/g, "");
+                  const capped = raw === "" ? "" : String(Math.min(Number(raw), 500000));
+                  setForm({ ...form, value: capped });
+                  setErrors(p => ({ ...p, value: "" }));
+                }}
+                placeholder="e.g. 80000 (max 500,000)"
                 className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 ${errors.value ? "border-red-500" : "border-white/10"}`} />
               {errors.value && <p className="text-xs text-error mt-1">{errors.value}</p>}
             </div>

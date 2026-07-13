@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Briefcase, MapPin, Clock, ArrowRight, Users, TrendingUp, Heart, Globe } from "lucide-react";
 import Link from "next/link";
@@ -46,15 +46,18 @@ const DEPT_COLORS: Record<string, string> = {
 
 export default function CareersPage() {
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const formRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, []);
 
   return (
     <div className="bg-background text-on-surface overflow-x-hidden pt-20">
 
-      {/* Application Modal */}
-      <JobApplicationModal
-        job={selectedJob}
-        onClose={() => setSelectedJob(null)}
-      />
+
 
       {/* Hero */}
       <section className="relative py-24 px-6 max-w-7xl mx-auto text-center overflow-hidden">
@@ -74,12 +77,11 @@ export default function CareersPage() {
             We're a team of engineers, operators, and innovators reimagining how the world moves goods. Join us and make a real impact on global trade.
           </motion.p>
           <motion.div variants={fadeUp} className="flex flex-wrap gap-4 justify-center">
-            <a href="#openings">
-              <motion.button whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.97 }}
-                className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-[#1E88E5] to-[#00C2FF] text-white font-bold text-base shadow-[0_0_30px_rgba(0,194,255,0.3)] flex items-center gap-2">
-                View Open Roles <ArrowRight className="w-4 h-4" />
-              </motion.button>
-            </a>
+            <motion.button whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.97 }}
+              onClick={() => document.getElementById("openings")?.scrollIntoView({ behavior: "smooth" })}
+              className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-[#1E88E5] to-[#00C2FF] text-white font-bold text-base shadow-[0_0_30px_rgba(0,194,255,0.3)] flex items-center gap-2">
+              View Open Roles <ArrowRight className="w-4 h-4" />
+            </motion.button>
           </motion.div>
         </motion.div>
       </section>
@@ -111,8 +113,9 @@ export default function CareersPage() {
           <div className="space-y-4">
             {JOBS.map((job, i) => (
               <motion.div key={job.title} variants={fadeUp} transition={{ delay: i * 0.05 }}
-                whileHover={{ x: 6, boxShadow: "0 0 24px rgba(0,194,255,0.08)" }}
-                className="glass rounded-xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all">
+                animate={selectedIndex === i ? { y: -12, boxShadow: "0 0 40px rgba(0,194,255,0.25)" } : { y: 0 }}
+                whileHover={selectedIndex !== i ? { x: 6, boxShadow: "0 0 24px rgba(0,194,255,0.08)" } : {}}
+                className={`glass rounded-xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all ${selectedIndex === i ? "border border-[#00C2FF]/40" : ""}`}>
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-lg bg-tertiary/10 flex items-center justify-center shrink-0 mt-0.5">
                     <Briefcase className="w-5 h-5 text-tertiary" />
@@ -131,7 +134,11 @@ export default function CareersPage() {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.97 }}
-                    onClick={() => setSelectedJob(job)}
+                    onClick={() => {
+                      setSelectedJob(job);
+                      setSelectedIndex(i);
+                      setTimeout(() => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
+                    }}
                     className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-tertiary/15 border border-tertiary/30 text-tertiary text-sm font-semibold hover:bg-tertiary/25 transition-colors"
                   >
                     Apply <ArrowRight className="w-3.5 h-3.5" />
@@ -142,6 +149,14 @@ export default function CareersPage() {
           </div>
         </motion.div>
       </section>
+
+      {/* Inline Application Form */}
+      <div ref={formRef}>
+        <JobApplicationModal
+          job={selectedJob}
+          onClose={() => { setSelectedJob(null); setSelectedIndex(null); }}
+        />
+      </div>
 
       {/* CTA */}
       <motion.section initial={{ opacity: 0, y: 60 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}

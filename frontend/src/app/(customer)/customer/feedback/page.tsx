@@ -107,7 +107,7 @@ export default function FeedbackPage() {
             <label className="block text-sm font-semibold text-on-surface mb-2">Title (Optional)</label>
             <input
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => setTitle(e.target.value.replace(/[^a-zA-Z\s]/g, ""))}
               placeholder="e.g., Great service!"
               className="w-full px-4 py-3 rounded-xl bg-surface-container border border-white/10 text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-tertiary/50"
             />
@@ -118,7 +118,7 @@ export default function FeedbackPage() {
             <label className="block text-sm font-semibold text-on-surface mb-2">Your Role/Position (Optional)</label>
             <input
               value={customerRole}
-              onChange={(e) => setCustomerRole(e.target.value)}
+              onChange={(e) => setCustomerRole(e.target.value.replace(/[^a-zA-Z\s]/g, ""))}
               placeholder="e.g., VP Supply Chain"
               className="w-full px-4 py-3 rounded-xl bg-surface-container border border-white/10 text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-tertiary/50"
             />
@@ -129,7 +129,7 @@ export default function FeedbackPage() {
             <label className="block text-sm font-semibold text-on-surface mb-2">Your Feedback</label>
             <textarea
               value={comment}
-              onChange={(e) => setComment(e.target.value)}
+              onChange={(e) => setComment(e.target.value.replace(/[^a-zA-Z\s]/g, ""))}
               placeholder="Tell us about your experience with NexaCargo..."
               rows={6}
               className="w-full px-4 py-3 rounded-xl bg-surface-container border border-white/10 text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-tertiary/50 resize-none"

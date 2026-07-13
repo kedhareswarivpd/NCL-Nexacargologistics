@@ -48,7 +48,6 @@ export function JobApplicationModal({ job, onClose }: Props) {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
 
   // Reset state when job changes
   useEffect(() => {
@@ -58,12 +57,7 @@ export function JobApplicationModal({ job, onClose }: Props) {
     setSubmitted(false);
   }, [job]);
 
-  // Close on overlay click
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === overlayRef.current) onClose();
-  };
 
-  // Close on Escape
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
@@ -73,16 +67,19 @@ export function JobApplicationModal({ job, onClose }: Props) {
   const set = (key: keyof FormState) => (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setForm((f) => ({ ...f, [key]: e.target.value }));
+    let val = e.target.value;
+    if (key === "full_name") val = val.replace(/[^a-zA-Z\s]/g, "");
+    setForm((f) => ({ ...f, [key]: val }));
     setErrors((err) => ({ ...err, [key]: "" }));
   };
 
   const validate = (): boolean => {
     const e: Partial<FormState> = {};
     if (!form.full_name.trim())          e.full_name = "Full name is required.";
-    if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
-      e.email = "A valid email is required.";
-    if (!form.phone.trim())              e.phone = "Phone number is required.";
+    if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.com$/i.test(form.email))
+      e.email = "Email must contain @ and end with .com";
+    if (!form.phone.trim() || !/^[+]?[\d\s\-().]{7,15}$/.test(form.phone))
+      e.phone = "Enter a valid phone number.";
     if (!form.years_of_experience)       e.years_of_experience = "Required.";
     if (!form.cover_letter.trim())       e.cover_letter = "Please add a short cover letter.";
     setErrors(e);
@@ -154,27 +151,20 @@ export function JobApplicationModal({ job, onClose }: Props) {
   return (
     <AnimatePresence>
       <motion.div
-        ref={overlayRef}
-        onClick={handleOverlayClick}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+        initial={{ opacity: 0, y: 60 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 60 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="w-full px-6 py-12 max-w-7xl mx-auto"
       >
-        <motion.div
-          initial={{ opacity: 0, scale: 0.94, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.94, y: 20 }}
-          transition={{ duration: 0.25, ease: "easeOut" }}
-          className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl border border-white/10 bg-[#0d2040] shadow-2xl"
-          style={{ boxShadow: "0 0 60px rgba(0,194,255,0.12)" }}
+        <div
+          className="relative w-full rounded-2xl border border-[#00C2FF]/20 bg-[#0d2040] shadow-2xl overflow-hidden"
+          style={{ boxShadow: "0 0 80px rgba(0,194,255,0.1)" }}
         >
           {/* Header */}
-          <div className="sticky top-0 z-10 flex items-start justify-between gap-4 p-6 pb-4 border-b border-white/5 bg-[#0d2040]">
+          <div className="flex items-start justify-between gap-4 p-6 pb-4 border-b border-white/5">
             <div>
-              <p className="text-xs font-bold text-[#00C2FF] uppercase tracking-widest mb-1">
-                Apply Now
-              </p>
+              <p className="text-xs font-bold text-[#00C2FF] uppercase tracking-widest mb-1">Apply Now</p>
               <h2 className="text-xl font-bold text-white leading-tight">{job.title}</h2>
               <div className="flex flex-wrap gap-2 mt-2">
                 <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-white/5 text-white/60">{job.dept}</span>
@@ -318,7 +308,7 @@ export function JobApplicationModal({ job, onClose }: Props) {
               </button>
             </form>
           )}
-        </motion.div>
+        </div>
       </motion.div>
     </AnimatePresence>
   );
