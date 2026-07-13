@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const BACKEND = process.env.BACKEND_API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "https://ncl-nexacargologistics-3.onrender.com/api/v1";
+const BACKEND = "https://ncl-nexacargologistics-3.onrender.com/api/v1";
 
 async function handler(req: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
-  const { path } = await params;
+  let path: string[];
+  try {
+    ({ path } = await params);
+  } catch {
+    return NextResponse.json({ detail: "Invalid route params" }, { status: 400 });
+  }
+
   const url = `${BACKEND}/${path.join("/")}${req.nextUrl.search}`;
 
   const headers: Record<string, string> = {};
