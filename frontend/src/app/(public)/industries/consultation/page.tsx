@@ -19,13 +19,17 @@ export default function ConsultationPage() {
   const validate = () => {
     const e: Record<string, string> = {};
     if (!form.name.trim())     e.name     = "Please fill out this field";
+    else if (form.name.trim().length < 2) e.name = "Name must be at least 2 characters.";
     if (!form.email.trim())    e.email    = "Please fill out this field";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) e.email = "Enter a valid email address.";
+    if (form.phone.trim() && !/^\+?[\d\s\-().]{7,20}$/.test(form.phone.trim())) e.phone = "Enter a valid phone number.";
     if (!form.company.trim())  e.company  = "Please fill out this field";
+    else if (form.company.trim().length < 2) e.company = "Company name must be at least 2 characters.";
     if (!form.industry)        e.industry = "Please select an industry";
     if (!form.date)            e.date     = "Please select a date";
     else if (new Date(form.date) < new Date(new Date().toDateString())) e.date = "Date must be today or in the future.";
     if (!form.time)            e.time     = "Please select a time";
+    if (form.message.trim() && form.message.trim().length < 10) e.message = "Message must be at least 10 characters.";
     return e;
   };
 
@@ -108,7 +112,8 @@ export default function ConsultationPage() {
               <div>
                 <label className="text-xs uppercase tracking-widest text-blue-200/60 flex items-center gap-1.5 mb-1"><Phone className="w-3 h-3" /> Phone</label>
                 <input value={form.phone} onChange={e => set("phone", e.target.value)} placeholder="+1 234 567 8900"
-                  className="w-full px-3 py-2.5 rounded-lg bg-[#0d2545] border border-white/10 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#00C2FF]/50" />
+                  className={`w-full px-3 py-2.5 rounded-lg bg-[#0d2545] border text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#00C2FF]/50 ${errors.phone ? "border-red-500" : "border-white/10"}`} />
+                {errors.phone && <p className="text-xs text-red-400 mt-1">{errors.phone}</p>}
               </div>
               {/* Company */}
               <div>
@@ -154,7 +159,8 @@ export default function ConsultationPage() {
               <label className="text-xs uppercase tracking-widest text-blue-200/60 mb-1 block">Tell us about your logistics challenge</label>
               <textarea value={form.message} onChange={e => set("message", e.target.value)} rows={3}
                 placeholder="Describe your current supply chain pain points, volumes, routes…"
-                className="w-full px-3 py-2.5 rounded-lg bg-[#0d2545] border border-white/10 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#00C2FF]/50 resize-none" />
+                className={`w-full px-3 py-2.5 rounded-lg bg-[#0d2545] border text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#00C2FF]/50 resize-none ${errors.message ? "border-red-500" : "border-white/10"}`} />
+              {errors.message && <p className="text-xs text-red-400 mt-1">{errors.message}</p>}
             </div>
 
             <button type="submit" className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-gradient-to-r from-[#1E88E5] to-[#00C2FF] text-white font-bold text-sm hover:opacity-90 transition-opacity shadow-[0_0_24px_rgba(0,194,255,0.3)]">
