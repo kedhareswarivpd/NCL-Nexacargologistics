@@ -1,12 +1,13 @@
 import logging
 
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
 from fastapi.responses import Response
 from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings, is_origin_allowed
-from app.core.database import engine
+from app.core.database import engine, get_db
 from app.api import api_router
 from app.middleware.logging import LoggingMiddleware
 
@@ -16,13 +17,17 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Warm up the DB connection pool on startup so the first request doesn't fail.
-    try:
-        async with engine.connect() as conn:
-            await conn.execute(text("SELECT 1"))
-        logger.info("Database connection pool warmed up.")
-    except Exception as exc:
-        logger.warning("DB warm-up failed (non-fatal): %s", exc)
+    import asyncio
+    for attempt in range(5):
+        try:
+            async with engine.connect() as conn:
+                await conn.execute(text("SELECT 1"))
+            logger.info("Database connection pool warmed up.")
+            break
+        except Exception as exc:
+            logger.warning("DB warm-up attempt %d failed: %s", attempt + 1, exc)
+            if attempt < 4:
+                await asyncio.sleep(2 ** attempt)
     yield
 
 
@@ -65,7 +70,8 @@ app.include_router(api_router)
 
 
 @app.get("/health")
-async def health():
+async def health(db: AsyncSession = Depends(get_db)):
+    await db.execute(text("SELECT 1"))
     return {"status": "ok", "service": settings.APP_NAME, "version": settings.VERSION}
 
 

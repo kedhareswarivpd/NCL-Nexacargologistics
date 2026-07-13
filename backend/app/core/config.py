@@ -45,7 +45,7 @@ CORS_ORIGIN_PATTERNS: list[re.Pattern] = [
     re.compile(r"^http://localhost:\d+$"),
     re.compile(r"^http://127\.0\.0\.1:\d+$"),
     re.compile(r"^https://.*\.vercel\.app$"),
-    re.compile(r"^https://ncl-nexacargologistics-2\.onrender\.com$"),
+    re.compile(r"^https://ncl-nexacargologistics-3\.onrender\.com$"),
 ]
 
 
