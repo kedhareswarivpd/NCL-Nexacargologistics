@@ -272,18 +272,101 @@ const INSURANCE_PLANS = [
 ];
 
 const POPULAR_LOCATIONS = [
-  { name: "Singapore Port, SG", value: "Singapore Port, SG" },
-  { name: "Rotterdam Gateway, NL", value: "Rotterdam Gateway, NL" },
-  { name: "Shanghai Port, CN", value: "Shanghai Port, CN" },
-  { name: "Tokyo Port, JP", value: "Tokyo Port, JP" },
-  { name: "London Gateway, UK", value: "London Gateway, UK" },
-  { name: "New York Port, US", value: "New York Port, US" },
-  { name: "Sydney Port, AU", value: "Sydney Port, AU" },
-  { name: "Mumbai Port, IN", value: "Mumbai Port, IN" },
-  { name: "Hyderabad, IN", value: "Hyderabad, IN" },
-  { name: "Kurnool, IN", value: "Kurnool, IN" },
-  { name: "Zurich, CH (Landlocked)", value: "Zurich, CH" },
-  { name: "Vienna, AT (Landlocked)", value: "Vienna, AT" }
+  // Asia
+  { name: "Shanghai, CN", value: "Shanghai" }, { name: "Beijing, CN", value: "Beijing" },
+  { name: "Shenzhen, CN", value: "Shenzhen" }, { name: "Guangzhou, CN", value: "Guangzhou" },
+  { name: "Hong Kong, CN", value: "Hong Kong" }, { name: "Qingdao, CN", value: "Qingdao" },
+  { name: "Tianjin, CN", value: "Tianjin" }, { name: "Tokyo, JP", value: "Tokyo" },
+  { name: "Osaka, JP", value: "Osaka" }, { name: "Yokohama, JP", value: "Yokohama" },
+  { name: "Nagoya, JP", value: "Nagoya" }, { name: "Kobe, JP", value: "Kobe" },
+  { name: "Seoul, KR", value: "Seoul" }, { name: "Busan, KR", value: "Busan" },
+  { name: "Incheon, KR", value: "Incheon" }, { name: "Singapore, SG", value: "Singapore" },
+  { name: "Kuala Lumpur, MY", value: "Kuala Lumpur" }, { name: "Penang, MY", value: "Penang" },
+  { name: "Jakarta, ID", value: "Jakarta" }, { name: "Surabaya, ID", value: "Surabaya" },
+  { name: "Bangkok, TH", value: "Bangkok" }, { name: "Chiang Mai, TH", value: "Chiang Mai" },
+  { name: "Ho Chi Minh, VN", value: "Ho Chi Minh" }, { name: "Hanoi, VN", value: "Hanoi" },
+  { name: "Da Nang, VN", value: "Da Nang" }, { name: "Manila, PH", value: "Manila" },
+  { name: "Cebu, PH", value: "Cebu" }, { name: "Taipei, TW", value: "Taipei" },
+  { name: "Yangon, MM", value: "Yangon" }, { name: "Phnom Penh, KH", value: "Phnom Penh" },
+  { name: "Mumbai, IN", value: "Mumbai" }, { name: "Delhi, IN", value: "Delhi" },
+  { name: "Bangalore, IN", value: "Bangalore" }, { name: "Chennai, IN", value: "Chennai" },
+  { name: "Kolkata, IN", value: "Kolkata" }, { name: "Hyderabad, IN", value: "Hyderabad" },
+  { name: "Pune, IN", value: "Pune" }, { name: "Ahmedabad, IN", value: "Ahmedabad" },
+  { name: "Kurnool, IN", value: "Kurnool" }, { name: "Karachi, PK", value: "Karachi" },
+  { name: "Lahore, PK", value: "Lahore" }, { name: "Islamabad, PK", value: "Islamabad" },
+  { name: "Dhaka, BD", value: "Dhaka" }, { name: "Chittagong, BD", value: "Chittagong" },
+  { name: "Colombo, LK", value: "Colombo" }, { name: "Kathmandu, NP", value: "Kathmandu" },
+  { name: "Ulaanbaatar, MN", value: "Ulaanbaatar" }, { name: "Tashkent, UZ", value: "Tashkent" },
+  { name: "Almaty, KZ", value: "Almaty" }, { name: "Kabul, AF", value: "Kabul" },
+  // Middle East
+  { name: "Dubai, AE", value: "Dubai" }, { name: "Abu Dhabi, AE", value: "Abu Dhabi" },
+  { name: "Jebel Ali, AE", value: "Jebel Ali" }, { name: "Riyadh, SA", value: "Riyadh" },
+  { name: "Jeddah, SA", value: "Jeddah" }, { name: "Dammam, SA", value: "Dammam" },
+  { name: "Doha, QA", value: "Doha" }, { name: "Kuwait City, KW", value: "Kuwait City" },
+  { name: "Muscat, OM", value: "Muscat" }, { name: "Salalah, OM", value: "Salalah" },
+  { name: "Manama, BH", value: "Manama" }, { name: "Baghdad, IQ", value: "Baghdad" },
+  { name: "Basra, IQ", value: "Basra" }, { name: "Tehran, IR", value: "Tehran" },
+  { name: "Istanbul, TR", value: "Istanbul" }, { name: "Beirut, LB", value: "Beirut" },
+  { name: "Amman, JO", value: "Amman" }, { name: "Tel Aviv, IL", value: "Tel Aviv" },
+  { name: "Cairo, EG", value: "Cairo" }, { name: "Alexandria, EG", value: "Alexandria" },
+  { name: "Damascus, SY", value: "Damascus" },
+  // Europe
+  { name: "London, UK", value: "London" }, { name: "Manchester, UK", value: "Manchester" },
+  { name: "Birmingham, UK", value: "Birmingham" }, { name: "Glasgow, UK", value: "Glasgow" },
+  { name: "Hamburg, DE", value: "Hamburg" }, { name: "Frankfurt, DE", value: "Frankfurt" },
+  { name: "Berlin, DE", value: "Berlin" }, { name: "Munich, DE", value: "Munich" },
+  { name: "Paris, FR", value: "Paris" }, { name: "Lyon, FR", value: "Lyon" },
+  { name: "Marseille, FR", value: "Marseille" }, { name: "Rotterdam, NL", value: "Rotterdam" },
+  { name: "Amsterdam, NL", value: "Amsterdam" }, { name: "Antwerp, BE", value: "Antwerp" },
+  { name: "Brussels, BE", value: "Brussels" }, { name: "Madrid, ES", value: "Madrid" },
+  { name: "Barcelona, ES", value: "Barcelona" }, { name: "Valencia, ES", value: "Valencia" },
+  { name: "Rome, IT", value: "Rome" }, { name: "Milan, IT", value: "Milan" },
+  { name: "Genoa, IT", value: "Genoa" }, { name: "Naples, IT", value: "Naples" },
+  { name: "Warsaw, PL", value: "Warsaw" }, { name: "Gdansk, PL", value: "Gdansk" },
+  { name: "Stockholm, SE", value: "Stockholm" }, { name: "Gothenburg, SE", value: "Gothenburg" },
+  { name: "Oslo, NO", value: "Oslo" }, { name: "Copenhagen, DK", value: "Copenhagen" },
+  { name: "Helsinki, FI", value: "Helsinki" }, { name: "Zurich, CH", value: "Zurich" },
+  { name: "Geneva, CH", value: "Geneva" }, { name: "Vienna, AT", value: "Vienna" },
+  { name: "Lisbon, PT", value: "Lisbon" }, { name: "Porto, PT", value: "Porto" },
+  { name: "Athens, GR", value: "Athens" }, { name: "Piraeus, GR", value: "Piraeus" },
+  { name: "Bucharest, RO", value: "Bucharest" }, { name: "Kyiv, UA", value: "Kyiv" },
+  { name: "Moscow, RU", value: "Moscow" }, { name: "St Petersburg, RU", value: "St Petersburg" },
+  { name: "Dublin, IE", value: "Dublin" }, { name: "Budapest, HU", value: "Budapest" },
+  { name: "Prague, CZ", value: "Prague" }, { name: "Bratislava, SK", value: "Bratislava" },
+  // North America
+  { name: "New York, US", value: "New York" }, { name: "Los Angeles, US", value: "Los Angeles" },
+  { name: "Chicago, US", value: "Chicago" }, { name: "Houston, US", value: "Houston" },
+  { name: "Miami, US", value: "Miami" }, { name: "Seattle, US", value: "Seattle" },
+  { name: "Boston, US", value: "Boston" }, { name: "Dallas, US", value: "Dallas" },
+  { name: "Atlanta, US", value: "Atlanta" }, { name: "San Francisco, US", value: "San Francisco" },
+  { name: "Long Beach, US", value: "Long Beach" }, { name: "Savannah, US", value: "Savannah" },
+  { name: "Toronto, CA", value: "Toronto" }, { name: "Vancouver, CA", value: "Vancouver" },
+  { name: "Montreal, CA", value: "Montreal" }, { name: "Halifax, CA", value: "Halifax" },
+  { name: "Mexico City, MX", value: "Mexico City" }, { name: "Veracruz, MX", value: "Veracruz" },
+  { name: "Panama City, PA", value: "Panama City" },
+  // South America
+  { name: "Sao Paulo, BR", value: "Sao Paulo" }, { name: "Rio de Janeiro, BR", value: "Rio de Janeiro" },
+  { name: "Santos, BR", value: "Santos" }, { name: "Buenos Aires, AR", value: "Buenos Aires" },
+  { name: "Santiago, CL", value: "Santiago" }, { name: "Bogota, CO", value: "Bogota" },
+  { name: "Cartagena, CO", value: "Cartagena" }, { name: "Lima, PE", value: "Lima" },
+  { name: "Guayaquil, EC", value: "Guayaquil" }, { name: "Montevideo, UY", value: "Montevideo" },
+  { name: "Caracas, VE", value: "Caracas" },
+  // Africa
+  { name: "Lagos, NG", value: "Lagos" }, { name: "Abuja, NG", value: "Abuja" },
+  { name: "Nairobi, KE", value: "Nairobi" }, { name: "Mombasa, KE", value: "Mombasa" },
+  { name: "Johannesburg, ZA", value: "Johannesburg" }, { name: "Cape Town, ZA", value: "Cape Town" },
+  { name: "Durban, ZA", value: "Durban" }, { name: "Casablanca, MA", value: "Casablanca" },
+  { name: "Accra, GH", value: "Accra" }, { name: "Dar es Salaam, TZ", value: "Dar es Salaam" },
+  { name: "Addis Ababa, ET", value: "Addis Ababa" }, { name: "Dakar, SN", value: "Dakar" },
+  { name: "Abidjan, CI", value: "Abidjan" }, { name: "Luanda, AO", value: "Luanda" },
+  { name: "Algiers, DZ", value: "Algiers" }, { name: "Tunis, TN", value: "Tunis" },
+  { name: "Kampala, UG", value: "Kampala" }, { name: "Douala, CM", value: "Douala" },
+  // Oceania
+  { name: "Sydney, AU", value: "Sydney" }, { name: "Melbourne, AU", value: "Melbourne" },
+  { name: "Brisbane, AU", value: "Brisbane" }, { name: "Perth, AU", value: "Perth" },
+  { name: "Adelaide, AU", value: "Adelaide" }, { name: "Auckland, NZ", value: "Auckland" },
+  { name: "Wellington, NZ", value: "Wellington" }, { name: "Christchurch, NZ", value: "Christchurch" },
+  { name: "Suva, FJ", value: "Suva" },
 ];
 
 export default function RequestQuotesPage() {
@@ -307,12 +390,8 @@ export default function RequestQuotesPage() {
 
   const routeModes = analyseRoute(form.origin, form.destination);
 
-  const filteredOriginLocs = POPULAR_LOCATIONS.filter(loc =>
-    loc.name.toLowerCase().includes(form.origin.toLowerCase())
-  );
-  const filteredDestLocs = POPULAR_LOCATIONS.filter(loc =>
-    loc.name.toLowerCase().includes(form.destination.toLowerCase())
-  );
+  const filteredOriginLocs = form.origin.trim().length > 0 ? POPULAR_LOCATIONS.filter(loc => loc.name.toLowerCase().includes(form.origin.toLowerCase())) : [];
+  const filteredDestLocs = form.destination.trim().length > 0 ? POPULAR_LOCATIONS.filter(loc => loc.name.toLowerCase().includes(form.destination.toLowerCase())) : [];
 
   // Keep track of previous values for intelligent defaults
   const prevTypeRef = useRef(form.type);
@@ -490,7 +569,8 @@ export default function RequestQuotesPage() {
               <input
                 value={form.origin}
                 onChange={(e) => {
-                  updateForm({ origin: e.target.value });
+                  const val = e.target.value.replace(/[^a-zA-Z\s,./()-]/g, "");
+                  updateForm({ origin: val });
                   setErrors(p => ({ ...p, origin: "" }));
                   setShowOriginSuggestions(true);
                 }}
@@ -499,9 +579,9 @@ export default function RequestQuotesPage() {
                 placeholder="e.g. Shanghai Port, CN"
                 className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 ${errors.origin ? "border-red-500" : "border-white/10"}`}
               />
-              {showOriginSuggestions && filteredOriginLocs.length > 0 && (
+              {showOriginSuggestions && form.origin.trim().length > 0 && (
                 <div className="absolute left-0 right-0 mt-1 max-h-60 overflow-y-auto rounded-lg border border-white/10 bg-[#16223f] shadow-xl z-50 divide-y divide-white/5">
-                  {filteredOriginLocs.map((loc) => (
+                  {filteredOriginLocs.length > 0 ? filteredOriginLocs.map((loc) => (
                     <div
                       key={loc.name}
                       onMouseDown={(e) => {
@@ -514,7 +594,7 @@ export default function RequestQuotesPage() {
                     >
                       {loc.name}
                     </div>
-                  ))}
+                  )) : (<div className="px-3 py-3 text-xs text-on-surface-variant/60 italic">No city available</div>)}
                 </div>
               )}
               {errors.origin && <p className="text-xs text-red-400 mt-1">{errors.origin}</p>}
@@ -524,7 +604,8 @@ export default function RequestQuotesPage() {
               <input
                 value={form.destination}
                 onChange={(e) => {
-                  updateForm({ destination: e.target.value });
+                  const val = e.target.value.replace(/[^a-zA-Z\s,./()-]/g, "");
+                  updateForm({ destination: val });
                   setErrors(p => ({ ...p, destination: "" }));
                   setShowDestSuggestions(true);
                 }}
@@ -533,9 +614,9 @@ export default function RequestQuotesPage() {
                 placeholder="e.g. Rotterdam Gateway, NL"
                 className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 ${errors.destination ? "border-red-500" : "border-white/10"}`}
               />
-              {showDestSuggestions && filteredDestLocs.length > 0 && (
+              {showDestSuggestions && form.destination.trim().length > 0 && (
                 <div className="absolute left-0 right-0 mt-1 max-h-60 overflow-y-auto rounded-lg border border-white/10 bg-[#16223f] shadow-xl z-50 divide-y divide-white/5">
-                  {filteredDestLocs.map((loc) => (
+                  {filteredDestLocs.length > 0 ? filteredDestLocs.map((loc) => (
                     <div
                       key={loc.name}
                       onMouseDown={(e) => {
@@ -548,7 +629,7 @@ export default function RequestQuotesPage() {
                     >
                       {loc.name}
                     </div>
-                  ))}
+                  )) : (<div className="px-3 py-3 text-xs text-on-surface-variant/60 italic">No city available</div>)}
                 </div>
               )}
               {errors.destination && <p className="text-xs text-red-400 mt-1">{errors.destination}</p>}
@@ -807,3 +888,8 @@ export default function RequestQuotesPage() {
     </div>
   );
 }
+
+
+
+
+

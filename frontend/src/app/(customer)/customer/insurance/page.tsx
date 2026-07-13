@@ -4,12 +4,10 @@ import { useState, useEffect } from "react";
 import { Shield, CheckCircle2, Send, FileText, ShieldCheck, ShieldAlert, ShieldX, ArrowLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
-import { insuranceApi } from "@/lib/services";
+import { insuranceApi, shipmentsApi } from "@/lib/services";
 import { apiError } from "@/lib/api";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-// SHP-12345  or  12345  (exactly 5 digits)
-const SHIPMENT_ID_RE = /^(SHP-\d{5}|\d{5})$/i;
 const POLICY_STATUS_STYLES: Record<string, string> = {
   requested: "text-amber-400 bg-amber-400/10",
   approved: "text-tertiary bg-tertiary/10",
@@ -59,12 +57,14 @@ export default function CargoInsurancePage() {
   const [form, setForm] = useState({ shipment: "", value: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [policies, setPolicies] = useState<any[]>([]);
+  const [shipments, setShipments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
   async function load() {
     setLoading(true);
     try { setPolicies((await insuranceApi.policies()) ?? []); } catch { setPolicies([]); }
+    try { setShipments((await shipmentsApi.list()) ?? []); } catch { setShipments([]); }
     setLoading(false);
   }
   useEffect(() => { load(); }, []);
@@ -72,8 +72,7 @@ export default function CargoInsurancePage() {
   const validate = () => {
     const e: Record<string, string> = {};
     const sid = form.shipment.trim();
-    if (!sid) e.shipment = "Shipment ID is required.";
-    else if (!SHIPMENT_ID_RE.test(sid)) e.shipment = "Use format SHP-12345 or a 5-digit number.";
+    if (!sid) e.shipment = "Please select a shipment.";
     const val = Number(form.value);
     if (!form.value.trim()) e.value = "Cargo value is required.";
     else if (isNaN(val) || val <= 0) e.value = "Enter a valid positive amount.";
@@ -90,10 +89,9 @@ export default function CargoInsurancePage() {
     const ref = form.shipment.trim();
     try {
       await insuranceApi.request({
-        // Only send a real UUID as shipment_id; otherwise keep the reference in notes.
-        shipment_id: UUID_RE.test(ref) ? ref : undefined,
+        shipment_id: ref,
         coverage_amount: Number(form.value),
-        notes: `${selectedPlan}${UUID_RE.test(ref) ? "" : ` · Shipment ref: ${ref}`}`,
+        notes: selectedPlan,
       });
       setSubmitted(true);
       setTimeout(() => setSubmitted(false), 5000);
@@ -187,16 +185,22 @@ export default function CargoInsurancePage() {
           <form noValidate onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="text-xs uppercase tracking-widest text-on-surface-variant">Shipment ID</label>
-              <input
-                value={form.shipment}
-                onChange={(e) => {
-                  // allow only alphanumeric + hyphen, max 9 chars (SHP-12345)
-                  const v = e.target.value.replace(/[^a-zA-Z0-9-]/g, "").slice(0, 9);
-                  setForm({ ...form, shipment: v });
-                  setErrors(p => ({ ...p, shipment: "" }));
-                }}
-                placeholder="e.g. SHP-12345 or 12345"
-                className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 ${errors.shipment ? "border-red-500" : "border-white/10"}`} />
+              {shipments.length === 0 && !loading ? (
+                <p className="mt-2 text-sm text-amber-400">No shipments created yet. Please book a shipment first.</p>
+              ) : (
+                <select
+                  value={form.shipment}
+                  onChange={(e) => { setForm({ ...form, shipment: e.target.value }); setErrors(p => ({ ...p, shipment: "" })); }}
+                  className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface focus:outline-none focus:border-tertiary/50 ${errors.shipment ? "border-red-500" : "border-white/10"}`}
+                >
+                  <option value="">Select a shipment…</option>
+                  {shipments.map((s: any) => (
+                    <option key={s.id} value={s.id}>
+                      {s.tracking_id ?? s.id} — {s.origin} → {s.destination}
+                    </option>
+                  ))}
+                </select>
+              )}
               {errors.shipment && <p className="text-xs text-error mt-1">{errors.shipment}</p>}
             </div>
             <div>
@@ -220,7 +224,7 @@ export default function CargoInsurancePage() {
               <input readOnly value={selectedPlan}
                 className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-tertiary/30 text-sm text-tertiary cursor-default" />
             </div>
-            <button type="submit" disabled={saving} className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] transition-colors shadow-[0_0_20px_rgba(30,136,229,0.3)] disabled:opacity-50">
+            <button type="submit" disabled={saving || shipments.length === 0} className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] transition-colors shadow-[0_0_20px_rgba(30,136,229,0.3)] disabled:opacity-50">
               <Send className="h-4 w-4" /> {saving ? "Submitting…" : "Submit Insurance Application"}
             </button>
           </form>

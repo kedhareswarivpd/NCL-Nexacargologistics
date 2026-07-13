@@ -107,6 +107,7 @@ function BookShipmentContent() {
   const validate = () => {
     const errs: Record<string, string> = {};
     if (!form.description.trim()) errs.description = "Description is required.";
+    else if (!/^[a-zA-Z\s]+$/.test(form.description.trim())) errs.description = "Description should only contain alphabets and spaces.";
     if (!form.eta) errs.eta = "Preferred delivery date (ETA) is required.";
     return errs;
   };
@@ -365,10 +366,12 @@ function BookShipmentContent() {
                   <textarea
                     value={form.description}
                     onChange={(e) => {
-                      setForm({ ...form, description: e.target.value });
+                      // Only allow alphabets and spaces
+                      const filtered = e.target.value.replace(/[^a-zA-Z\s]/g, "");
+                      setForm({ ...form, description: filtered });
                       setErrors(p => ({ ...p, description: "" }));
                     }}
-                    placeholder="Describe the items being shipped (e.g. 5 boxes of electronic components, fragile, handle with care)"
+                    placeholder="Describe the items being shipped (e.g. Electronic Components Fragile)"
                     rows={3}
                     className={`${inputCls} resize-none ${errors.description ? "border-red-500" : ""}`}
                   />

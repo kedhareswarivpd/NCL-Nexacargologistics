@@ -1,11 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, MapPin, FileSignature, Receipt, HeadphonesIcon, Shield, CreditCard, HelpCircle, LogOut, Package, Play, Star } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { LayoutDashboard, MapPin, FileSignature, Receipt, HeadphonesIcon, Shield, CreditCard, Package, Play, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/context/AuthContext";
-import { useToast } from "@/context/ToastContext";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard",      href: "/customer",           enabled: true },
@@ -22,15 +20,6 @@ const navItems = [
 
 export function CustomerSidebar() {
   const pathname = usePathname();
-  const { logout } = useAuth();
-  const toast = useToast();
-  const router = useRouter();
-
-  const handleLogout = () => {
-    logout();
-    toast.info("You have been signed out.");
-    router.replace("/");
-  };
 
   return (
     <aside className="sticky top-0 hidden h-screen w-[280px] shrink-0 flex-col border-r border-white/5 bg-surface-container-low/20 p-4 shadow-xl backdrop-blur-md lg:flex overflow-y-auto">
@@ -65,14 +54,6 @@ export function CustomerSidebar() {
           );
         })}
       </nav>
-      <div className="mt-auto flex flex-col gap-1 pt-6 border-t border-white/5">
-        <Link href="/contact" className="flex items-center gap-4 text-on-surface-variant p-3 hover:bg-white/5 hover:text-on-surface transition-colors text-xs uppercase tracking-widest rounded-lg">
-          <HelpCircle className="w-5 h-5" /> Support
-        </Link>
-        <button onClick={handleLogout} className="w-full flex items-center gap-4 text-on-surface-variant p-3 hover:bg-white/5 hover:text-on-surface transition-colors text-xs uppercase tracking-widest rounded-lg">
-          <LogOut className="w-5 h-5" /> Logout
-        </button>
-      </div>
     </aside>
   );
 }
