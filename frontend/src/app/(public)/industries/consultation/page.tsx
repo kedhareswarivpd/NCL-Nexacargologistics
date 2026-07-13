@@ -21,7 +21,7 @@ export default function ConsultationPage() {
     if (!form.name.trim())     e.name     = "Please fill out this field";
     else if (form.name.trim().length < 2) e.name = "Name must be at least 2 characters.";
     if (!form.email.trim())    e.email    = "Please fill out this field";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) e.email = "Enter a valid email address.";
+    else if (!/^[^\s@]+@[^\s@]+\.com$/i.test(form.email.trim())) e.email = "Email must contain @ and end with .com";
     if (form.phone.trim() && !/^\+?[\d\s\-().]{7,20}$/.test(form.phone.trim())) e.phone = "Enter a valid phone number.";
     if (!form.company.trim())  e.company  = "Please fill out this field";
     else if (form.company.trim().length < 2) e.company = "Company name must be at least 2 characters.";
@@ -41,6 +41,10 @@ export default function ConsultationPage() {
   };
 
   const set = (key: string, val: string) => {
+    if (key === "name")    val = val.replace(/[^a-zA-Z\s]/g, "");
+    if (key === "phone")   val = val.replace(/[^\d+\s\-().]/g, "");
+    if (key === "company") val = val.replace(/[^a-zA-Z0-9\s&.\-]/g, "");
+    if (key === "message") val = val.replace(/[^a-zA-Z\s]/g, "");
     setForm(p => ({ ...p, [key]: val }));
     setErrors(p => ({ ...p, [key]: "" }));
   };
