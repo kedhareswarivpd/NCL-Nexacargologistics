@@ -404,24 +404,27 @@ export default function RequestQuotesPage() {
       form.insurance && form.insurance !== "No Insurance" ? `Insurance: ${form.insurance}` : "",
       form.notes,
     ].filter(Boolean);
-    try {
-      await quotesApi.create({
-        origin: form.origin.trim(),
-        destination: form.destination.trim(),
-        mode: form.mode || typeToMode(form.type),
-        cargo_type: form.type,
-        weight: Number(form.weight) || undefined,
-        notes: noteParts.join(" · "),
-      });
-      setSubmitted(true);
-      setSubmitError(null);
-      setTimeout(() => setSubmitted(false), 5000);
-      setForm({ origin: "", destination: "", type: "FCL 20FT", mode: "", weight: "", date: "", insurance: "No Insurance", notes: "" });
-      loadQuotes();
-    } catch (err) {
-      setSubmitError(apiError(err));
-    }
-    setSaving(false);
+    const submit = async () => {
+      try {
+        await quotesApi.create({
+          origin: form.origin.trim(),
+          destination: form.destination.trim(),
+          mode: form.mode || typeToMode(form.type),
+          cargo_type: form.type,
+          weight: Number(form.weight) || undefined,
+          notes: noteParts.join(" · "),
+        });
+        setSubmitted(true);
+        setSubmitError(null);
+        setTimeout(() => setSubmitted(false), 5000);
+        setForm({ origin: "", destination: "", type: "FCL 20FT", mode: "", weight: "", date: "", insurance: "No Insurance", notes: "" });
+        loadQuotes();
+      } catch (err) {
+        setSubmitError(apiError(err));
+      }
+      setSaving(false);
+    };
+    fetch("/api/proxy/health").catch(() => null).finally(submit);
   };
 
   return (
