@@ -3,6 +3,9 @@
   "outputDirectory": ".next",
   "installCommand": "npm install",
   "framework": "nextjs",
+  "functions": {
+    "src/app/api/proxy/[...path]/route.ts": { "maxDuration": 60 }
+  },
   "env": {
     "BACKEND_API_URL": "https://ncl-nexacargologistics-3.onrender.com/api/v1",
     "NEXT_PUBLIC_API_URL": "https://ncl-nexacargologistics-3.onrender.com/api/v1",

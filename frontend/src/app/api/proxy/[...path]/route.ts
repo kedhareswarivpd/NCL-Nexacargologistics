@@ -19,13 +19,17 @@ async function handler(req: NextRequest, { params }: { params: Promise<{ path: s
     try { body = await req.text(); } catch { body = undefined; }
   }
 
-  const res = await fetch(url, { method: req.method, headers, body });
-  const data = await res.text();
-
-  return new NextResponse(data, {
-    status: res.status,
-    headers: { "Content-Type": res.headers.get("Content-Type") || "application/json" },
-  });
+  try {
+    const res = await fetch(url, { method: req.method, headers, body });
+    const data = await res.text();
+    return new NextResponse(data, {
+      status: res.status,
+      headers: { "Content-Type": res.headers.get("Content-Type") || "application/json" },
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Backend unreachable";
+    return NextResponse.json({ detail: `Proxy error: ${message}` }, { status: 502 });
+  }
 }
 
 export async function GET(req: NextRequest, ctx: { params: Promise<{ path: string[] }> }) { return handler(req, ctx); }
