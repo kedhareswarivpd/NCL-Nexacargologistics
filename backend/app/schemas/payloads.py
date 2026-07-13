@@ -48,12 +48,12 @@ class StaffCreate(BaseModel):
 
 # ----------------------------- Quotes -----------------------------
 class QuoteCreate(BaseModel):
-    origin: str
-    destination: str
-    mode: str = "sea"
+    origin: str = Field(min_length=2, max_length=255)
+    destination: str = Field(min_length=2, max_length=255)
+    mode: str = Field(default="sea", pattern="^(air|sea|road)$")
     cargo_type: Optional[str] = None
-    weight: Optional[float] = None
-    volume: Optional[float] = None
+    weight: Optional[float] = Field(default=None, gt=0, le=10000)
+    volume: Optional[float] = Field(default=None, gt=0)
     incoterm: Optional[str] = None
     contact_name: Optional[str] = None
     contact_email: Optional[str] = None
