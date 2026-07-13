@@ -32,7 +32,6 @@ function BookShipmentContent() {
   const [bookedShipment, setBookedShipment] = useState<any>(null);
   
   const [availableQuotes, setAvailableQuotes] = useState<any[]>([]);
-  const [generatingDemo, setGeneratingDemo] = useState(false);
 
   // Form fields
   const [form, setForm] = useState({
@@ -63,29 +62,6 @@ function BookShipmentContent() {
       lookupQuote(urlQuoteId);
     }
   }, [urlQuoteId]);
-
-  const handleGenerateDemoQuote = async () => {
-    setGeneratingDemo(true);
-    try {
-      const demoQuote = await quotesApi.create({
-        origin: "Singapore Port",
-        destination: "Rotterdam Gateway",
-        mode: "sea",
-        cargo_type: "Electronics",
-        weight: 1200,
-        volume: 4.5,
-        notes: "Automated demo quote for quick shipment booking",
-      });
-      setQuote(demoQuote);
-      setQuoteIdInput(demoQuote.id);
-      toast.success("Demo quote created and loaded automatically!");
-      router.replace(`/customer/shipments/new?quote_id=${demoQuote.id}`);
-    } catch (err) {
-      toast.error("Could not generate demo quote.");
-    } finally {
-      setGeneratingDemo(false);
-    }
-  };
 
   async function lookupQuote(id: string) {
     if (!id.trim()) return;
@@ -230,67 +206,45 @@ function BookShipmentContent() {
         <Card className="p-6 space-y-4">
           <div className="flex items-center gap-2 text-tertiary">
             <Search className="h-5 w-5" />
-            <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">Enter Quote ID to Begin</h2>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="flex-1">
-              <input
-                type="text"
-                value={quoteIdInput}
-                onChange={(e) => setQuoteIdInput(e.target.value)}
-                placeholder="Paste Quote ID (e.g. e2cf8eac-...)"
-                className={inputCls}
-              />
-              {errors.quoteId && <p className="text-xs text-red-400 mt-1 font-semibold">{errors.quoteId}</p>}
-            </div>
-            <button
-              onClick={() => lookupQuote(quoteIdInput)}
-              disabled={loadingQuote || !quoteIdInput.trim()}
-              className="h-11 sm:mt-1 px-6 rounded-lg bg-[#1E88E5] text-white text-sm font-bold hover:bg-[#1565C0] transition-colors disabled:opacity-50 flex items-center justify-center gap-2 whitespace-nowrap"
-            >
-              {loadingQuote ? <Loader2 className="h-4 w-4 animate-spin" /> : "Look Up Quote"}
-            </button>
+            <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">Select a Quote to Begin</h2>
           </div>
 
-          <div className="border-t border-white/5 pt-4 mt-2">
-            <p className="text-xs text-on-surface-variant mb-3 font-semibold">Or use one of these automated options:</p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
-              {availableQuotes.length > 0 && (
-                <div className="flex-1">
-                  <select
-                    onChange={(e) => {
-                      if (e.target.value) {
-                        setQuoteIdInput(e.target.value);
-                        lookupQuote(e.target.value);
-                        router.replace(`/customer/shipments/new?quote_id=${e.target.value}`);
-                      }
-                    }}
-                    value={quote?.id || ""}
-                    className="w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-xs text-on-surface focus:outline-none focus:border-tertiary/50"
-                  >
-                    <option value="">-- Choose an Existing Quote --</option>
-                    {availableQuotes.map((q: any) => (
-                      <option key={q.id} value={q.id}>
-                        {q.quote_ref || q.id.slice(0, 8)} ({q.origin} → {q.destination})
-                      </option>
-                    ))}
-                  </select>
+          {availableQuotes.length === 0 ? (
+            <div className="py-4 text-center space-y-2">
+              <p className="text-sm text-on-surface-variant">No approved quotes available.</p>
+              <p className="text-xs text-on-surface-variant/60">Request a quote first and wait for it to be approved before booking a shipment.</p>
+              <Link href="/customer/quotes" className="inline-flex items-center gap-1.5 mt-2 px-4 py-2 rounded-lg bg-tertiary/10 border border-tertiary/20 text-tertiary text-xs font-bold hover:bg-tertiary/20 transition-all">
+                Request a Quote <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <select
+                onChange={(e) => {
+                  if (e.target.value) {
+                    setQuoteIdInput(e.target.value);
+                    lookupQuote(e.target.value);
+                    router.replace(`/customer/shipments/new?quote_id=${e.target.value}`);
+                  }
+                }}
+                defaultValue=""
+                className="w-full px-3 py-2.5 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50"
+              >
+                <option value="" disabled>— Select an approved quote —</option>
+                {availableQuotes.map((q: any) => (
+                  <option key={q.id} value={q.id}>
+                    {q.quote_ref || q.id.slice(0, 8)} · {q.origin} → {q.destination} ({q.status})
+                  </option>
+                ))}
+              </select>
+              {loadingQuote && (
+                <div className="flex items-center gap-2 text-xs text-on-surface-variant">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" /> Loading quote details…
                 </div>
               )}
-              <button
-                type="button"
-                onClick={handleGenerateDemoQuote}
-                disabled={generatingDemo}
-                className="px-4 py-2.5 rounded-lg bg-tertiary/10 border border-tertiary/20 text-tertiary text-xs font-bold hover:bg-tertiary/20 transition-all flex items-center justify-center gap-2"
-              >
-                {generatingDemo ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  <>Auto-Generate Demo Quote & Fill</>
-                )}
-              </button>
+              {errors.quoteId && <p className="text-xs text-red-400 font-semibold">{errors.quoteId}</p>}
             </div>
-          </div>
+          )}
         </Card>
       )}
 
