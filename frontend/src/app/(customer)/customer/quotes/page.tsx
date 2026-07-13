@@ -376,7 +376,9 @@ export default function RequestQuotesPage() {
   async function loadQuotes() {
     try { setQuotes((await quotesApi.list()) ?? []); } catch { setQuotes([]); }
   }
-  useEffect(() => { loadQuotes(); }, [user?.id]);
+  useEffect(() => {
+    fetch("/api/proxy/health").catch(() => null).finally(loadQuotes);
+  }, [user?.id]);
 
   const validate = () => {
     const e: Record<string, string> = {};
