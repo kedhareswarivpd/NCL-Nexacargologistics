@@ -271,6 +271,9 @@ const INSURANCE_PLANS = [
   }
 ];
 
+const VALID_CITIES = new Set<string>();
+// populated after POPULAR_LOCATIONS is defined
+
 const POPULAR_LOCATIONS = [
   // Asia
   { name: "Shanghai, CN", value: "Shanghai" }, { name: "Beijing, CN", value: "Beijing" },
@@ -369,6 +372,8 @@ const POPULAR_LOCATIONS = [
   { name: "Suva, FJ", value: "Suva" },
 ];
 
+POPULAR_LOCATIONS.forEach(l => VALID_CITIES.add(l.value.toLowerCase()));
+
 export default function RequestQuotesPage() {
   const { user } = useAuth();
   const [submitted, setSubmitted] = useState(false);
@@ -461,9 +466,13 @@ export default function RequestQuotesPage() {
 
   const validate = () => {
     const e: Record<string, string> = {};
-    if (!form.origin.trim())      e.origin      = "Please fill out this field";
-    if (!form.destination.trim()) e.destination = "Please fill out this field";
-    if (form.origin.trim() && form.destination.trim() && form.origin.trim().toLowerCase() === form.destination.trim().toLowerCase())
+    const orig = form.origin.trim();
+    const dest = form.destination.trim();
+    if (!orig) e.origin = "Please fill out this field";
+    else if (!VALID_CITIES.has(orig.toLowerCase())) e.origin = "Please select a valid city from the suggestions list.";
+    if (!dest) e.destination = "Please fill out this field";
+    else if (!VALID_CITIES.has(dest.toLowerCase())) e.destination = "Please select a valid city from the suggestions list.";
+    if (!e.origin && !e.destination && orig.toLowerCase() === dest.toLowerCase())
       e.destination = "Destination must be different from origin";
     if (!form.mode)               e.mode        = "Please select a transport mode";
     if (!form.weight.trim())      e.weight      = "Please fill out this field";
@@ -575,7 +584,12 @@ export default function RequestQuotesPage() {
                   setShowOriginSuggestions(true);
                 }}
                 onFocus={() => setShowOriginSuggestions(true)}
-                onBlur={() => setShowOriginSuggestions(false)}
+                onBlur={() => {
+                  setShowOriginSuggestions(false);
+                  const v = form.origin.trim();
+                  if (v && !VALID_CITIES.has(v.toLowerCase()))
+                    setErrors(p => ({ ...p, origin: "Please select a valid city from the suggestions list." }));
+                }}
                 placeholder="e.g. Shanghai Port, CN"
                 className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 ${errors.origin ? "border-red-500" : "border-white/10"}`}
               />
@@ -610,7 +624,12 @@ export default function RequestQuotesPage() {
                   setShowDestSuggestions(true);
                 }}
                 onFocus={() => setShowDestSuggestions(true)}
-                onBlur={() => setShowDestSuggestions(false)}
+                onBlur={() => {
+                  setShowDestSuggestions(false);
+                  const v = form.destination.trim();
+                  if (v && !VALID_CITIES.has(v.toLowerCase()))
+                    setErrors(p => ({ ...p, destination: "Please select a valid city from the suggestions list." }));
+                }}
                 placeholder="e.g. Rotterdam Gateway, NL"
                 className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 ${errors.destination ? "border-red-500" : "border-white/10"}`}
               />
