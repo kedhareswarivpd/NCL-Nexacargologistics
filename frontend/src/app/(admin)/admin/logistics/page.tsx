@@ -1,5 +1,5 @@
 import LogisticsDashboard from "@/components/dashboards/LogisticsDashboard";
 
-export default function LogisticsDashboardPage() {
+export default function AdminLogisticsPage() {
   return <LogisticsDashboard />;
 }

@@ -19,10 +19,10 @@ const navItems = [
 ];
 
 const portalLinks = [
-  { icon: Truck, label: "Logistics", href: "/logistics" },
-  { icon: Warehouse, label: "Warehouse", href: "/warehouse" },
-  { icon: Navigation, label: "Driver App", href: "/driver" },
-  { icon: TrendingUp, label: "Finance", href: "/finance" },
+  { icon: Truck, label: "Logistics", href: "/admin/logistics" },
+  { icon: Warehouse, label: "Warehouse", href: "/admin/warehouse" },
+  { icon: Navigation, label: "Driver App", href: "/admin/driver" },
+  { icon: TrendingUp, label: "Finance", href: "/admin/finance" },
 ];
 
 export function AdminSidebar() {

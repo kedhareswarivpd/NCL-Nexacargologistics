@@ -29,7 +29,7 @@ type Quote = {
 const STATS = [
   { label: "Total Users",     value: "1,284", delta: "+24 this week",     Icon: Users,       color: "text-tertiary bg-tertiary/10", href: "/admin/users" },
   { label: "Active Branches", value: "12",    delta: "3 countries",       Icon: GitBranch,   color: "text-secondary bg-secondary/10", href: "/admin/branches" },
-  { label: "Active Shipments",value: "348",   delta: "+12 today",         Icon: Package,     color: "text-green-400 bg-green-400/10", href: "/logistics" },
+  { label: "Active Shipments",value: "348",   delta: "+12 today",         Icon: Package,     color: "text-green-400 bg-green-400/10", href: "/admin/logistics" },
   { label: "System Health",   value: "99.8%", delta: "Uptime this month", Icon: Activity,    color: "text-on-tertiary-container bg-on-tertiary-container/10", href: "/admin" },
 ];
 
@@ -47,10 +47,10 @@ const ADMIN_CONTROLS = [
 ];
 
 const PORTAL_LINKS = [
-  { icon: Truck,      label: "Logistics",  desc: "Shipments, routes & containers", href: "/logistics", color: "text-secondary bg-secondary/10" },
-  { icon: Warehouse,  label: "Warehouse",  desc: "Inventory, zones & tasks",       href: "/warehouse", color: "text-on-tertiary-container bg-on-tertiary-container/10" },
-  { icon: Navigation, label: "Driver App", desc: "Routes, deliveries & GPS",       href: "/driver",    color: "text-green-400 bg-green-400/10" },
-  { icon: TrendingUp, label: "Finance",    desc: "Invoices, payments & reports",   href: "/finance",   color: "text-tertiary bg-tertiary/10" },
+  { icon: Truck,      label: "Logistics",  desc: "Shipments, routes & containers", href: "/admin/logistics", color: "text-secondary bg-secondary/10" },
+  { icon: Warehouse,  label: "Warehouse",  desc: "Inventory, zones & tasks",       href: "/admin/warehouse", color: "text-on-tertiary-container bg-on-tertiary-container/10" },
+  { icon: Navigation, label: "Driver App", desc: "Routes, deliveries & GPS",       href: "/admin/driver",    color: "text-green-400 bg-green-400/10" },
+  { icon: TrendingUp, label: "Finance",    desc: "Invoices, payments & reports",   href: "/admin/finance",   color: "text-tertiary bg-tertiary/10" },
 ];
 
 const PLATFORM_STATUS = [
