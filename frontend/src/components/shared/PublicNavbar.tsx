@@ -49,7 +49,7 @@ export function PublicNavbar() {
         <img
           src="/logo5.jpg"
           alt="NexaCargo Logo"
-          className="h-16 w-44 md:h-20 md:w-60 object-contain"
+          className="h-16 w-56 md:h-20 md:w-60 object-contain object-left"
         />
       </Link>
 
