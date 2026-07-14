@@ -131,7 +131,7 @@ export default function LandingPage() {
 
               <motion.h1
                 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }}
-                className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6"
+                className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6"
               >
                 Move Cargo{" "}
                 <span className="bg-gradient-to-r from-[#1E88E5] via-[#00C2FF] to-[#1E88E5] bg-clip-text text-transparent bg-[length:200%] animate-gradient">
@@ -142,14 +142,14 @@ export default function LandingPage() {
 
               <motion.p
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-lg text-white font-bold max-w-xl mb-10 leading-relaxed"
+                className="text-base sm:text-lg text-white font-bold max-w-xl mb-10 leading-relaxed"
               >
                 We help businesses ship goods across the world — faster, cheaper and with full visibility at every step. From a single parcel to full container loads, we've got it covered.
               </motion.p>
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}
-                className="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto lg:mx-0 mb-12"
+                className="flex flex-col xs:flex-row gap-3 max-w-xl mx-auto lg:mx-0 mb-12"
               >
                 <Link href={isAuthenticated ? "/customer/quotes" : "/register"} className="flex">
                   <button
@@ -266,7 +266,7 @@ export default function LandingPage() {
             <span className="inline-block px-4 py-1.5 rounded-full border border-[#00C2FF]/30 bg-[#00C2FF]/10 text-[#00C2FF] text-sm font-bold uppercase tracking-widest mb-4">
               What We Offer
             </span>
-            <h2 className="text-4xl font-bold text-white mt-3 mb-4">Everything You Need to Ship Globally</h2>
+            <h2 className="text-2xl sm:text-4xl font-bold text-white mt-3 mb-4">Everything You Need to Ship Globally</h2>
             <p className="text-blue-200/60 max-w-xl mx-auto">From air freight to customs clearance, we handle every part of your shipment so you don't have to worry about it.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -344,7 +344,7 @@ export default function LandingPage() {
             <span className="inline-block px-4 py-1.5 rounded-full border border-[#00C2FF]/30 bg-[#00C2FF]/10 text-[#00C2FF] text-sm font-bold uppercase tracking-widest mb-4">
               Industries
             </span>
-            <h2 className="text-4xl font-bold text-white mt-3 mb-4 text-center mx-auto">Industries We Serve</h2>
+            <h2 className="text-2xl sm:text-4xl font-bold text-white mt-3 mb-4 text-center mx-auto">Industries We Serve</h2>
             <p className="text-blue-200/60 max-w-lg mx-auto text-center">Different industries have different shipping needs. We know them all and have built solutions that actually fit.</p>
           </div>
           <div className="flex flex-wrap justify-center gap-4">
@@ -356,7 +356,7 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.05 }}
                 whileHover={{ y: -6, scale: 1.05, borderColor: "rgba(30,136,229,0.5)", backgroundColor: "rgba(30,136,229,0.1)" }}
-                className="w-full sm:w-[calc(33.333%-12px)] rounded-xl border border-white/8 bg-white/[0.03] p-6 text-center cursor-pointer transition-all duration-200 group"
+                className="w-full sm:w-[calc(50%-8px)] lg:w-[calc(33.333%-12px)] rounded-xl border border-white/8 bg-white/[0.03] p-6 text-center cursor-pointer transition-all duration-200 group"
               >
                 <div className="text-4xl mb-4 group-hover:scale-125 group-hover:rotate-12 transition-transform duration-300">{icon}</div>
                 <p className="text-base font-bold text-white group-hover:text-[#00C2FF] transition-colors">{name}</p>
@@ -375,7 +375,7 @@ export default function LandingPage() {
             <span className="inline-block px-4 py-1.5 rounded-full border border-[#00C2FF]/30 bg-[#00C2FF]/10 text-[#00C2FF] text-sm font-bold uppercase tracking-widest mb-4">
               Real Feedback
             </span>
-            <h2 className="text-4xl font-bold text-white mt-3">What Our Clients Actually Say</h2>
+            <h2 className="text-2xl sm:text-4xl font-bold text-white mt-3">What Our Clients Actually Say</h2>
           </div>
         </div>
         {/* Scrolling carousel — no scrollbar, auto-scrolls left to right */}
@@ -433,8 +433,8 @@ export default function LandingPage() {
             transition={{ type: "spring", stiffness: 80, damping: 15, delay: 0.1 }}
           >
             <span className="inline-block px-4 py-1.5 rounded-full border border-[#00C2FF]/30 bg-[#00C2FF]/10 text-[#00C2FF] text-sm font-bold uppercase tracking-widest mb-6">Let's Get Moving</span>
-            <h2 className="text-5xl font-bold text-white mb-6">Ready to Ship<br />Without the Hassle?</h2>
-            <p className="text-blue-200/60 max-w-xl mx-auto mb-10 text-lg">Over 500 businesses already trust NexaCargo to handle their logistics. Come see why.</p>
+            <h2 className="text-3xl sm:text-5xl font-bold text-white mb-6">Ready to Ship<br />Without the Hassle?</h2>
+            <p className="text-blue-200/60 max-w-xl mx-auto mb-10 text-base sm:text-lg">Over 500 businesses already trust NexaCargo to handle their logistics. Come see why.</p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link href="/register">
                 <button className="px-10 py-4 rounded-xl bg-gradient-to-r from-[#1E88E5] to-[#00C2FF] text-white font-bold text-lg shadow-[0_0_40px_rgba(0,194,255,0.3)] hover:shadow-[0_0_60px_rgba(0,194,255,0.5)] hover:-translate-y-1 transition-all duration-200">

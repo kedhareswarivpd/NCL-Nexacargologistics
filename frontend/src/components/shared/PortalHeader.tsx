@@ -188,7 +188,7 @@ export function PortalHeader({ userRole = "Premium Member" }: { userRole?: strin
             </button>
 
             {bellOpen && (
-              <div className="absolute right-0 top-12 w-80 rounded-2xl border border-white/10 bg-surface-container shadow-2xl z-50 overflow-hidden animate-scale-in">
+              <div className="absolute right-0 top-12 w-[calc(100vw-2rem)] max-w-xs sm:w-80 rounded-2xl border border-white/10 bg-surface-container shadow-2xl z-50 overflow-hidden animate-scale-in">
                 <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
                   <p className="text-sm font-semibold text-on-surface">
                     {role === "admin" ? "Recent Notifications" : "Recent Quotes"}
@@ -241,7 +241,7 @@ export function PortalHeader({ userRole = "Premium Member" }: { userRole?: strin
             </button>
 
             {gridOpen && (
-              <div className="absolute right-0 top-12 w-72 rounded-2xl border border-white/10 bg-surface-container shadow-2xl z-50 overflow-hidden animate-scale-in">
+              <div className="absolute right-0 top-12 w-[calc(100vw-2rem)] max-w-[288px] sm:w-72 rounded-2xl border border-white/10 bg-surface-container shadow-2xl z-50 overflow-hidden animate-scale-in">
                 <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
                   <p className="text-sm font-semibold text-on-surface">Quick Access</p>
                   <button onClick={() => setGridOpen(false)}><X className="w-4 h-4 text-on-surface-variant" /></button>
@@ -296,7 +296,7 @@ export function PortalHeader({ userRole = "Premium Member" }: { userRole?: strin
           </div>
 
           {avatarOpen && (
-            <div className="absolute right-0 top-14 w-72 rounded-2xl border border-white/10 bg-surface-container shadow-2xl z-50 animate-scale-in overflow-hidden">
+            <div className="absolute right-0 top-14 w-[calc(100vw-2rem)] max-w-[288px] sm:w-72 rounded-2xl border border-white/10 bg-surface-container shadow-2xl z-50 animate-scale-in overflow-hidden">
               <div className="p-5 border-b border-white/5 flex items-center gap-4">
                 <div className="w-14 h-14 rounded-full bg-[#1E88E5] flex items-center justify-center shrink-0">
                   <span className="text-lg font-bold text-white">{initials}</span>

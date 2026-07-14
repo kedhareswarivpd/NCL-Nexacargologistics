@@ -49,7 +49,7 @@ export default function AboutPage() {
 
   return (
     <div className="bg-background text-on-surface overflow-x-hidden pt-20">
-      <section className="relative h-[819px] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[600px] md:h-[819px] flex items-center justify-center overflow-hidden">
         <motion.div style={{ y: heroY }} className="absolute inset-0">
           <img
             className="absolute inset-0 w-full h-full object-cover"
@@ -81,7 +81,7 @@ export default function AboutPage() {
           <motion.span variants={fadeUp} className="inline-block px-4 py-1.5 rounded-full border border-tertiary/30 bg-tertiary/10 text-tertiary text-sm font-bold uppercase tracking-widest mb-4">
             Established 1998
           </motion.span>
-          <motion.h1 variants={fadeUp} className="font-display-lg text-4xl md:text-5xl leading-tight mb-6">
+          <motion.h1 variants={fadeUp} className="font-display-lg text-3xl md:text-5xl leading-tight mb-6">
             Built to Move the World —<br /><span className="text-tertiary">One Shipment at a Time</span>
           </motion.h1>
           <motion.p variants={fadeUp} className="font-body-lg text-on-surface-variant max-w-2xl mx-auto">
@@ -276,7 +276,7 @@ export default function AboutPage() {
           initial={{ opacity: 0, y: 100 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.25 }}
-          className="max-w-7xl mx-auto glass rounded-2xl p-16 text-center relative overflow-hidden"
+          className="max-w-7xl mx-auto glass rounded-2xl p-8 sm:p-16 text-center relative overflow-hidden"
         >
           <div className="absolute -top-24 -left-24 w-64 h-64 bg-tertiary/10 blur-[100px]" />
           <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-primary/10 blur-[100px]" />

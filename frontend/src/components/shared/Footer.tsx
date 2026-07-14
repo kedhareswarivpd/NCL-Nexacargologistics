@@ -115,7 +115,8 @@ export function Footer() {
             <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
             <span className="text-xs uppercase tracking-widest text-green-400 font-semibold">Live Tracking</span>
           </div>
-          <div className="w-full rounded-2xl overflow-hidden border border-white/10 relative" style={{ height: 320 }}>
+          <div className="w-full rounded-2xl overflow-hidden border border-white/10 relative" style={{ height: 220 }} data-mobile-height>
+            <style>{`@media(min-width:640px){[data-mobile-height]{height:320px}}`}</style>
             <iframe
               title="NexaCargo Live Tracking Map"
               width="100%"
@@ -135,7 +136,7 @@ export function Footer() {
       </div>
 
       {/* ── Main links grid ── */}
-      <div className="py-12 px-8 md:px-12 flex flex-col sm:flex-row justify-between gap-8 max-w-7xl mx-auto w-full relative z-10">
+      <div className="py-12 px-6 md:px-12 grid grid-cols-2 sm:flex sm:flex-row justify-between gap-8 max-w-7xl mx-auto w-full relative z-10">
         <div className="w-full sm:w-[280px] shrink-0">
           <h5 className="text-sm font-bold text-white uppercase tracking-widest mb-6 mt-0">NexaCargo Global</h5>
           <p className="font-body-sm text-sm text-on-surface-variant max-w-xs mb-4">

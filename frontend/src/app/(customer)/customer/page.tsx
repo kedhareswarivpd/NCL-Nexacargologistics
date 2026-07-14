@@ -120,20 +120,27 @@ export default function CustomerDashboardPage() {
         <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">Quick Actions</h2>
         {ACTIONS.map(({ title, desc, href, icon: Icon, color, cta, enabled }) => (
           <Card key={title} className={`p-5 border border-white/5 transition-colors duration-150 ${enabled ? "hover:bg-white/2" : "opacity-40"}`}>
-            <div className="flex items-center gap-4">
+            <div className="flex items-start sm:items-center gap-4">
               <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border ${color}`}>
                 <Icon className="h-5 w-5" />
               </span>
               <div className="flex-grow min-w-0">
                 <p className="text-sm font-semibold text-on-surface">{title}</p>
                 <p className="text-xs text-on-surface-variant mt-1 leading-relaxed">{desc}</p>
+                {enabled ? (
+                  <Link href={href} className="mt-3 sm:hidden inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1E88E5] text-white text-xs font-bold hover:bg-[#1565C0] transition-all shadow-[0_0_16px_rgba(30,136,229,0.3)]">
+                    {cta} <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                ) : (
+                  <span className="mt-3 sm:hidden inline-block px-4 py-2 rounded-xl bg-white/5 text-on-surface-variant text-xs font-bold cursor-not-allowed">Coming Soon</span>
+                )}
               </div>
               {enabled ? (
-                <Link href={href} className="shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#1E88E5] text-white text-xs font-bold hover:bg-[#1565C0] transition-all shadow-[0_0_16px_rgba(30,136,229,0.3)] whitespace-nowrap">
+                <Link href={href} className="shrink-0 hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#1E88E5] text-white text-xs font-bold hover:bg-[#1565C0] transition-all shadow-[0_0_16px_rgba(30,136,229,0.3)] whitespace-nowrap">
                   {cta} <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               ) : (
-                <span className="shrink-0 px-4 py-2 rounded-xl bg-white/5 text-on-surface-variant text-xs font-bold cursor-not-allowed whitespace-nowrap">Coming Soon</span>
+                <span className="shrink-0 hidden sm:block px-4 py-2 rounded-xl bg-white/5 text-on-surface-variant text-xs font-bold cursor-not-allowed whitespace-nowrap">Coming Soon</span>
               )}
             </div>
           </Card>
