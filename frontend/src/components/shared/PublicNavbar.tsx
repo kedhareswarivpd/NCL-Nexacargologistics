@@ -38,10 +38,10 @@ export function PublicNavbar() {
   return (
     <nav
       className={cn(
-        "fixed top-0 z-50 flex w-full items-center justify-between px-6 backdrop-blur-xl border-b transition-all duration-300",
+        "fixed top-0 z-50 flex w-full items-center justify-between px-4 md:px-6 backdrop-blur-xl border-b transition-all duration-300",
         scrolled
-          ? "h-20 bg-white border-gray-200 shadow-[0_4px_20px_rgba(0,0,0,0.12)]"
-          : "h-20 bg-white border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.08)]"
+          ? "h-16 md:h-20 bg-white border-gray-200 shadow-[0_4px_20px_rgba(0,0,0,0.12)]"
+          : "h-16 md:h-20 bg-white border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.08)]"
       )}
     >
       {/* Logo — always left */}
@@ -49,7 +49,7 @@ export function PublicNavbar() {
         <img
           src="/logo5.jpg"
           alt="NexaCargo Logo"
-          className="h-12 w-36 md:h-20 md:w-60 object-contain"
+          className="h-16 w-44 md:h-20 md:w-60 object-contain"
         />
       </Link>
 
