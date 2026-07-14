@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { AdminSidebar } from "@/components/shared/AdminSidebar";
 import { PortalHeader } from "@/components/shared/PortalHeader";
+import { MobileSidebarWrapper } from "@/components/shared/MobileSidebarWrapper";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { status, user, logout } = useAuth();
@@ -35,11 +36,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="bg-background text-on-surface min-h-screen">
-      <AdminSidebar />
-      <main className="lg:ml-[280px] h-screen flex flex-col overflow-y-auto">
+    <div className="flex bg-background text-on-surface min-h-screen">
+      <MobileSidebarWrapper>
+        <AdminSidebar />
+      </MobileSidebarWrapper>
+      <main className="flex flex-1 flex-col overflow-y-auto min-w-0">
         <PortalHeader userRole="Administrator" />
-        {children}
+        <div className="flex-1 p-4 lg:p-6">{children}</div>
       </main>
     </div>
   );

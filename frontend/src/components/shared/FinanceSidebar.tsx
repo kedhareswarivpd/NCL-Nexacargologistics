@@ -30,7 +30,7 @@ export function FinanceSidebar() {
   };
 
   return (
-    <aside className="sticky top-0 hidden h-screen w-[280px] shrink-0 flex-col border-r border-white/5 bg-surface-container-low/20 p-4 shadow-xl backdrop-blur-md lg:flex">
+    <aside className="sticky top-0 flex h-screen w-[280px] shrink-0 flex-col border-r border-white/5 bg-surface-container-low/20 p-4 shadow-xl backdrop-blur-md">
       <div className="mb-12 px-4 mt-2">
         <h1 className="font-headline-lg text-3xl font-black text-on-surface">NexaCargo</h1>
         <p className="font-label-caps text-xs text-on-surface-variant opacity-70 uppercase tracking-widest mt-1">Finance Portal</p>

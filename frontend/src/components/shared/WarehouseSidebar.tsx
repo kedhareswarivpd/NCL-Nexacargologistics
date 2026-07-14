@@ -31,7 +31,7 @@ export function WarehouseSidebar() {
   };
 
   return (
-    <aside className="fixed left-0 top-0 h-full flex flex-col p-4 bg-surface-container-low/20 backdrop-blur-md border-r border-white/5 shadow-xl w-[280px] z-50 hidden lg:flex">
+    <aside className="flex h-full flex-col p-4 bg-surface-container-low/20 backdrop-blur-md border-r border-white/5 shadow-xl w-[280px]">
       <div className="mb-12 px-4 mt-2">
         <h1 className="font-headline-lg text-3xl font-black text-on-surface">NexaCargo</h1>
         <p className="font-label-caps text-xs text-on-surface-variant opacity-70 uppercase tracking-widest mt-1">Warehouse Portal</p>

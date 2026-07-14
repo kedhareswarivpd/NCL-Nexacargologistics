@@ -4,15 +4,18 @@ import { ReactNode } from "react";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { SupportSidebar } from "@/components/shared/SupportSidebar";
 import { PortalHeader } from "@/components/shared/PortalHeader";
+import { MobileSidebarWrapper } from "@/components/shared/MobileSidebarWrapper";
 
 export default function SupportLayout({ children }: { children: ReactNode }) {
   return (
     <ProtectedRoute allow={["admin"]}>
-      <div className="bg-background text-on-surface min-h-screen">
-        <SupportSidebar />
-        <main className="lg:ml-[280px] min-h-screen flex flex-col">
+      <div className="flex bg-background text-on-surface min-h-screen">
+        <MobileSidebarWrapper>
+          <SupportSidebar />
+        </MobileSidebarWrapper>
+        <main className="flex flex-1 flex-col overflow-y-auto min-w-0">
           <PortalHeader userRole="Support Executive" />
-          {children}
+          <div className="flex-1 p-4 lg:p-6">{children}</div>
         </main>
       </div>
     </ProtectedRoute>

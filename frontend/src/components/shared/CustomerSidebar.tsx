@@ -22,7 +22,7 @@ export function CustomerSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="sticky top-0 hidden h-screen w-[280px] shrink-0 flex-col border-r border-white/5 bg-surface-container-low/20 p-4 shadow-xl backdrop-blur-md lg:flex overflow-y-auto">
+    <aside className="sticky top-0 flex h-screen w-[280px] shrink-0 flex-col border-r border-white/5 bg-surface-container-low/20 p-4 shadow-xl backdrop-blur-md overflow-y-auto">
       <div className="mb-12 px-4 mt-2">
         <h1 className="text-3xl font-black text-on-surface">NexaCargo</h1>
         <p className="text-xs text-on-surface-variant opacity-70 uppercase tracking-widest mt-1">Customer Portal</p>

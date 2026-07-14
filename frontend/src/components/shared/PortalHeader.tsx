@@ -143,8 +143,8 @@ export function PortalHeader({ userRole = "Premium Member" }: { userRole?: strin
   const alertHref = ALERT_HREF[role] ?? "/";
 
   return (
-    <header className="animate-fade-in flex justify-between items-center w-full px-6 h-16 bg-surface/5 backdrop-blur-lg border-b border-white/5 sticky top-0 z-40">
-      <div className="flex items-center gap-4 w-1/2">
+    <header className="animate-fade-in flex justify-between items-center w-full px-4 lg:px-6 h-16 bg-surface/5 backdrop-blur-lg border-b border-white/5 sticky top-0 z-40">
+      <div className="flex items-center gap-4 w-1/2 pl-10 lg:pl-0">
         {isAdminSubPage && (
           <button
             onClick={() => router.push("/admin")}
@@ -161,7 +161,7 @@ export function PortalHeader({ userRole = "Premium Member" }: { userRole?: strin
           </div>
         )}
         {!isAdminPage && (
-          <div className="relative group w-full max-w-md">
+          <div className="relative group w-full max-w-md hidden sm:block">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant w-5 h-5 group-focus-within:text-tertiary transition-colors" />
             <input
               className="w-full bg-black/20 border border-white/10 rounded-full pl-10 pr-4 py-2 text-sm text-on-surface focus:border-tertiary focus:ring-1 focus:ring-tertiary outline-none transition-all placeholder:text-on-surface-variant/50"

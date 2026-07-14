@@ -33,7 +33,7 @@ export function AdminSidebar() {
       initial={{ x: -280, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ type: "spring", stiffness: 220, damping: 25 }}
-      className="fixed left-0 top-0 h-full flex flex-col p-4 bg-surface-container-low/20 backdrop-blur-md border-r border-white/5 shadow-xl w-[280px] z-50 hidden lg:flex overflow-y-auto"
+      className="flex h-full flex-col p-4 bg-surface-container-low/20 backdrop-blur-md border-r border-white/5 shadow-xl w-[280px] overflow-y-auto"
     >
       <div className="mb-12 px-4 mt-2">
         <h1 className="text-3xl font-black text-on-surface tracking-tight bg-gradient-to-r from-white via-on-surface to-tertiary bg-clip-text text-transparent">NexaCargo</h1>
