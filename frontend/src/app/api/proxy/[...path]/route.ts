@@ -32,17 +32,29 @@ async function handler(req: NextRequest, { params }: { params: Promise<{ path: s
     try { body = await req.text(); } catch { body = undefined; }
   }
 
-  try {
-    const res = await fetch(url, { method: req.method, headers, body });
-    const data = await res.text();
-    return new NextResponse(data, {
-      status: res.status,
-      headers: { "Content-Type": res.headers.get("Content-Type") || "application/json" },
-    });
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Backend unreachable";
-    return NextResponse.json({ detail: `Proxy error: ${message}` }, { status: 502 });
+  // Retry fetch up to 2 times for 502/503/504 errors (Render free tier cold-start spin-up)
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const res = await fetch(url, { method: req.method, headers, body });
+      if ((res.status === 502 || res.status === 503 || res.status === 504) && attempt < 3) {
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+        continue;
+      }
+      const data = await res.text();
+      return new NextResponse(data, {
+        status: res.status,
+        headers: { "Content-Type": res.headers.get("Content-Type") || "application/json" },
+      });
+    } catch (err) {
+      if (attempt < 3) {
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+        continue;
+      }
+      const message = err instanceof Error ? err.message : "Backend unreachable";
+      return NextResponse.json({ detail: `Proxy error: ${message}` }, { status: 502 });
+    }
   }
+  return NextResponse.json({ detail: "Proxy error: Backend unavailable after retries" }, { status: 503 });
 }
 
 export async function GET(req: NextRequest, ctx: { params: Promise<{ path: string[] }> }) { return handler(req, ctx); }
