@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
 function getBackendBase(): string {
-  let raw = (process.env.BACKEND_API_URL || "http://127.0.0.1:8000/api/v1").trim().replace(/\/+$/, "");
+  const defaultUrl = process.env.VERCEL ? "https://ncl-nexacargologistics-2.onrender.com/api/v1" : "http://127.0.0.1:8000/api/v1";
+  let raw = (process.env.BACKEND_API_URL || defaultUrl).trim().replace(/\/+$/, "");
   if (!raw.endsWith("/api/v1") && !raw.includes("/api/")) {
     raw = `${raw}/api/v1`;
   }
