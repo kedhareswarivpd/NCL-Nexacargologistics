@@ -110,7 +110,8 @@ async def location_update(
     shipment.lng = payload.lng
     if payload.status:
         shipment.status = payload.status
-    db.add(ShipmentStatusHistory(
+    await crud.record_status_history(
+        db,
         shipment_id=shipment.id,
         status=payload.status or shipment.status,
         note=payload.note or "Location update",
@@ -118,8 +119,7 @@ async def location_update(
         lat=payload.lat,
         lng=payload.lng,
         changed_by=current_user.id,
-    ))
-    await db.flush()
+    )
     await db.refresh(shipment)
     return {"tracking_id": shipment.tracking_id, "lat": shipment.lat, "lng": shipment.lng, "status": shipment.status}
 
@@ -141,7 +141,7 @@ async def live_tracking(websocket: WebSocket, shipment_id: str):
         await websocket.close(code=1008)
         return
     try:
-        await verify_access_token(token)
+        claims = await verify_access_token(token)
     except TokenError:
         await websocket.send_json({"error": "Invalid token"})
         await websocket.close(code=1008)
@@ -149,10 +149,25 @@ async def live_tracking(websocket: WebSocket, shipment_id: str):
 
     try:
         sid = uuid.UUID(shipment_id)
-    except ValueError:
-        await websocket.send_json({"error": "Invalid shipment id"})
+        user_id = uuid.UUID(claims["id"])
+    except (ValueError, KeyError):
+        await websocket.send_json({"error": "Invalid shipment or token identity"})
         await websocket.close(code=1008)
         return
+
+    async with async_session_factory() as db:
+        user = await db.get(Profile, user_id)
+        shipment = await db.get(Shipment, sid)
+        if shipment is None:
+            await websocket.send_json({"error": "Shipment not found"})
+            await websocket.close(code=1008)
+            return
+        role = claims.get("role") or (user.role if user else "customer")
+        is_staff = role in UserRole.STAFF or (user and user.role in UserRole.STAFF)
+        if not is_staff and shipment.customer_id != user_id:
+            await websocket.send_json({"error": "Not authorized to track this shipment"})
+            await websocket.close(code=1008)
+            return
 
     try:
         while True:

@@ -13,18 +13,15 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
+from app.core.dependencies import assert_owner_or_staff
 from app.middleware.auth import get_current_user
 from app.models.profile import Profile, UserRole
 from app.models.shipment import Document, Shipment
 from app.schemas.payloads import DocumentCreate
 from app.services import crud
-from app.utils.helpers import serialize
+from app.utils.helpers import serialize, serialize_all
 
 router = APIRouter(prefix="/documents", tags=["documents"])
-
-
-def _can_view_all(role: str) -> bool:
-    return role in UserRole.STAFF
 
 
 async def _assert_shipment_access(db: AsyncSession, shipment_id, user: Profile):
@@ -33,8 +30,7 @@ async def _assert_shipment_access(db: AsyncSession, shipment_id, user: Profile):
     shipment = await crud.get_item(db, Shipment, shipment_id)
     if not shipment:
         raise HTTPException(status_code=404, detail="Shipment not found")
-    if not _can_view_all(user.role) and shipment.customer_id != user.id:
-        raise HTTPException(status_code=403, detail="Not allowed")
+    assert_owner_or_staff(shipment, user)
 
 
 @router.post("/upload", status_code=status.HTTP_201_CREATED)
@@ -44,13 +40,16 @@ async def upload_document(
     current_user: Profile = Depends(get_current_user),
 ):
     """Register an uploaded document (metadata + Storage URL)."""
+    url = (payload.file_url or "").strip()
+    if not (url.startswith("http://") or url.startswith("https://")):
+        raise HTTPException(status_code=400, detail="Invalid file URL scheme. Must use http or https.")
     shipment_uuid = uuid.UUID(payload.shipment_id) if payload.shipment_id else None
     await _assert_shipment_access(db, shipment_uuid, current_user)
     doc = await crud.create_item(db, Document, {
         "shipment_id": shipment_uuid,
         "doc_type": payload.doc_type,
         "file_name": payload.file_name,
-        "file_url": payload.file_url,
+        "file_url": url,
         "uploaded_by": current_user.id,
     })
     return serialize(doc)
@@ -64,12 +63,11 @@ async def list_documents(
     current_user: Profile = Depends(get_current_user),
 ):
     query = select(Document)
-    if not _can_view_all(current_user.role):
-        # Customers see only documents they uploaded.
+    if current_user.role not in UserRole.STAFF:
         query = query.where(Document.uploaded_by == current_user.id)
     query = query.order_by(Document.created_at.desc()).offset(skip).limit(limit)
     result = await db.execute(query)
-    return [serialize(d) for d in result.scalars().all()]
+    return serialize_all(result.scalars().all())
 
 
 @router.get("/shipment/{shipment_id}")
@@ -83,7 +81,7 @@ async def documents_for_shipment(
         select(Document).where(Document.shipment_id == uuid.UUID(shipment_id))
         .order_by(Document.created_at.desc())
     )
-    return [serialize(d) for d in result.scalars().all()]
+    return serialize_all(result.scalars().all())
 
 
 @router.get("/{document_id}")
@@ -95,8 +93,7 @@ async def get_document(
     doc = await crud.get_item(db, Document, document_id)
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
-    if not _can_view_all(current_user.role) and doc.uploaded_by != current_user.id:
-        raise HTTPException(status_code=403, detail="Not allowed")
+    assert_owner_or_staff(doc, current_user, owner_field="uploaded_by")
     return serialize(doc)
 
 
@@ -109,7 +106,6 @@ async def delete_document(
     doc = await crud.get_item(db, Document, document_id)
     if not doc:
         return None
-    if not _can_view_all(current_user.role) and doc.uploaded_by != current_user.id:
-        raise HTTPException(status_code=403, detail="Not allowed")
+    assert_owner_or_staff(doc, current_user, owner_field="uploaded_by")
     await crud.delete_item(db, doc)
     return None

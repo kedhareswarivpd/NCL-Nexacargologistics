@@ -136,12 +136,12 @@ async def forgot_password(payload: ForgotPasswordRequest, db: AsyncSession = Dep
     result = await db.execute(select(Profile).where(Profile.email == email))
     profile = result.scalar_one_or_none()
     if profile is not None and settings.JWT_SECRET:
-        reset_token = create_password_reset_token(str(profile.id))
+        _reset_token = create_password_reset_token(str(profile.id))
         await create_notification(
             db,
             user_id=str(profile.id),
             title="Password reset requested",
-            message=f"Use this token to reset your password: {reset_token}",
+            message="A password reset link has been dispatched to your email address.",
             channel="email",
             type="system",
             email_to=profile.email,

@@ -31,35 +31,60 @@ async def lifespan(app: FastAPI):
     yield
 
 
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse, Response
+
 app = FastAPI(title=settings.APP_NAME, version=settings.VERSION, lifespan=lifespan)
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    """Format Pydantic validation errors into a clean, user-friendly message."""
+    messages = []
+    for error in exc.errors():
+        field = " -> ".join(str(loc) for loc in error.get("loc", []) if loc != "body")
+        msg = error.get("msg", "Invalid value")
+        messages.append(f"Field '{field}': {msg}" if field else msg)
+    clean_msg = "; ".join(messages) if messages else "Invalid request input."
+    return JSONResponse(
+        status_code=422,
+        content={"detail": clean_msg, "errors": exc.errors()},
+    )
+
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    """Catch uncaught exceptions gracefully without exposing tracebacks to users."""
+    logger.error("Uncaught exception processing %s %s: %s", request.method, request.url.path, exc, exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "An unexpected error occurred. Please try again later."},
+    )
 
 
 @app.middleware("http")
 async def cors_middleware(request: Request, call_next):
     origin = request.headers.get("origin", "")
-    allowed = is_origin_allowed(origin, settings.cors_origin_list)
+    allowed = bool(origin) and is_origin_allowed(origin, settings.cors_origin_list)
 
     if request.method == "OPTIONS":
         response = Response(status_code=204)
-        if allowed and origin:
+        if allowed:
             response.headers["Access-Control-Allow-Origin"] = origin
             response.headers["Access-Control-Allow-Credentials"] = "true"
             response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
-            response.headers["Access-Control-Allow-Headers"] = "*"
+            response.headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type, Accept, Origin, X-Requested-With, apikey"
             response.headers["Access-Control-Max-Age"] = "86400"
+            response.headers["Vary"] = "Origin"
         return response
 
     response = await call_next(request)
 
-    if origin:
-        if allowed:
-            response.headers["Access-Control-Allow-Origin"] = origin
-        else:
-            # Still set wildcard so browser doesn't hard-block the response
-            response.headers["Access-Control-Allow-Origin"] = "*"
+    if allowed:
+        response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Access-Control-Allow-Credentials"] = "true"
         response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
-        response.headers["Access-Control-Allow-Headers"] = "*"
+        response.headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type, Accept, Origin, X-Requested-With, apikey"
         response.headers["Vary"] = "Origin"
 
     return response

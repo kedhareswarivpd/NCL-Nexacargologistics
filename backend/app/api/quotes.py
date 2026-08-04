@@ -7,6 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
+from app.core.dependencies import assert_owner_or_staff
 from app.middleware.auth import get_current_user
 from app.models.profile import Profile, UserRole
 from app.models.shipment import Quote, Shipment, ShipmentStatusHistory
@@ -14,7 +15,7 @@ from app.models.finance import Invoice, InvoiceStatus
 from datetime import datetime, timedelta, timezone
 from app.schemas.payloads import QuoteCalculate, QuoteCreate, QuoteUpdate
 from app.services import crud
-from app.utils.helpers import generate_ref, serialize, generate_tracking_id
+from app.utils.helpers import generate_ref, serialize, serialize_all, generate_tracking_id
 
 router = APIRouter(prefix="/quotes", tags=["quotes"])
 
@@ -48,7 +49,7 @@ async def list_quotes(
         query = query.where(Quote.customer_id == current_user.id)
     query = query.order_by(Quote.created_at.desc()).offset(skip).limit(limit)
     result = await db.execute(query)
-    return [serialize(q) for q in result.scalars().all()]
+    return serialize_all(result.scalars().all())
 
 
 @router.post("/calculate")
@@ -100,12 +101,13 @@ async def _create_quote(payload: QuoteCreate, db: AsyncSession, current_user: Pr
     shipment = await crud.create_item(db, Shipment, shipment_data)
 
     # Seed status history
-    db.add(ShipmentStatusHistory(
+    await crud.record_status_history(
+        db,
         shipment_id=shipment.id,
         status=shipment.status,
         note=f"Shipment auto-created from Quote Request {quote.quote_ref}",
         changed_by=current_user.id,
-    ))
+    )
     
     # Automatically create a pending invoice linked to this shipment
     issue_dt = datetime.now(timezone.utc)
@@ -158,8 +160,7 @@ async def get_quote(
     quote = await crud.get_item(db, Quote, quote_id)
     if not quote:
         raise HTTPException(status_code=404, detail="Quote not found")
-    if current_user.role == UserRole.CUSTOMER and quote.customer_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not allowed")
+    assert_owner_or_staff(quote, current_user)
     return serialize(quote)
 
 
@@ -177,12 +178,11 @@ async def update_quote(
     data = payload.model_dump(exclude_unset=True)
     # Customers may only accept/reject their own quote; staff may price it.
     if current_user.role == UserRole.CUSTOMER:
-        if quote.customer_id != current_user.id:
-            raise HTTPException(status_code=403, detail="Not allowed")
+        assert_owner_or_staff(quote, current_user)
         allowed = {"status"}
         if not set(data).issubset(allowed) or data.get("status") not in {"accepted", "rejected"}:
             raise HTTPException(status_code=403, detail="Customers may only accept or reject a quote")
-    elif current_user.role not in (UserRole.ADMIN, UserRole.LOGISTICS, UserRole.FINANCE, UserRole.SUPPORT):
+    elif current_user.role not in UserRole.STAFF:
         raise HTTPException(status_code=403, detail="Not allowed")
     updated = await crud.update_item(db, quote, data)
     return serialize(updated)
@@ -198,8 +198,7 @@ async def approve_quote(
     quote = await crud.get_item(db, Quote, quote_id)
     if not quote:
         raise HTTPException(status_code=404, detail="Quote not found")
-    if current_user.role == UserRole.CUSTOMER and quote.customer_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not allowed")
+    assert_owner_or_staff(quote, current_user)
     quote.status = "accepted"
     await db.flush()
     await db.refresh(quote)
@@ -215,8 +214,7 @@ async def reject_quote(
     quote = await crud.get_item(db, Quote, quote_id)
     if not quote:
         raise HTTPException(status_code=404, detail="Quote not found")
-    if current_user.role == UserRole.CUSTOMER and quote.customer_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not allowed")
+    assert_owner_or_staff(quote, current_user)
     quote.status = "rejected"
     await db.flush()
     await db.refresh(quote)
@@ -233,7 +231,6 @@ async def delete_quote(
     if not quote:
         return None
     # Customers may delete their own draft/quoted requests; staff may delete any.
-    if current_user.role == UserRole.CUSTOMER and quote.customer_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not allowed")
+    assert_owner_or_staff(quote, current_user)
     await crud.delete_item(db, quote)
     return None

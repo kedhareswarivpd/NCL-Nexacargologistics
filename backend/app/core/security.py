@@ -12,8 +12,14 @@ class TokenError(Exception):
     pass
 
 
+import hashlib
+
+
 def _pw_bytes(password: str) -> bytes:
-    return password.encode("utf-8")[:72]
+    pw_encoded = password.encode("utf-8")
+    if len(pw_encoded) > 72:
+        return hashlib.sha256(pw_encoded).digest()
+    return pw_encoded
 
 
 def hash_password(password: str) -> str:
@@ -47,6 +53,7 @@ def create_access_token(
         "role": role,
         "name": name,
         "iss": settings.JWT_ISSUER,
+        "aud": settings.JWT_ISSUER,
         "iat": now,
         "exp": expire,
     }
@@ -61,6 +68,7 @@ def create_password_reset_token(subject: str, expires_minutes: int = 30) -> str:
         "sub": str(subject),
         "purpose": "pwd_reset",
         "iss": settings.JWT_ISSUER,
+        "aud": settings.JWT_ISSUER,
         "iat": now,
         "exp": now + timedelta(minutes=expires_minutes),
     }
@@ -76,7 +84,8 @@ def verify_password_reset_token(token: str) -> str:
             settings.JWT_SECRET,
             algorithms=[settings.JWT_ALGORITHM],
             issuer=settings.JWT_ISSUER,
-            options={"verify_aud": False},
+            audience=settings.JWT_ISSUER,
+            options={"verify_aud": True},
         )
     except JWTError as exc:
         raise TokenError("Invalid or expired reset token") from exc
@@ -94,7 +103,8 @@ def _verify_backend(token: str) -> Optional[dict]:
             settings.JWT_SECRET,
             algorithms=[settings.JWT_ALGORITHM],
             issuer=settings.JWT_ISSUER,
-            options={"verify_aud": False},
+            audience=settings.JWT_ISSUER,
+            options={"verify_aud": True},
         )
     except JWTError:
         return None

@@ -10,10 +10,10 @@ from app.core.database import get_db
 from app.core.dependencies import get_driver_user
 from app.models.profile import Profile
 from app.models.logistics import Delivery
-from app.models.shipment import Shipment, ShipmentStatusHistory
+from app.models.shipment import Shipment
 from app.schemas.payloads import DeliveryUpdate
 from app.services import crud
-from app.utils.helpers import serialize, now_iso
+from app.utils.helpers import serialize, serialize_all, now_iso
 
 router = APIRouter(prefix="/driver", tags=["driver"])
 
@@ -26,7 +26,7 @@ async def my_deliveries(
     result = await db.execute(
         select(Delivery).where(Delivery.driver_id == current_user.id).order_by(Delivery.created_at.desc())
     )
-    return [serialize(d) for d in result.scalars().all()]
+    return serialize_all(result.scalars().all())
 
 
 @router.patch("/deliveries/{delivery_id}")
@@ -53,7 +53,8 @@ async def update_my_delivery(
                 "Failed": "Delayed",
             }.get(data["status"], shipment.status)
             shipment.status = mapped
-            db.add(ShipmentStatusHistory(
+            await crud.record_status_history(
+                db,
                 shipment_id=shipment.id,
                 status=mapped,
                 note=f"Driver update: {data['status']}",
@@ -61,8 +62,7 @@ async def update_my_delivery(
                 lat=data.get("lat"),
                 lng=data.get("lng"),
                 changed_by=current_user.id,
-            ))
-            await db.flush()
+            )
     return serialize(updated)
 
 
@@ -84,13 +84,13 @@ async def upload_proof(
         shipment = await crud.get_item(db, Shipment, delivery.shipment_id)
         if shipment:
             shipment.status = "Delivered"
-            db.add(ShipmentStatusHistory(
+            await crud.record_status_history(
+                db,
                 shipment_id=shipment.id,
                 status="Delivered",
                 note="Proof of delivery uploaded",
                 changed_by=current_user.id,
-            ))
-            await db.flush()
+            )
     return serialize(delivery)
 
 

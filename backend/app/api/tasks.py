@@ -1,6 +1,6 @@
 """
-Driver Tasks API — the task board (/tasks). Logistics/admin create & assign;
-drivers see and progress their own tasks.
+Warehouse Tasks API — task board (/tasks). Logistics/admin create & assign;
+warehouse staff see and progress assigned tasks.
 """
 
 import uuid
@@ -13,36 +13,35 @@ from app.core.database import get_db
 from app.core.dependencies import require_roles
 from app.middleware.auth import get_current_user
 from app.models.profile import Profile, UserRole
-from app.models.driver_task import DriverTask
+from app.models.warehouse import WarehouseTask
 from app.schemas.payloads import TaskCreate, TaskStatusPatch, TaskUpdate
 from app.services import crud
-from app.utils.helpers import serialize
+from app.utils.helpers import serialize, serialize_all
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
-manage_guard = require_roles(UserRole.LOGISTICS)
+manage_guard = require_roles(UserRole.LOGISTICS, UserRole.WAREHOUSE)
 
 
 @router.get("")
 async def list_tasks(
     status_filter: str | None = None,
-    driver_id: str | None = None,
+    assigned_to: str | None = None,
     skip: int = 0,
     limit: int = 200,
     db: AsyncSession = Depends(get_db),
     current_user: Profile = Depends(get_current_user),
 ):
-    query = select(DriverTask)
-    # Drivers only ever see their own tasks.
-    if current_user.role == UserRole.DRIVER:
-        query = query.where(DriverTask.driver_id == current_user.id)
-    elif driver_id:
-        query = query.where(DriverTask.driver_id == uuid.UUID(driver_id))
+    query = select(WarehouseTask)
+    if current_user.role == UserRole.WAREHOUSE:
+        query = query.where(WarehouseTask.assigned_to == current_user.id)
+    elif assigned_to:
+        query = query.where(WarehouseTask.assigned_to == uuid.UUID(assigned_to))
     if status_filter:
-        query = query.where(DriverTask.status == status_filter)
-    query = query.order_by(DriverTask.created_at.desc()).offset(skip).limit(limit)
+        query = query.where(WarehouseTask.status == status_filter)
+    query = query.order_by(WarehouseTask.created_at.desc()).offset(skip).limit(limit)
     result = await db.execute(query)
-    return [serialize(t) for t in result.scalars().all()]
+    return serialize_all(result.scalars().all())
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
@@ -52,10 +51,10 @@ async def create_task(
     _: Profile = Depends(manage_guard),
 ):
     data = payload.model_dump(exclude_unset=True)
-    for f in ("driver_id", "shipment_id"):
+    for f in ("assigned_to", "shipment_id", "warehouse_id"):
         if data.get(f):
             data[f] = uuid.UUID(data[f])
-    return serialize(await crud.create_item(db, DriverTask, data))
+    return serialize(await crud.create_item(db, WarehouseTask, data))
 
 
 @router.get("/{task_id}")
@@ -64,10 +63,10 @@ async def get_task(
     db: AsyncSession = Depends(get_db),
     current_user: Profile = Depends(get_current_user),
 ):
-    task = await crud.get_item(db, DriverTask, task_id)
+    task = await crud.get_item(db, WarehouseTask, task_id)
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
-    if current_user.role == UserRole.DRIVER and task.driver_id != current_user.id:
+    if current_user.role == UserRole.WAREHOUSE and task.assigned_to != current_user.id:
         raise HTTPException(status_code=403, detail="Not allowed")
     return serialize(task)
 
@@ -80,12 +79,12 @@ async def update_task(
     db: AsyncSession = Depends(get_db),
     _: Profile = Depends(manage_guard),
 ):
-    task = await crud.get_item(db, DriverTask, task_id)
+    task = await crud.get_item(db, WarehouseTask, task_id)
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
     data = payload.model_dump(exclude_unset=True)
-    if data.get("driver_id"):
-        data["driver_id"] = uuid.UUID(data["driver_id"])
+    if data.get("assigned_to"):
+        data["assigned_to"] = uuid.UUID(data["assigned_to"])
     return serialize(await crud.update_item(db, task, data))
 
 
@@ -96,12 +95,12 @@ async def set_task_status(
     db: AsyncSession = Depends(get_db),
     current_user: Profile = Depends(get_current_user),
 ):
-    """Progress a task. Drivers may update only their own; staff may update any."""
-    task = await crud.get_item(db, DriverTask, task_id)
+    """Progress a task. Warehouse staff may update assigned tasks; managers update any."""
+    task = await crud.get_item(db, WarehouseTask, task_id)
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
-    is_staff = current_user.role in (UserRole.ADMIN, UserRole.LOGISTICS)
-    if not is_staff and task.driver_id != current_user.id:
+    is_staff = current_user.role in (UserRole.ADMIN, UserRole.LOGISTICS, UserRole.WAREHOUSE)
+    if not is_staff and task.assigned_to != current_user.id:
         raise HTTPException(status_code=403, detail="Not allowed")
     task.status = payload.status
     await db.flush()
@@ -115,7 +114,7 @@ async def delete_task(
     db: AsyncSession = Depends(get_db),
     _: Profile = Depends(manage_guard),
 ):
-    task = await crud.get_item(db, DriverTask, task_id)
+    task = await crud.get_item(db, WarehouseTask, task_id)
     if task:
         await crud.delete_item(db, task)
     return None

@@ -16,10 +16,9 @@ from app.models.shipment import Shipment
 from app.models.finance import Invoice, InvoiceStatus
 from app.models.support import SupportTicket
 from app.models.notification import AuditLog
-from app.models.access import Role
-from app.schemas.payloads import BranchCreate, BranchUpdate, RoleCreate, RoleUpdate
+from app.schemas.payloads import BranchCreate, BranchUpdate
 from app.services import crud
-from app.utils.helpers import serialize
+from app.utils.helpers import serialize, serialize_all
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
@@ -27,7 +26,7 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 # ----------------------------- Branches -----------------------------
 @router.get("/branches")
 async def list_branches(db: AsyncSession = Depends(get_db), _: Profile = Depends(get_admin_user)):
-    return [serialize(b) for b in await crud.list_items(db, Branch, limit=200)]
+    return serialize_all(await crud.list_items(db, Branch, limit=200))
 
 
 @router.post("/branches", status_code=status.HTTP_201_CREATED)
@@ -40,7 +39,12 @@ async def create_branch(payload: BranchCreate, db: AsyncSession = Depends(get_db
 
 @router.patch("/branches/{branch_id}")
 @router.put("/branches/{branch_id}")
-async def update_branch(branch_id: str, payload: BranchUpdate, db: AsyncSession = Depends(get_db), _: Profile = Depends(get_admin_user)):
+async def update_branch(
+    branch_id: str,
+    payload: BranchUpdate,
+    db: AsyncSession = Depends(get_db),
+    _: Profile = Depends(get_admin_user),
+):
     branch = await crud.get_item(db, Branch, branch_id)
     if not branch:
         raise HTTPException(status_code=404, detail="Branch not found")
@@ -51,38 +55,66 @@ async def update_branch(branch_id: str, payload: BranchUpdate, db: AsyncSession 
 
 
 @router.delete("/branches/{branch_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_branch(branch_id: str, db: AsyncSession = Depends(get_db), _: Profile = Depends(get_admin_user)):
+async def delete_branch(
+    branch_id: str,
+    db: AsyncSession = Depends(get_db),
+    _: Profile = Depends(get_admin_user),
+):
     branch = await crud.get_item(db, Branch, branch_id)
     if branch:
         await crud.delete_item(db, branch)
     return None
 
 
-# ----------------------------- Analytics -----------------------------
+# ----------------------------- System Analytics -----------------------------
 @router.get("/analytics")
-async def analytics(db: AsyncSession = Depends(get_db), _: Profile = Depends(get_admin_user)):
+async def system_analytics(
+    db: AsyncSession = Depends(get_db),
+    _: Profile = Depends(get_admin_user),
+):
+    total_users = await crud.count(db, Profile)
+    total_shipments = await crud.count(db, Shipment)
+    active_shipments = await crud.count(db, Shipment, {"status": "In Transit"})
+    delivered_shipments = await crud.count(db, Shipment, {"status": "Delivered"})
+    open_tickets = await crud.count(db, SupportTicket, {"status": "open"})
+
+    inv_res = await db.execute(select(func.sum(Invoice.total)).where(Invoice.status == InvoiceStatus.PAID))
+    revenue = float(inv_res.scalar() or 0)
+
+    role_counts = {}
+    for r in sorted(UserRole.ALL):
+        role_counts[r] = await crud.count(db, Profile, {"role": r})
+
     return {
-        "users": await crud.count(db, Profile),
-        "customers": await crud.count(db, Profile, {"role": UserRole.CUSTOMER}),
-        "shipments": await crud.count(db, Shipment),
-        "shipments_in_transit": await crud.count(db, Shipment, {"status": "In Transit"}),
-        "shipments_delivered": await crud.count(db, Shipment, {"status": "Delivered"}),
-        "invoices": await crud.count(db, Invoice),
-        "invoices_paid": await crud.count(db, Invoice, {"status": InvoiceStatus.PAID}),
-        "open_tickets": await crud.count(db, SupportTicket, {"status": "open"}),
-        "branches": await crud.count(db, Branch),
+        "users": {"total": total_users, "by_role": role_counts},
+        "shipments": {
+            "total": total_shipments,
+            "active": active_shipments,
+            "delivered": delivered_shipments,
+        },
+        "support": {"open_tickets": open_tickets},
+        "finance": {"total_revenue": revenue, "currency": "USD"},
     }
 
 
-# ----------------------------- Audit logs -----------------------------
+# ----------------------------- Audit Logs -----------------------------
 @router.get("/audit-logs")
-async def audit_logs(
+async def list_audit_logs(
     skip: int = 0,
     limit: int = 100,
     db: AsyncSession = Depends(get_db),
     _: Profile = Depends(get_admin_user),
 ):
-    return [serialize(a) for a in await crud.list_items(db, AuditLog, skip=skip, limit=limit)]
+    return serialize_all(await crud.list_items(db, AuditLog, skip=skip, limit=limit, order_desc=True))
+
+
+# ----------------------------- Roles -----------------------------
+@router.get("/roles")
+async def list_roles(_: Profile = Depends(get_admin_user)):
+    return [
+        {"key": r, "label": r.capitalize(), "is_system": True}
+        for r in sorted(UserRole.ALL)
+    ]
 
 
 # ----------------------------- Dashboard -----------------------------

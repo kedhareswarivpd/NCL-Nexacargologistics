@@ -72,7 +72,7 @@ async def create_item(db: AsyncSession, model: Type, data: dict):
 
 async def update_item(db: AsyncSession, obj, data: dict):
     for field, value in data.items():
-        if value is not None and hasattr(obj, field):
+        if hasattr(obj, field):
             setattr(obj, field, value)
     await db.flush()
     await db.refresh(obj)
@@ -96,3 +96,29 @@ async def count(db: AsyncSession, model: Type, filters: Optional[dict] = None) -
             query = query.where(col == value)
     result = await db.execute(query)
     return int(result.scalar() or 0)
+
+
+async def record_status_history(
+    db: AsyncSession,
+    shipment_id: Any,
+    status: str,
+    note: Optional[str] = None,
+    changed_by: Optional[Any] = None,
+    location: Optional[str] = None,
+    lat: Optional[float] = None,
+    lng: Optional[float] = None,
+):
+    """Centralized helper to log shipment status timeline entries."""
+    from app.models.shipment import ShipmentStatusHistory
+    history = ShipmentStatusHistory(
+        shipment_id=_coerce_id(shipment_id),
+        status=status,
+        note=note,
+        location=location,
+        lat=lat,
+        lng=lng,
+        changed_by=_coerce_id(changed_by) if changed_by else None,
+    )
+    db.add(history)
+    await db.flush()
+    return history

@@ -16,7 +16,7 @@ from app.models.profile import Profile
 from app.models.warehouse import Warehouse, InventoryItem
 from app.schemas.payloads import WarehouseCreate, WarehouseUpdate
 from app.services import crud
-from app.utils.helpers import serialize
+from app.utils.helpers import serialize, serialize_all
 
 router = APIRouter(prefix="/warehouses", tags=["warehouses"])
 
@@ -26,7 +26,7 @@ async def list_warehouses(
     db: AsyncSession = Depends(get_db),
     _: Profile = Depends(get_current_user),
 ):
-    return [serialize(w) for w in await crud.list_items(db, Warehouse, limit=500)]
+    return serialize_all(await crud.list_items(db, Warehouse, limit=500))
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)

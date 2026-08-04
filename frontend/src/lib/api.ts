@@ -71,8 +71,11 @@ export function apiError(err: unknown, fallback = "Something went wrong."): stri
   if (axios.isAxiosError(err)) {
     const detail = err.response?.data?.detail;
     if (typeof detail === "string") return detail;
-    if (Array.isArray(detail) && detail[0]?.msg) return detail[0].msg;
-    return err.message || fallback;
+    if (Array.isArray(detail)) {
+      const msgs = detail.map((d) => (typeof d === "string" ? d : d?.msg || String(d))).filter(Boolean);
+      if (msgs.length > 0) return msgs.join("; ");
+    }
+    return err.response?.data?.message || err.message || fallback;
   }
   return err instanceof Error ? err.message : fallback;
 }

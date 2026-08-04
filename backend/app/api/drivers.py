@@ -12,10 +12,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
 from app.core.dependencies import require_roles
 from app.models.profile import Profile, UserRole
-from app.models.driver_task import DriverTask
+from app.models.logistics import Delivery
 from app.schemas.payloads import AvailabilityPatch, DriverCreate, DriverUpdate
 from app.services import crud, supabase_admin
-from app.utils.helpers import serialize
+from app.utils.helpers import serialize, serialize_all
 
 router = APIRouter(prefix="/drivers", tags=["drivers"])
 
@@ -43,7 +43,10 @@ async def list_drivers(
         query = query.where(Profile.status == status_filter)
     query = query.order_by(Profile.created_at.desc()).offset(skip).limit(limit)
     result = await db.execute(query)
-    return [serialize(d) for d in result.scalars().all()]
+    return serialize_all(result.scalars().all())
+
+
+from app.core.security import hash_password
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
@@ -69,6 +72,7 @@ async def create_driver(
         name=payload.name.strip(),
         role=UserRole.DRIVER,
         phone=payload.phone,
+        password_hash=hash_password(payload.password) if not auth_id else None,
         branch_id=uuid.UUID(payload.branch_id) if payload.branch_id else None,
     )
     db.add(driver)
@@ -121,10 +125,10 @@ async def driver_tasks(
 ):
     await _get_driver(db, driver_id)
     result = await db.execute(
-        select(DriverTask).where(DriverTask.driver_id == uuid.UUID(driver_id))
-        .order_by(DriverTask.created_at.desc())
+        select(Delivery).where(Delivery.driver_id == uuid.UUID(driver_id))
+        .order_by(Delivery.created_at.desc())
     )
-    return [serialize(t) for t in result.scalars().all()]
+    return serialize_all(result.scalars().all())
 
 
 @router.patch("/{driver_id}/availability")

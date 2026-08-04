@@ -10,13 +10,13 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
-from app.core.dependencies import get_finance_user
+from app.core.dependencies import get_finance_user, assert_owner_or_staff
 from app.middleware.auth import get_current_user
 from app.models.profile import Profile, UserRole
 from app.models.finance import Invoice, Payment, InvoiceStatus
 from app.schemas.payloads import PaymentCreate, PaymentVerify
 from app.services import crud
-from app.utils.helpers import generate_ref, serialize, now_iso
+from app.utils.helpers import generate_ref, serialize, serialize_all, now_iso
 
 router = APIRouter(prefix="/payments", tags=["payments"])
 
@@ -37,7 +37,7 @@ async def list_payments(
         query = query.where(Payment.customer_id == current_user.id)
     query = query.order_by(Payment.created_at.desc()).offset(skip).limit(limit)
     result = await db.execute(query)
-    return [serialize(p) for p in result.scalars().all()]
+    return serialize_all(result.scalars().all())
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
@@ -49,8 +49,10 @@ async def create_payment(
     invoice = await crud.get_item(db, Invoice, payload.invoice_id)
     if not invoice:
         raise HTTPException(status_code=404, detail="Invoice not found")
-    if not _is_finance(current_user.role) and invoice.customer_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not allowed")
+    if not _is_finance(current_user.role):
+        assert_owner_or_staff(invoice, current_user)
+    is_staff = _is_finance(current_user.role)
+    status_str = "completed" if is_staff else "pending"
     payment = await crud.create_item(db, Payment, {
         "payment_ref": generate_ref("PAY"),
         "invoice_id": invoice.id,
@@ -58,10 +60,11 @@ async def create_payment(
         "amount": payload.amount,
         "currency": payload.currency,
         "method": payload.method,
-        "status": "completed",
-        "paid_at": now_iso(),
+        "status": status_str,
+        "paid_at": now_iso() if is_staff else None,
     })
-    invoice.status = InvoiceStatus.PAID
+    if is_staff:
+        invoice.status = InvoiceStatus.PAID
     await db.flush()
     return serialize(payment)
 
@@ -106,7 +109,7 @@ async def payments_for_customer(
         select(Payment).where(Payment.customer_id == uuid.UUID(customer_id))
         .order_by(Payment.created_at.desc())
     )
-    return [serialize(p) for p in result.scalars().all()]
+    return serialize_all(result.scalars().all())
 
 
 @router.get("/{payment_id}")
@@ -118,6 +121,6 @@ async def get_payment(
     payment = await crud.get_item(db, Payment, payment_id)
     if not payment:
         raise HTTPException(status_code=404, detail="Payment not found")
-    if not _is_finance(current_user.role) and payment.customer_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not allowed")
+    if not _is_finance(current_user.role):
+        assert_owner_or_staff(payment, current_user)
     return serialize(payment)

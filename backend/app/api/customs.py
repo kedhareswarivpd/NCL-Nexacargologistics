@@ -15,7 +15,7 @@ from app.models.customs import CustomsEntry
 from app.models.shipment import Shipment, ShipmentStatusHistory
 from app.schemas.payloads import CustomsCreate, CustomsUpdate
 from app.services import crud
-from app.utils.helpers import generate_ref, serialize
+from app.utils.helpers import generate_ref, serialize, serialize_all
 
 router = APIRouter(prefix="/customs", tags=["customs"])
 
@@ -31,7 +31,7 @@ async def list_entries(
         query = query.where(CustomsEntry.status == status_filter)
     query = query.order_by(CustomsEntry.created_at.desc())
     result = await db.execute(query)
-    return [serialize(e) for e in result.scalars().all()]
+    return serialize_all(result.scalars().all())
 
 
 @router.post("/entries", status_code=status.HTTP_201_CREATED)
@@ -68,11 +68,11 @@ async def update_entry(
         shipment = await crud.get_item(db, Shipment, entry.shipment_id)
         if shipment:
             shipment.status = "In Transit" if data["status"] == "cleared" else "Customs Hold"
-            db.add(ShipmentStatusHistory(
+            await crud.record_status_history(
+                db,
                 shipment_id=shipment.id,
                 status=shipment.status,
                 note=f"Customs {data['status']}",
                 changed_by=current_user.id,
-            ))
-            await db.flush()
+            )
     return serialize(entry)

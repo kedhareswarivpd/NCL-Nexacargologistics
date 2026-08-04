@@ -18,7 +18,7 @@ from app.models.logistics import Container
 from app.models.shipment import Shipment
 from app.schemas.payloads import ContainerCreate, ContainerUpdate
 from app.services import crud
-from app.utils.helpers import serialize
+from app.utils.helpers import serialize, serialize_all
 
 router = APIRouter(prefix="/containers", tags=["containers"])
 
@@ -36,7 +36,7 @@ async def list_containers(
         query = query.where(Container.status == status_filter)
     query = query.order_by(Container.created_at.desc()).offset(skip).limit(limit)
     result = await db.execute(query)
-    return [serialize(c) for c in result.scalars().all()]
+    return serialize_all(result.scalars().all())
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)

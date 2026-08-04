@@ -51,5 +51,10 @@ def serialize(obj) -> dict:
     return data
 
 
+def serialize_all(items) -> list:
+    """Serialize an iterable of SQLAlchemy model instances."""
+    return [serialize(item) for item in items]
+
+
 def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()

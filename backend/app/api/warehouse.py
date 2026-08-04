@@ -130,14 +130,18 @@ async def update_task(task_id: str, payload: WarehouseTaskUpdate, db: AsyncSessi
     return serialize(await crud.update_item(db, obj, data))
 
 
+from sqlalchemy import func
+
+
 @router.get("/analytics")
 async def warehouse_analytics(db: AsyncSession = Depends(get_db), _: Profile = Depends(get_current_user)):
-    items = await crud.list_items(db, InventoryItem, limit=5000)
-    total_qty = sum((i.qty or 0) for i in items)
-    low = sum(1 for i in items if i.status == "Low")
-    out = sum(1 for i in items if i.status == "Out")
+    total_items = await crud.count(db, InventoryItem)
+    qty_res = await db.execute(select(func.coalesce(func.sum(InventoryItem.qty), 0)))
+    total_qty = int(qty_res.scalar() or 0)
+    low = await crud.count(db, InventoryItem, {"status": "Low"})
+    out = await crud.count(db, InventoryItem, {"status": "Out"})
     return {
-        "total_items": len(items),
+        "total_items": total_items,
         "total_quantity": total_qty,
         "low_stock": low,
         "out_of_stock": out,

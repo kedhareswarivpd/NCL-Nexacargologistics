@@ -19,10 +19,6 @@ from app.models.customs import CustomsEntry
 from app.models.insurance import InsurancePolicy
 from app.models.support import SupportTicket, TicketMessage
 from app.models.notification import Notification, AuditLog
-from app.models.access import Role
-from app.models.expense import Expense
-from app.models.driver_task import DriverTask
-from app.models.review import Review
 
 __all__ = [
     "Profile",
@@ -50,8 +46,4 @@ __all__ = [
     "TicketMessage",
     "Notification",
     "AuditLog",
-    "Role",
-    "Expense",
-    "DriverTask",
-    "Review",
 ]

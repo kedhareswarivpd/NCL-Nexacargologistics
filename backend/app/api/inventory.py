@@ -16,7 +16,7 @@ from app.models.profile import Profile
 from app.models.warehouse import InventoryItem
 from app.schemas.payloads import InventoryCreate, InventoryUpdate
 from app.services import crud
-from app.utils.helpers import serialize
+from app.utils.helpers import serialize, serialize_all
 
 
 def _stock_status(qty: int, reorder_at: int | None) -> str:
@@ -43,7 +43,7 @@ async def list_inventory(
         query = query.where(InventoryItem.warehouse_id == uuid.UUID(warehouse_id))
     query = query.order_by(InventoryItem.created_at.desc()).offset(skip).limit(limit)
     result = await db.execute(query)
-    return [serialize(i) for i in result.scalars().all()]
+    return serialize_all(result.scalars().all())
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)

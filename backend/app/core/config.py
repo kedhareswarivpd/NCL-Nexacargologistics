@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     APP_NAME: str = "NexaCargo API"
     VERSION: str = "1.0.0"
-    DEBUG: bool = True
+    DEBUG: bool = False
 
     API_PREFIX: str = "/api/v1"
 
@@ -22,8 +22,8 @@ class Settings(BaseSettings):
     JWT_ISSUER: str = "nexacargo-api"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24
 
-    # Comma-separated explicit origins. Vercel/localhost handled by regex below.
-    CORS_ORIGINS: str = "*"
+    # Comma-separated explicit origins.
+    CORS_ORIGINS: str = ""
 
     UPLOAD_DIR: str = "uploads"
 
@@ -35,8 +35,8 @@ class Settings(BaseSettings):
 
     @property
     def cors_origin_list(self) -> list[str]:
-        if self.CORS_ORIGINS.strip() == "*":
-            return ["*"]
+        if not self.CORS_ORIGINS or self.CORS_ORIGINS.strip() == "*":
+            return []
         return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]
 
 
@@ -44,7 +44,7 @@ class Settings(BaseSettings):
 CORS_ORIGIN_PATTERNS: list[re.Pattern] = [
     re.compile(r"^http://localhost:\d+$"),
     re.compile(r"^http://127\.0\.0\.1:\d+$"),
-    re.compile(r"^https://.*\.vercel\.app$"),
+    re.compile(r"^https://ncl-[a-zA-Z0-9-]+\.vercel\.app$"),
     re.compile(r"^https://ncl-nexacargologistics-3\.onrender\.com$"),
 ]
 
