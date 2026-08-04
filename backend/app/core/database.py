@@ -14,11 +14,18 @@ def _build_connect_args(url: str) -> dict:
     return args
 
 
+db_url = settings.DATABASE_URL
+if db_url.startswith("postgresql://"):
+    db_url = db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+elif db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql+asyncpg://", 1)
+
+
 engine = create_async_engine(
-    settings.DATABASE_URL,
+    db_url,
     echo=settings.DEBUG,
     poolclass=NullPool,
-    connect_args=_build_connect_args(settings.DATABASE_URL),
+    connect_args=_build_connect_args(db_url),
 )
 
 async_session_factory = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
