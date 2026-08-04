@@ -8,13 +8,17 @@ from app.core.config import settings
 def _build_connect_args(url: str) -> dict:
     if "sqlite" in url:
         return {}
-    # statement_cache_size=0 is required for PgBouncer/Supabase transaction pooler.
-    # ssl="require" forces encrypted connection and IPv4-friendly resolution.
-    args: dict = {
+    import ssl as _ssl
+    # statement_cache_size=0 required for PgBouncer/Supabase transaction pooler.
+    # We create an SSL context that does NOT verify the Supabase self-signed cert
+    # but still uses TLS encryption — this forces IPv4 DNS resolution on Render.
+    ssl_ctx = _ssl.create_default_context()
+    ssl_ctx.check_hostname = False
+    ssl_ctx.verify_mode = _ssl.CERT_NONE
+    return {
         "statement_cache_size": 0,
-        "ssl": "require",
+        "ssl": ssl_ctx,
     }
-    return args
 
 
 db_url = settings.DATABASE_URL

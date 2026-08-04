@@ -1,17 +1,18 @@
 services:
   - type: web
     name: nexacargo-backend
-    runtime: python
+    runtime: docker
     rootDir: backend
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     plan: free
     healthCheckPath: /health
     envVars:
+      # IMPORTANT: Set DATABASE_URL manually in the Render dashboard.
+      # Use: postgresql+asyncpg://postgres:PASSWORD@db.PROJECT.supabase.co:5432/postgres
       - key: DATABASE_URL
         sync: false
+      # Set manually in Render dashboard (Project Settings → API → anon key)
       - key: SUPABASE_URL
-        sync: false
+        value: https://sgwywgrabomkbegnsref.supabase.co
       - key: SUPABASE_ANON_KEY
         sync: false
       - key: SUPABASE_JWT_SECRET

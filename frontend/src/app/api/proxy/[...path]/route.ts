@@ -42,11 +42,19 @@ async function handler(req: NextRequest, { params }: { params: Promise<{ path: s
         continue;
       }
       const data = await res.text();
+      if (!res.ok) {
+        // Surface the backend error in Vercel function logs
+        console.error(
+          `[proxy] ${req.method} ${url} → HTTP ${res.status}\n` +
+          `Backend response: ${data.slice(0, 500)}`
+        );
+      }
       return new NextResponse(data, {
         status: res.status,
         headers: { "Content-Type": res.headers.get("Content-Type") || "application/json" },
       });
     } catch (err) {
+      console.error(`[proxy] ${req.method} ${url} attempt ${attempt} threw:`, err);
       if (attempt < 3) {
         await new Promise((resolve) => setTimeout(resolve, 3000));
         continue;

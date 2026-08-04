@@ -7,7 +7,7 @@ from sqlalchemy.future import select
 
 from app.core.database import get_db
 from app.core.security import verify_access_token, TokenError
-from app.models.profile import Profile
+from app.models.profile import Profile, UserRole
 
 bearer = HTTPBearer(auto_error=False)
 
