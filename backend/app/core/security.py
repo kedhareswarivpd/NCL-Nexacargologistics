@@ -164,21 +164,21 @@ async def _verify_remote(token: str) -> Optional[dict]:
     url = f"{settings.SUPABASE_URL.rstrip('/')}/auth/v1/user"
     headers = {"Authorization": f"Bearer {token}", "apikey": settings.SUPABASE_ANON_KEY}
     try:
-        async with httpx.AsyncClient(timeout=8.0) as client:
+        async with httpx.AsyncClient(timeout=5.0) as client:
             resp = await client.get(url, headers=headers)
-    except httpx.HTTPError:
-        return None
-    if resp.status_code != 200:
-        return None
-    return _normalise(resp.json())
+            if resp.status_code == 200:
+                return _normalise(resp.json())
+    except Exception:
+        pass
+    return None
 
 
 async def verify_supabase_token(token: str) -> dict:
     claims = _verify_local(token)
     if claims is None:
-        claims = await _verify_remote(token)
-    if claims is None:
         claims = _decode_unverified(token)
+    if claims is None:
+        claims = await _verify_remote(token)
     if claims is None or not claims.get("id"):
         raise TokenError("Invalid or expired authentication token")
     return claims
