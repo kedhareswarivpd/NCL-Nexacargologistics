@@ -8,9 +8,12 @@ from app.core.config import settings
 def _build_connect_args(url: str) -> dict:
     if "sqlite" in url:
         return {}
-    args: dict = {"statement_cache_size": 0, "timeout": 5}
-    if "supabase.co" in url or "pooler.supabase.com" in url:
-        args["server_settings"] = {"application_name": "nexacargo-api"}
+    # statement_cache_size=0 is required for PgBouncer/Supabase transaction pooler.
+    # ssl="require" forces encrypted connection and IPv4-friendly resolution.
+    args: dict = {
+        "statement_cache_size": 0,
+        "ssl": "require",
+    }
     return args
 
 
