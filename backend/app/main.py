@@ -8,6 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings, is_origin_allowed
 from app.core.database import engine, get_db, Base
+from app.api import api_router
+from app.middleware.logging import LoggingMiddleware
 import app.models  # noqa: F401
 
 logging.basicConfig(level=logging.INFO)
