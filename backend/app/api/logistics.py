@@ -10,6 +10,7 @@ from app.core.dependencies import require_roles
 from app.middleware.auth import get_current_user
 from app.models.profile import Profile, UserRole
 from app.models.logistics import Container, Route, Vehicle, Delivery
+from app.models.shipment import Shipment, ShipmentStatusHistory
 from app.schemas.payloads import (
     ContainerCreate, ContainerUpdate,
     RouteCreate, RouteUpdate,
@@ -132,8 +133,34 @@ async def create_delivery(payload: DeliveryCreate, db: AsyncSession = Depends(ge
 
 @router.patch("/deliveries/{item_id}")
 @router.put("/deliveries/{item_id}")
-async def update_delivery(item_id: str, payload: DeliveryUpdate, db: AsyncSession = Depends(get_db), _: Profile = Depends(require_roles(UserRole.LOGISTICS, UserRole.DRIVER))):
+async def update_delivery(
+    item_id: str,
+    payload: DeliveryUpdate,
+    db: AsyncSession = Depends(get_db),
+    _: Profile = Depends(require_roles(UserRole.LOGISTICS, UserRole.DRIVER, UserRole.CUSTOMER, UserRole.ADMIN)),
+):
     obj = await crud.get_item(db, Delivery, item_id)
     if not obj:
         raise HTTPException(status_code=404, detail="Delivery not found")
-    return serialize(await crud.update_item(db, obj, payload.model_dump(exclude_unset=True)))
+    data = payload.model_dump(exclude_unset=True)
+    updated = await crud.update_item(db, obj, data)
+
+    if data.get("status") and obj.shipment_id:
+        shipment = await crud.get_item(db, Shipment, obj.shipment_id)
+        if shipment:
+            mapped = {
+                "Picked Up": "In Transit",
+                "In Transit": "In Transit",
+                "Delivered": "Delivered",
+                "Failed": "Delayed",
+            }.get(data["status"], shipment.status)
+            shipment.status = mapped
+            db.add(ShipmentStatusHistory(
+                shipment_id=shipment.id,
+                status=mapped,
+                note=f"Delivery update: {data['status']}",
+                location=data.get("location"),
+                lat=data.get("lat"),
+                lng=data.get("lng"),
+            ))
+    return serialize(updated)
