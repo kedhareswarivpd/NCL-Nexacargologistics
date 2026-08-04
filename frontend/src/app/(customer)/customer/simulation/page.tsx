@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
 import { Card } from "@/components/ui/card";
-import { quotesApi, shipmentsApi, financeApi } from "@/lib/services";
+import { quotesApi, shipmentsApi, financeApi, dispatchApi } from "@/lib/services";
 import { supabase } from "@/lib/supabase";
 import { apiError } from "@/lib/api";
 import Link from "next/link";
@@ -251,45 +251,27 @@ export default function WorkflowSimulationPage() {
 
     setLoading(true);
     try {
-      const deliveryCode = `DLV-${Math.floor(1000 + Math.random() * 9000)}`;
-      const { data, error } = await supabase.from("deliveries").insert({
-        delivery_code: deliveryCode,
+      const data = await dispatchApi.assignDriver({
         shipment_id: shipment.id,
         driver_id: targetDriver.id,
-        status: "Pending",
-        location: shipment.origin,
-        progress: 0,
         eta: "12 days",
-        lat: 1.3521,
-        lng: 103.8198
-      }).select().single();
+      });
 
-      if (error) throw error;
       setDelivery(data);
       setDriver({ ...targetDriver, name: displayName });
 
-      // Update shipment status to "In Transit"
-      await supabase
-        .from("shipments")
-        .update({ status: "In Transit" })
-        .eq("id", shipment.id);
-
-      // Add status history
-      await supabase.from("shipment_status_history").insert({
-        shipment_id: shipment.id,
-        status: "In Transit",
-        note: `Admin/Dispatcher assigned driver ${displayName} to transport shipment.`,
-        changed_by: user?.id
-      });
-
       // Reload shipment state
-      const updatedShipment = await shipmentsApi.get(shipment.id);
-      setShipment(updatedShipment);
+      try {
+        const updatedShipment = await shipmentsApi.get(shipment.id);
+        setShipment(updatedShipment);
+      } catch {
+        setShipment((prev: any) => ({ ...prev, status: "In Transit" }));
+      }
 
-      toast.success(`Driver ${displayName} assigned successfully by Admin!`);
+      toast.success(`Driver ${displayName} assigned successfully!`);
       setCurrentStage(6);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to assign driver.");
+      toast.error(apiError(err, "Failed to assign driver."));
     } finally {
       setLoading(false);
     }

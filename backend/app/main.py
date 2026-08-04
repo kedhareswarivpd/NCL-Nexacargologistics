@@ -17,17 +17,6 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    import asyncio
-    for attempt in range(5):
-        try:
-            async with engine.connect() as conn:
-                await conn.execute(text("SELECT 1"))
-            logger.info("Database connection pool warmed up.")
-            break
-        except Exception as exc:
-            logger.warning("DB warm-up attempt %d failed: %s", attempt + 1, exc)
-            if attempt < 4:
-                await asyncio.sleep(2 ** attempt)
     yield
 
 

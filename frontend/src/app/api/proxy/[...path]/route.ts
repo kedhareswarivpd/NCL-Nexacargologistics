@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const BACKEND = process.env.BACKEND_API_URL || "http://127.0.0.1:8000/api/v1";
+function getBackendBase(): string {
+  let raw = (process.env.BACKEND_API_URL || "http://127.0.0.1:8000/api/v1").trim().replace(/\/+$/, "");
+  if (!raw.endsWith("/api/v1") && !raw.includes("/api/")) {
+    raw = `${raw}/api/v1`;
+  }
+  return raw;
+}
 
 async function handler(req: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   let path: string[];
@@ -10,7 +16,8 @@ async function handler(req: NextRequest, { params }: { params: Promise<{ path: s
     return NextResponse.json({ detail: "Invalid route params" }, { status: 400 });
   }
 
-  const url = `${BACKEND}/${path.join("/")}${req.nextUrl.search}`;
+  const backendBase = getBackendBase();
+  const url = `${backendBase}/${path.join("/")}${req.nextUrl.search}`;
 
   const headers: Record<string, string> = {};
 

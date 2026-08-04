@@ -46,6 +46,17 @@ class StaffCreate(BaseModel):
     branch_id: Optional[str] = None
 
 
+class RoleCreate(BaseModel):
+    key: str = Field(min_length=2, max_length=50)
+    label: str = Field(min_length=2, max_length=100)
+    description: Optional[str] = None
+
+
+class RoleUpdate(BaseModel):
+    label: Optional[str] = None
+    description: Optional[str] = None
+
+
 # ----------------------------- Quotes -----------------------------
 class QuoteCreate(BaseModel):
     origin: str = Field(min_length=2, max_length=255)
@@ -274,6 +285,14 @@ class PaymentCreate(BaseModel):
     amount: float
     currency: str = "USD"
     method: Optional[str] = None
+
+
+class ExpenseCreate(BaseModel):
+    category: str = Field(default="Operational", max_length=50)
+    amount: float = Field(gt=0)
+    currency: str = Field(default="USD", max_length=10)
+    description: Optional[str] = None
+    branch_id: Optional[str] = None
 
 
 # ----------------------------- Customs -----------------------------

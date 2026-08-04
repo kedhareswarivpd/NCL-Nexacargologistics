@@ -48,3 +48,16 @@ class Payment(Base):
     status = Column(String(20), nullable=False, default="pending")  # pending|completed|failed|refunded
     paid_at = Column(String(40), nullable=True)
     created_at = created_column()
+
+
+class Expense(Base):
+    __tablename__ = "expenses"
+
+    id = pk_column()
+    category = Column(String(50), nullable=False, default="Operational")
+    amount = Column(Float, nullable=False, default=0.0)
+    currency = Column(String(10), nullable=False, default="USD")
+    description = Column(Text, nullable=True)
+    branch_id = Column(UUID(as_uuid=True), ForeignKey("branches.id"), nullable=True)
+    created_at = created_column()
+    updated_at = updated_column()

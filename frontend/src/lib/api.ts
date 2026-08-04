@@ -44,7 +44,16 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    const status = error.response?.status;
+
+    // Retry transient 502 / 503 / 504 errors (e.g., backend deployment cold start) up to 2 times
+    if ((status === 502 || status === 503 || status === 504) && originalRequest && (originalRequest._retryCount || 0) < 2) {
+      originalRequest._retryCount = (originalRequest._retryCount || 0) + 1;
+      await new Promise((resolve) => setTimeout(resolve, 1500 * originalRequest._retryCount));
+      return api(originalRequest);
+    }
+
+    if (status === 401 && originalRequest && !originalRequest._retry) {
       originalRequest._retry = true;
       const { data } = await supabase.auth.refreshSession();
       if (data.session?.access_token) {
@@ -69,6 +78,11 @@ api.interceptors.response.use(
 /** Narrow an axios error into a readable message for toasts. */
 export function apiError(err: unknown, fallback = "Something went wrong."): string {
   if (axios.isAxiosError(err)) {
+    if (err.response?.status === 503) {
+      const detail = err.response?.data?.detail;
+      if (typeof detail === "string" && detail.length > 0) return detail;
+      return "The backend service is currently spinning up or unavailable. Please try again in a few seconds.";
+    }
     const detail = err.response?.data?.detail;
     if (typeof detail === "string") return detail;
     if (Array.isArray(detail)) {

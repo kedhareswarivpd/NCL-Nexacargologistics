@@ -10,13 +10,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.dependencies import get_admin_user
-from app.models.profile import Profile, UserRole
+from app.models.profile import Profile, UserRole, Role
 from app.models.branch import Branch
 from app.models.shipment import Shipment
 from app.models.finance import Invoice, InvoiceStatus
 from app.models.support import SupportTicket
 from app.models.notification import AuditLog
-from app.schemas.payloads import BranchCreate, BranchUpdate
+from app.schemas.payloads import BranchCreate, BranchUpdate, RoleCreate, RoleUpdate
 from app.services import crud
 from app.utils.helpers import serialize, serialize_all
 
@@ -109,8 +109,8 @@ async def list_audit_logs(
 
 
 # ----------------------------- Roles -----------------------------
-@router.get("/roles")
-async def list_roles(_: Profile = Depends(get_admin_user)):
+@router.get("/system-roles")
+async def list_system_roles(_: Profile = Depends(get_admin_user)):
     return [
         {"key": r, "label": r.capitalize(), "is_system": True}
         for r in sorted(UserRole.ALL)

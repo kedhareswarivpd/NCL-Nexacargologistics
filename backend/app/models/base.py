@@ -1,12 +1,11 @@
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import Column, DateTime
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Column, DateTime, Uuid
 
 
 def pk_column():
-    return Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    return Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
 
 def created_column():

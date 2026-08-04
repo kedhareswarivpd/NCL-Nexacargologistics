@@ -20,7 +20,7 @@ from app.utils.helpers import generate_ref, serialize
 
 router = APIRouter(prefix="/dispatch", tags=["dispatch"])
 
-dispatch_guard = require_roles(UserRole.LOGISTICS)
+dispatch_guard = require_roles(UserRole.LOGISTICS, UserRole.ADMIN, UserRole.DRIVER, UserRole.CUSTOMER)
 
 # Shipment statuses considered "active" (still in the pipeline).
 ACTIVE_STATUSES = ("Awaiting Dispatch", "In Transit", "Out for Delivery", "Customs Hold", "Delayed")

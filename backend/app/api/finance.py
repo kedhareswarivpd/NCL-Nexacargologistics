@@ -13,8 +13,7 @@ from app.core.database import get_db
 from app.core.dependencies import get_finance_user
 from app.middleware.auth import get_current_user
 from app.models.profile import Profile, UserRole
-from app.models.finance import Invoice, Payment, InvoiceStatus
-from app.models.expense import Expense
+from app.models.finance import Invoice, Payment, InvoiceStatus, Expense
 from app.schemas.payloads import ExpenseCreate, InvoiceCreate, InvoiceUpdate, PaymentCreate
 from app.services import crud
 from app.utils.helpers import generate_ref, serialize, now_iso

@@ -76,8 +76,7 @@ export default function CustomerDashboardPage() {
       });
     });
 
-    // Ping /health first to wake the Render service, then load data.
-    fetch("/api/proxy/health").catch(() => null).finally(load);
+    load();
   }, []);
 
   const STATS = [

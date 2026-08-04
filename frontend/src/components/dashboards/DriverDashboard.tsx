@@ -118,37 +118,10 @@ export default function DriverDashboard() {
 
     setAssigning(true);
     try {
-      // 1. Insert into deliveries table
-      const { error: delError } = await supabase.from("deliveries").insert({
-        delivery_code: `DEL-${Math.floor(1000 + Math.random() * 9000)}`,
+      await dispatchApi.assignDriver({
         shipment_id: targetShipment.id,
         driver_id: user.id,
-        status: "Pending",
-        location: targetShipment.origin,
-        progress: 0,
         eta: targetShipment.eta || "3 days",
-      });
-      if (delError) throw delError;
-
-      // 2. Update shipments table status
-      const { error: shpError } = await supabase
-        .from("shipments")
-        .update({ status: "In Transit" })
-        .eq("id", targetShipment.id);
-      if (shpError) throw shpError;
-
-      // 3. Update profiles table driver status
-      await supabase
-        .from("profiles")
-        .update({ status: "on_trip" })
-        .eq("id", user.id);
-
-      // 4. Add to status history
-      await supabase.from("shipment_status_history").insert({
-        shipment_id: targetShipment.id,
-        status: "In Transit",
-        note: `Self-assigned by driver ${formattedDriverName} for transporting`,
-        changed_by: user.id,
       });
 
       toast.success("Shipment successfully assigned to you! Transit started.");

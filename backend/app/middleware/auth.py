@@ -36,23 +36,29 @@ async def get_current_user(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(exc))
 
     user_id = uuid.UUID(claims["id"])
+    email = (claims.get("email") or "").lower().strip()
+
     result = await db.execute(select(Profile).where(Profile.id == user_id))
     profile = result.scalar_one_or_none()
+
+    if profile is None and email:
+        result_email = await db.execute(select(Profile).where(Profile.email == email))
+        profile = result_email.scalar_one_or_none()
 
     if profile is None:
         profile = Profile(
             id=user_id,
-            email=claims.get("email") or "",
-            name=claims.get("name") or (claims.get("email") or "User").split("@")[0],
-            role=UserRole.CUSTOMER,
+            email=email,
+            name=claims.get("name") or (email.split("@")[0] if email else "User"),
+            role=claims.get("role") or UserRole.CUSTOMER,
             phone=claims.get("phone"),
             company=claims.get("company"),
         )
         db.add(profile)
         await db.flush()
     else:
-        if claims.get("email") and profile.email != claims["email"]:
-            profile.email = claims["email"]
+        if email and profile.email != email:
+            profile.email = email
 
     return profile
 

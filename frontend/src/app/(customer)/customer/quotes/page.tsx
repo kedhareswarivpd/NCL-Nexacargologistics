@@ -461,7 +461,7 @@ export default function RequestQuotesPage() {
     try { setQuotes((await quotesApi.list()) ?? []); } catch { setQuotes([]); }
   }
   useEffect(() => {
-    fetch("/api/proxy/health").catch(() => null).finally(loadQuotes);
+    loadQuotes();
   }, [user?.id]);
 
   const validate = () => {
@@ -496,27 +496,25 @@ export default function RequestQuotesPage() {
       form.insurance && form.insurance !== "No Insurance" ? `Insurance: ${form.insurance}` : "",
       form.notes,
     ].filter(Boolean);
-    const submit = async () => {
-      try {
-        await quotesApi.create({
-          origin: form.origin.trim(),
-          destination: form.destination.trim(),
-          mode: form.mode || typeToMode(form.type),
-          cargo_type: form.type,
-          weight: Number(form.weight) || undefined,
-          notes: noteParts.join(" · "),
-        });
-        setSubmitted(true);
-        setSubmitError(null);
-        setTimeout(() => setSubmitted(false), 5000);
-        setForm({ origin: "", destination: "", type: "FCL 20FT", mode: "", weight: "", date: "", insurance: "No Insurance", notes: "" });
-        loadQuotes();
-      } catch (err) {
-        setSubmitError(apiError(err));
-      }
+    try {
+      await quotesApi.create({
+        origin: form.origin.trim(),
+        destination: form.destination.trim(),
+        mode: form.mode || typeToMode(form.type),
+        cargo_type: form.type,
+        weight: Number(form.weight) || undefined,
+        notes: noteParts.join(" · "),
+      });
+      setSubmitted(true);
+      setSubmitError(null);
+      setTimeout(() => setSubmitted(false), 5000);
+      setForm({ origin: "", destination: "", type: "FCL 20FT", mode: "", weight: "", date: "", insurance: "No Insurance", notes: "" });
+      loadQuotes();
+    } catch (err) {
+      setSubmitError(apiError(err));
+    } finally {
       setSaving(false);
-    };
-    fetch("/api/proxy/health").catch(() => null).finally(submit);
+    }
   };
 
   return (
@@ -560,6 +558,16 @@ export default function RequestQuotesPage() {
           <Zap className="h-5 w-5 text-tertiary" />
           <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">Get an Instant Quote</h2>
         </div>
+
+        {submitError && (
+          <div className="flex items-center gap-2 mb-5 p-4 rounded-lg bg-red-400/10 border border-red-400/20 text-red-400 text-sm">
+            <XCircle className="h-5 w-5 shrink-0" />
+            <div>
+              <p className="font-semibold">Unable to submit quote</p>
+              <p className="text-xs text-red-400/80 mt-0.5">{submitError}</p>
+            </div>
+          </div>
+        )}
 
         {submitted && (
           <div className="flex items-center gap-2 mb-5 p-4 rounded-lg bg-green-400/10 border border-green-400/20 text-green-400 text-sm">

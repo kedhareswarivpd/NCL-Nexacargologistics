@@ -6,7 +6,9 @@ from app.core.config import settings
 
 
 def _build_connect_args(url: str) -> dict:
-    args: dict = {"statement_cache_size": 0}
+    if "sqlite" in url:
+        return {}
+    args: dict = {"statement_cache_size": 0, "timeout": 5}
     if "supabase.co" in url or "pooler.supabase.com" in url:
         args["server_settings"] = {"application_name": "nexacargo-api"}
     return args

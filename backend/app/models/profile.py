@@ -1,8 +1,8 @@
-from sqlalchemy import Column, String, ForeignKey
+from sqlalchemy import Column, String, ForeignKey, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 
 from app.core.database import Base
-from app.models.base import created_column, updated_column
+from app.models.base import pk_column, created_column, updated_column
 
 
 class UserRole:
@@ -32,5 +32,17 @@ class Profile(Base):
     department = Column(String(100), nullable=True)
     branch_id = Column(UUID(as_uuid=True), ForeignKey("branches.id"), nullable=True)
     status = Column(String(50), nullable=False, default="active")
+    created_at = created_column()
+    updated_at = updated_column()
+
+
+class Role(Base):
+    __tablename__ = "roles"
+
+    id = pk_column()
+    key = Column(String(50), unique=True, nullable=False, index=True)
+    label = Column(String(100), nullable=False)
+    description = Column(String(255), nullable=True)
+    is_system = Column(Boolean, nullable=False, default=False)
     created_at = created_column()
     updated_at = updated_column()
