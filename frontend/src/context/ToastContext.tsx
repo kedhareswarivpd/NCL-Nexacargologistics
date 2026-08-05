@@ -12,6 +12,15 @@ import * as React from "react";
 import { CheckCircle2, AlertTriangle, Info, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+const secureRandom = () => {
+  if (typeof window !== "undefined" && window.crypto) {
+    const arr = new Uint32Array(1);
+    window.crypto.getRandomValues(arr);
+    return arr[0] / 4294967296;
+  }
+  return 0.5;
+};
+
 type ToastVariant = "success" | "error" | "info";
 
 interface Toast {
@@ -50,7 +59,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 
   const toast = React.useCallback(
     (message: string, variant: ToastVariant = "info") => {
-      const id = Math.random().toString(36).slice(2);
+      const id = secureRandom().toString(36).slice(2);
       setToasts((current) => [...current, { id, message, variant }]);
       // Auto-dismiss after a readable interval.
       window.setTimeout(() => dismiss(id), 4500);

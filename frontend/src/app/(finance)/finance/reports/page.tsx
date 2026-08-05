@@ -153,7 +153,7 @@ export default function ReportsPage() {
                 <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${TYPE_STYLES[r.type] ?? ""}`}>
                   {r.type}
                 </span>
-                <button
+                <button type="button"
                   onClick={() => downloadReport(r.key)}
                   disabled={downloading === r.key}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-tertiary/10 text-tertiary text-xs font-semibold hover:bg-tertiary/20 transition-colors disabled:opacity-50"

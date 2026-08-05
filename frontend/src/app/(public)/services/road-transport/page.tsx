@@ -245,12 +245,12 @@ export default function RoadTransportPage() {
           <p className="text-[#b8cce8] mb-6">Request a competitive road freight quote today.</p>
           <div className="flex flex-wrap gap-4 justify-center">
             <Link href="/contact">
-              <button className="px-8 py-3 rounded-full bg-[#2563eb] hover:bg-[#4fa3ff] text-white font-semibold transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(37,99,235,0.45)]">
+              <button type="button" className="px-8 py-3 rounded-full bg-[#2563eb] hover:bg-[#4fa3ff] text-white font-semibold transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(37,99,235,0.45)]">
                 Get a Quote
               </button>
             </Link>
             <Link href="/track">
-              <button className="px-8 py-3 rounded-full border border-white/20 hover:bg-white/5 text-white font-semibold transition-all hover:-translate-y-0.5">
+              <button type="button" className="px-8 py-3 rounded-full border border-white/20 hover:bg-white/5 text-white font-semibold transition-all hover:-translate-y-0.5">
                 Track Shipment
               </button>
             </Link>

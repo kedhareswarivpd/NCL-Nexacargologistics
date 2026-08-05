@@ -125,7 +125,7 @@ export default function CustomsDashboardPage() {
                       </td>
                       <td className="px-4 py-3 text-on-surface-variant">{c.updated_at ? new Date(c.updated_at).toLocaleDateString() : "—"}</td>
                       <td className="px-4 py-3 text-right">
-                        <button onClick={() => openEdit(c)} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary transition-colors" title="Edit"><Edit className="h-4 w-4" /></button>
+                        <button type="button" onClick={() => openEdit(c)} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary transition-colors" title="Edit"><Edit className="h-4 w-4" /></button>
                       </td>
                     </tr>
                   ))}
@@ -162,7 +162,7 @@ export default function CustomsDashboardPage() {
           <div className="w-full max-w-md rounded-2xl border border-white/10 bg-surface-container shadow-2xl">
             <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
               <h2 className="text-base font-bold text-on-surface">Edit Clearance</h2>
-              <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
             </div>
             <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
               <div>

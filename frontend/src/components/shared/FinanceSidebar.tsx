@@ -59,7 +59,7 @@ export function FinanceSidebar() {
         <Link href="/contact" className="flex items-center gap-4 text-on-surface-variant p-3 hover:bg-white/5 hover:text-on-surface transition-colors font-label-caps text-xs uppercase tracking-widest rounded-lg">
           <HelpCircle className="w-5 h-5 text-on-surface-variant" /> Support
         </Link>
-        <button onClick={handleLogout} className="w-full flex items-center gap-4 text-on-surface-variant p-3 hover:bg-white/5 hover:text-on-surface transition-colors font-label-caps text-xs uppercase tracking-widest rounded-lg">
+        <button type="button" onClick={handleLogout} className="w-full flex items-center gap-4 text-on-surface-variant p-3 hover:bg-white/5 hover:text-on-surface transition-colors font-label-caps text-xs uppercase tracking-widest rounded-lg">
           <LogOut className="w-5 h-5 text-on-surface-variant" /> Logout
         </button>
       </div>

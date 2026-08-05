@@ -133,7 +133,7 @@ export default function DriverTasksPage() {
             <div className="flex items-center gap-2 shrink-0">
               <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${STATUS_STYLES[t.status]}`}>{t.status}</span>
               <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${PRIORITY_STYLES[t.priority]}`}>{t.priority}</span>
-              <button onClick={() => openEdit(t)} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary transition-colors" title="Edit"><Edit className="h-3.5 w-3.5" /></button>
+              <button type="button" onClick={() => openEdit(t)} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary transition-colors" title="Edit"><Edit className="h-3.5 w-3.5" /></button>
             </div>
           </div>
         ))}
@@ -146,7 +146,7 @@ export default function DriverTasksPage() {
           <div className="w-full max-w-md rounded-2xl border border-white/10 bg-surface-container shadow-2xl">
             <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
               <h2 className="text-base font-bold text-on-surface">Edit Task</h2>
-              <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
             </div>
             <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
               <div>

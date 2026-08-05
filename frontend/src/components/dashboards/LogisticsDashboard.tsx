@@ -12,6 +12,15 @@ import { apiError } from "@/lib/api";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
+const secureRandom = () => {
+  if (typeof window !== "undefined" && window.crypto) {
+    const arr = new Uint32Array(1);
+    window.crypto.getRandomValues(arr);
+    return arr[0] / 4294967296;
+  }
+  return 0.5;
+};
+
 const QUICK_LINKS = [
   { label: "Shipments",          desc: "Manage all shipments",           href: "/logistics/shipments",  icon: Package, color: "text-tertiary bg-tertiary/10" },
   { label: "Containers",         desc: "Track container usage",          href: "/logistics/containers", icon: Package, color: "text-secondary bg-secondary/10" },
@@ -30,7 +39,7 @@ const CARGO_TYPES = ["FCL 20FT", "FCL 40FT", "FCL 40HQ", "LCL", "Air Freight", "
 
 function generateId(): string {
   const ts  = Date.now().toString(36).toUpperCase();
-  const rnd = Math.random().toString(36).substring(2, 8).toUpperCase();
+  const rnd = secureRandom().toString(36).substring(2, 8).toUpperCase();
   return `SHIP-${ts}-${rnd}`;
 }
 
@@ -192,10 +201,10 @@ export default function LogisticsDashboard() {
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">Recent Shipments</h2>
             <div className="flex items-center gap-3">
-              <button onClick={load} className="flex items-center gap-1 text-xs text-on-surface-variant hover:text-on-surface transition-colors">
+              <button type="button" onClick={load} className="flex items-center gap-1 text-xs text-on-surface-variant hover:text-on-surface transition-colors">
                 <RefreshCw className="h-3.5 w-3.5" /> Refresh
               </button>
-              <button onClick={openModal} className="flex items-center gap-1.5 text-xs font-bold text-[#00C2FF] hover:text-white transition-colors">
+              <button type="button" onClick={openModal} className="flex items-center gap-1.5 text-xs font-bold text-[#00C2FF] hover:text-white transition-colors">
                 <Plus className="h-3.5 w-3.5" /> New Shipment
               </button>
             </div>
@@ -239,7 +248,7 @@ export default function LogisticsDashboard() {
                     <tr>
                       <td colSpan={6} className="px-4 py-10 text-center text-on-surface-variant text-sm">
                         No shipments yet.{" "}
-                        <button onClick={openModal} className="text-[#00C2FF] font-semibold hover:underline">
+                        <button type="button" onClick={openModal} className="text-[#00C2FF] font-semibold hover:underline">
                           Create the first one →
                         </button>
                       </td>
@@ -302,7 +311,7 @@ export default function LogisticsDashboard() {
                     <p className="text-xs text-on-surface-variant">Saved directly to Supabase shipments table</p>
                   </div>
                 </div>
-                <button onClick={() => setShowModal(false)}
+                <button type="button" onClick={() => setShowModal(false)}
                   className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white/10 transition-colors text-on-surface-variant hover:text-on-surface">
                   <X className="h-4 w-4" />
                 </button>

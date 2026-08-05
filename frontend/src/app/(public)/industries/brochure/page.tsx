@@ -127,7 +127,7 @@ export default function BrochurePage() {
                     <span className="flex items-center gap-1"><FileText className="w-3 h-3" /> {pages} pages</span>
                     <span>{size}</span>
                   </div>
-                  <button onClick={() => handleDownload(industry, pages, size)}
+                  <button type="button" onClick={() => handleDownload(industry, pages, size)}
                     className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 ${
                       isDone
                         ? "bg-green-500/15 border border-green-500/30 text-green-400"

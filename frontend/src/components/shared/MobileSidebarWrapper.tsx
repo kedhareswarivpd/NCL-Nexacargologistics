@@ -26,7 +26,7 @@ export function MobileSidebarWrapper({ children }: Props) {
   return (
     <>
       {/* Hamburger button — only visible on mobile */}
-      <button
+      <button type="button"
         onClick={() => setOpen(true)}
         className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-surface-container border border-white/10 text-on-surface shadow-lg"
         aria-label="Open menu"
@@ -49,7 +49,7 @@ export function MobileSidebarWrapper({ children }: Props) {
           lg:relative lg:translate-x-0 lg:z-auto`}
       >
         {/* Close button inside drawer on mobile */}
-        <button
+        <button type="button"
           onClick={() => setOpen(false)}
           className="lg:hidden absolute top-4 right-4 z-10 p-1.5 rounded-lg bg-white/10 text-on-surface-variant hover:text-on-surface"
           aria-label="Close menu"

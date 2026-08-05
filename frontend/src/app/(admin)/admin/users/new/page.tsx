@@ -9,6 +9,15 @@ import { useRouter } from "next/navigation";
 import { usersApi } from "@/lib/services";
 import { apiError } from "@/lib/api";
 
+const secureRandom = () => {
+  if (typeof window !== "undefined" && window.crypto) {
+    const arr = new Uint32Array(1);
+    window.crypto.getRandomValues(arr);
+    return arr[0] / 4294967296;
+  }
+  return 0.5;
+};
+
 const ROLES = ["Customer", "Driver", "Warehouse", "Finance", "Logistics", "Admin"];
 const STATUSES = ["Active", "Pending", "Suspended"];
 
@@ -59,7 +68,7 @@ export default function AddUserPage() {
       await usersApi.create({
         name: form.name,
         email: form.email,
-        password: Math.random().toString(36).slice(2) + "Aa1!",
+        password: secureRandom().toString(36).slice(2) + "Aa1!",
         role: form.role.toLowerCase(),
         phone: form.phone || undefined,
         department: form.department || undefined,

@@ -14,6 +14,15 @@ import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
 import { reviewsApi } from "@/lib/services";
 
+const secureRandom = () => {
+  if (typeof window !== "undefined" && window.crypto) {
+    const arr = new Uint32Array(1);
+    window.crypto.getRandomValues(arr);
+    return arr[0] / 4294967296;
+  }
+  return 0.5;
+};
+
 /* ── Animated Counter ── */
 function Counter({ to, suffix = "", duration = 2 }: { to: number; suffix?: string; duration?: number }) {
   const [val, setVal] = useState(0);
@@ -225,7 +234,7 @@ export default function LandingPage() {
                 <h2 className="text-2xl font-bold text-white">Your Customer Portal</h2>
               </div>
               <Link href="/customer">
-                <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#1E88E5]/20 border border-[#1E88E5]/30 text-[#00C2FF] text-sm font-semibold hover:bg-[#1E88E5]/30 transition-all">
+                <button type="button" className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#1E88E5]/20 border border-[#1E88E5]/30 text-[#00C2FF] text-sm font-semibold hover:bg-[#1E88E5]/30 transition-all">
                   <LayoutDashboard className="w-4 h-4" /> Go to Dashboard
                 </button>
               </Link>
@@ -322,7 +331,7 @@ export default function LandingPage() {
                   <motion.div
                     className="w-12 h-12 rounded-xl bg-[#1E88E5]/15 border border-[#1E88E5]/25 flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300"
                     animate={{ boxShadow: ["0 0 0px rgba(0,194,255,0)", "0 0 18px rgba(0,194,255,0.4)", "0 0 0px rgba(0,194,255,0)"] }}
-                    transition={{ duration: 2.5, repeat: Infinity, delay: Math.random() * 2 }}
+                    transition={{ duration: 2.5, repeat: Infinity, delay: secureRandom() * 2 }}
                   >
                     <Icon className="w-5 h-5 text-[#00C2FF]" />
                   </motion.div>
@@ -437,12 +446,12 @@ export default function LandingPage() {
             <p className="text-blue-200/60 max-w-xl mx-auto mb-10 text-base sm:text-lg">Over 500 businesses already trust NexaCargo to handle their logistics. Come see why.</p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link href="/register">
-                <button className="px-10 py-4 rounded-xl bg-gradient-to-r from-[#1E88E5] to-[#00C2FF] text-white font-bold text-lg shadow-[0_0_40px_rgba(0,194,255,0.3)] hover:shadow-[0_0_60px_rgba(0,194,255,0.5)] hover:-translate-y-1 transition-all duration-200">
+                <button type="button" className="px-10 py-4 rounded-xl bg-gradient-to-r from-[#1E88E5] to-[#00C2FF] text-white font-bold text-lg shadow-[0_0_40px_rgba(0,194,255,0.3)] hover:shadow-[0_0_60px_rgba(0,194,255,0.5)] hover:-translate-y-1 transition-all duration-200">
                   Start Your Journey
                 </button>
               </Link>
               {/* <Link href="/contact">
-                <button className="px-10 py-4 rounded-xl border border-white/20 bg-white/5 text-white font-bold text-lg hover:bg-white/10 hover:-translate-y-1 transition-all duration-200 flex items-center gap-2">
+                <button type="button" className="px-10 py-4 rounded-xl border border-white/20 bg-white/5 text-white font-bold text-lg hover:bg-white/10 hover:-translate-y-1 transition-all duration-200 flex items-center gap-2">
                   <Headset className="w-5 h-5" /> 
                 </button>
               </Link> */}

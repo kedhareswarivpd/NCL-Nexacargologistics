@@ -226,12 +226,12 @@ export default function ConsultingPage() {
           <p className="text-[#b8cce8] mb-6">Book a consulting session with our supply chain specialists today.</p>
           <div className="flex flex-wrap gap-4 justify-center">
             <Link href="/contact">
-              <button className="px-8 py-3 rounded-full bg-[#2563eb] hover:bg-[#4fa3ff] text-white font-semibold transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(37,99,235,0.45)]">
+              <button type="button" className="px-8 py-3 rounded-full bg-[#2563eb] hover:bg-[#4fa3ff] text-white font-semibold transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(37,99,235,0.45)]">
                 Book Session
               </button>
             </Link>
             <Link href="/services">
-              <button className="px-8 py-3 rounded-full border border-white/20 hover:bg-white/5 text-white font-semibold transition-all hover:-translate-y-0.5">
+              <button type="button" className="px-8 py-3 rounded-full border border-white/20 hover:bg-white/5 text-white font-semibold transition-all hover:-translate-y-0.5">
                 Explore Services
               </button>
             </Link>

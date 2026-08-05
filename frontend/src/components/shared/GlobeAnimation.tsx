@@ -2,6 +2,15 @@
 
 import { useEffect, useRef } from "react";
 
+const secureRandom = () => {
+  if (typeof window !== "undefined" && window.crypto) {
+    const arr = new Uint32Array(1);
+    window.crypto.getRandomValues(arr);
+    return arr[0] / 4294967296;
+  }
+  return 0.5;
+};
+
 const SIZE = 520;
 const CX = SIZE / 2;
 const CY = SIZE / 2;
@@ -124,10 +133,10 @@ export function GlobeAnimation() {
 
     // Pre-generate star field
     const stars = Array.from({ length: 180 }, () => ({
-      x: Math.random() * SIZE,
-      y: Math.random() * SIZE,
-      r: Math.random() * 1.2 + 0.2,
-      a: Math.random() * 0.7 + 0.2,
+      x: secureRandom() * SIZE,
+      y: secureRandom() * SIZE,
+      r: secureRandom() * 1.2 + 0.2,
+      a: secureRandom() * 0.7 + 0.2,
     }));
 
     const render = () => {

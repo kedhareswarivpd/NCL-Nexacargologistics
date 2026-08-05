@@ -153,7 +153,7 @@ export default function PartnersPage() {
                 </div>
                 <h4 className="text-lg font-bold text-on-surface">Application Submitted!</h4>
                 <p className="text-sm text-on-surface-variant">Thank you, <span className="text-white font-semibold">{form.company}</span>. We'll reach out to <span className="text-tertiary">{form.email}</span> shortly.</p>
-                <button onClick={() => { setForm({ company:"", email:"", type:"", message:"" }); setSubmitted(false); }}
+                <button type="button" onClick={() => { setForm({ company:"", email:"", type:"", message:"" }); setSubmitted(false); }}
                   className="mt-2 px-5 py-2 rounded-lg bg-white/5 border border-white/10 text-sm text-on-surface-variant hover:bg-white/10 transition-colors">
                   Submit Another
                 </button>

@@ -8,6 +8,15 @@ import Link from "next/link";
 import { adminApi } from "@/lib/services";
 import { apiError } from "@/lib/api";
 
+const secureRandom = () => {
+  if (typeof window !== "undefined" && window.crypto) {
+    const arr = new Uint32Array(1);
+    window.crypto.getRandomValues(arr);
+    return arr[0] / 4294967296;
+  }
+  return 0.5;
+};
+
 const BRANCH_STATUS_FROM_API: Record<string, string> = { active: "Operational", inactive: "Maintenance" };
 
 function mapBranch(b: any) {
@@ -93,7 +102,7 @@ export default function BranchManagementPage() {
     setBranchErrors({});
     setSaving(true);
     const [city, country] = branchForm.location.split(",").map((s) => s.trim());
-    const code = branchForm.name.replace(/[^A-Za-z]/g, "").slice(0, 3).toUpperCase() + "-" + Math.floor(100 + Math.random() * 900);
+    const code = branchForm.name.replace(/[^A-Za-z]/g, "").slice(0, 3).toUpperCase() + "-" + Math.floor(100 + secureRandom() * 900);
     try {
       await adminApi.createBranch({ name: branchForm.name.trim(), code, city: city || branchForm.location.trim(), country: country || "" });
       setShowForm(false);
@@ -183,8 +192,8 @@ export default function BranchManagementPage() {
                 </div>
               </div>
               <div className="flex gap-3">
-                <button onClick={handleBranchSave} disabled={saving} className="px-4 py-2 rounded-lg bg-tertiary/20 text-tertiary text-sm font-semibold hover:bg-tertiary/30 transition-colors disabled:opacity-50">{saving ? "Saving…" : "Save Branch"}</button>
-                <button onClick={() => { setShowForm(false); setBranchErrors({}); }} className="px-4 py-2 rounded-lg bg-white/5 text-on-surface-variant text-sm font-semibold hover:bg-white/10 transition-colors">Cancel</button>
+                <button type="button" onClick={handleBranchSave} disabled={saving} className="px-4 py-2 rounded-lg bg-tertiary/20 text-tertiary text-sm font-semibold hover:bg-tertiary/30 transition-colors disabled:opacity-50">{saving ? "Saving…" : "Save Branch"}</button>
+                <button type="button" onClick={() => { setShowForm(false); setBranchErrors({}); }} className="px-4 py-2 rounded-lg bg-white/5 text-on-surface-variant text-sm font-semibold hover:bg-white/10 transition-colors">Cancel</button>
               </div>
             </Card>
           </motion.div>
@@ -257,10 +266,10 @@ export default function BranchManagementPage() {
                   </div>
                 </div>
                 <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button onClick={() => openEdit(b)} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 text-tertiary text-xs hover:bg-tertiary/10 transition-colors">
+                  <button type="button" onClick={() => openEdit(b)} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 text-tertiary text-xs hover:bg-tertiary/10 transition-colors">
                     <Edit className="h-3.5 w-3.5" /> Edit
                   </button>
-                  <button onClick={() => removeBranch(b.id)} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 text-error text-xs hover:bg-error/10 transition-colors">
+                  <button type="button" onClick={() => removeBranch(b.id)} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 text-error text-xs hover:bg-error/10 transition-colors">
                     <Trash2 className="h-3.5 w-3.5" /> Remove
                   </button>
                 </div>
@@ -275,7 +284,7 @@ export default function BranchManagementPage() {
           <div className="w-full max-w-md rounded-2xl border border-white/10 bg-surface-container shadow-2xl">
             <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
               <h2 className="text-base font-bold text-on-surface">Edit Branch</h2>
-              <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
             </div>
             <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
               <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Branch Name</label><input value={editForm.name} onChange={e => { const filtered = e.target.value.replace(/[0-9]/g, ''); setEditForm(p => ({...p, name: filtered})); }} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>

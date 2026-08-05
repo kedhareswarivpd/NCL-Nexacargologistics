@@ -172,7 +172,7 @@ export function JobApplicationModal({ job, onClose }: Props) {
                 <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-white/5 text-white/60">{job.level}</span>
               </div>
             </div>
-            <button
+            <button type="button"
               onClick={onClose}
               className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors"
             >
@@ -194,7 +194,7 @@ export function JobApplicationModal({ job, onClose }: Props) {
               <p className="text-white/60 max-w-sm text-sm">
                 Thank you, <strong className="text-white">{form.full_name}</strong>! We've received your application for <strong className="text-[#00C2FF]">{job.title}</strong> and will be in touch soon.
               </p>
-              <button
+              <button type="button"
                 onClick={onClose}
                 className="mt-4 px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#1E88E5] to-[#00C2FF] text-white font-semibold text-sm"
               >

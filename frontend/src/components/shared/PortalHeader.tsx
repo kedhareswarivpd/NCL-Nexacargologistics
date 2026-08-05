@@ -146,7 +146,7 @@ export function PortalHeader({ userRole = "Premium Member" }: { userRole?: strin
     <header className="animate-fade-in flex justify-between items-center w-full px-4 lg:px-6 h-16 bg-surface/5 backdrop-blur-lg border-b border-white/5 sticky top-0 z-40">
       <div className="flex items-center gap-4 w-1/2 pl-10 lg:pl-0">
         {isAdminSubPage && (
-          <button
+          <button type="button"
             onClick={() => router.push("/admin")}
             className="flex items-center gap-1.5 shrink-0 px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 hover:border-tertiary/40 transition-all group"
           >
@@ -177,7 +177,7 @@ export function PortalHeader({ userRole = "Premium Member" }: { userRole?: strin
 
           {/* ── Bell ── */}
           <div className="relative" ref={bellRef}>
-            <button
+            <button type="button"
               onClick={() => { setBellOpen(o => !o); setGridOpen(false); setAvatarOpen(false); }}
               className="hover:bg-white/10 rounded-full p-2 transition-all hover:scale-110 active:scale-95 relative"
             >
@@ -193,7 +193,7 @@ export function PortalHeader({ userRole = "Premium Member" }: { userRole?: strin
                   <p className="text-sm font-semibold text-on-surface">
                     {role === "admin" ? "Recent Notifications" : "Recent Quotes"}
                   </p>
-                  <button onClick={() => setBellOpen(false)}><X className="w-4 h-4 text-on-surface-variant" /></button>
+                  <button type="button" onClick={() => setBellOpen(false)}><X className="w-4 h-4 text-on-surface-variant" /></button>
                 </div>
                 <div className="divide-y divide-white/5 max-h-72 overflow-y-auto">
                   {role === "admin" ? (
@@ -233,7 +233,7 @@ export function PortalHeader({ userRole = "Premium Member" }: { userRole?: strin
 
           {/* ── Grid (App Switcher) ── */}
           <div className="relative" ref={gridRef}>
-            <button
+            <button type="button"
               onClick={() => { setGridOpen(o => !o); setBellOpen(false); setAvatarOpen(false); }}
               className="hover:bg-white/10 rounded-full p-2 transition-all hover:scale-110 active:scale-95 hover:rotate-12"
             >
@@ -244,7 +244,7 @@ export function PortalHeader({ userRole = "Premium Member" }: { userRole?: strin
               <div className="absolute right-0 top-12 w-[calc(100vw-2rem)] max-w-[288px] sm:w-72 rounded-2xl border border-white/10 bg-surface-container shadow-2xl z-50 overflow-hidden animate-scale-in">
                 <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
                   <p className="text-sm font-semibold text-on-surface">Quick Access</p>
-                  <button onClick={() => setGridOpen(false)}><X className="w-4 h-4 text-on-surface-variant" /></button>
+                  <button type="button" onClick={() => setGridOpen(false)}><X className="w-4 h-4 text-on-surface-variant" /></button>
                 </div>
                 <div className="grid grid-cols-3 gap-1 p-3">
                   {gridLinks.map(({ icon: Icon, label, href, color }) => (
@@ -266,7 +266,7 @@ export function PortalHeader({ userRole = "Premium Member" }: { userRole?: strin
           </div>
 
           {/* ── ShieldAlert ── */}
-          <button
+          <button type="button"
             onClick={() => { setGridOpen(false); setBellOpen(false); setAvatarOpen(false); router.push(alertHref); }}
             className="hover:bg-white/10 rounded-full p-2 transition-all hover:scale-110 active:scale-95"
             title={role === "admin" ? "Notifications Centre" : role === "customer" ? "Support Tickets" : "Alerts"}
@@ -318,17 +318,17 @@ export function PortalHeader({ userRole = "Premium Member" }: { userRole?: strin
                 </div>
               </div>
               <div className="p-2">
-                <button onClick={() => { setAvatarOpen(false); router.push("/profile"); }}
+                <button type="button" onClick={() => { setAvatarOpen(false); router.push("/profile"); }}
                   className="w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors group">
                   <div className="flex items-center gap-3"><User className="h-4 w-4 text-on-surface-variant" /><span className="text-sm text-on-surface">View Profile</span></div>
                   <ChevronRight className="h-3.5 w-3.5 text-on-surface-variant group-hover:translate-x-0.5 transition-transform" />
                 </button>
-                <button onClick={() => { setAvatarOpen(false); router.push("/profile"); }}
+                <button type="button" onClick={() => { setAvatarOpen(false); router.push("/profile"); }}
                   className="w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors group">
                   <div className="flex items-center gap-3"><Settings className="h-4 w-4 text-on-surface-variant" /><span className="text-sm text-on-surface">Settings</span></div>
                   <ChevronRight className="h-3.5 w-3.5 text-on-surface-variant group-hover:translate-x-0.5 transition-transform" />
                 </button>
-                <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-error/10 transition-colors mt-1">
+                <button type="button" onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-error/10 transition-colors mt-1">
                   <LogOut className="h-4 w-4 text-error" />
                   <span className="text-sm text-error font-medium">Sign Out</span>
                 </button>

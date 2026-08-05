@@ -134,7 +134,7 @@ export default function AccessControlPage() {
             {roles.map((r) => {
               const isSelected = selected === r.role;
               return (
-                <button 
+                <button type="button" 
                   key={r.role} 
                   onClick={() => setSelected(r.role)}
                   className={`relative w-full flex items-center justify-between gap-3 p-4 hover:bg-white/5 transition-colors text-left focus:outline-none`}
@@ -197,9 +197,9 @@ export default function AccessControlPage() {
                         <span className="text-sm text-on-surface truncate">{perm}</span>
                       </div>
                       <div className="flex gap-1 shrink-0">
-                        <button className="p-1 rounded hover:bg-white/10 text-tertiary transition-colors"><Eye className="h-3.5 w-3.5" /></button>
-                        <button className="p-1 rounded hover:bg-white/10 text-on-surface-variant transition-colors"><Edit className="h-3.5 w-3.5" /></button>
-                        <button className="p-1 rounded hover:bg-error/10 text-error transition-colors"><Trash2 className="h-3.5 w-3.5" /></button>
+                        <button type="button" className="p-1 rounded hover:bg-white/10 text-tertiary transition-colors"><Eye className="h-3.5 w-3.5" /></button>
+                        <button type="button" className="p-1 rounded hover:bg-white/10 text-on-surface-variant transition-colors"><Edit className="h-3.5 w-3.5" /></button>
+                        <button type="button" className="p-1 rounded hover:bg-error/10 text-error transition-colors"><Trash2 className="h-3.5 w-3.5" /></button>
                       </div>
                     </motion.div>
                   ))}

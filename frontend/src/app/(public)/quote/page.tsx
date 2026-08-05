@@ -101,7 +101,7 @@ export default function FreightQuoteCalculatorPage() {
         <p className="text-on-surface-variant max-w-md">
           Your freight quote has been received. Our team will review it and get back to you shortly.
         </p>
-        <button
+        <button type="button"
           onClick={() => { setSubmitted(false); setCurrentStep(1); setFields({ origin: "", destination: "", cargoType: "General Cargo", weight: 0, volume: 0 }); setService("Standard"); }}
           className="mt-8 px-8 h-12 bg-[#1565C0] text-[#E8F0FE] rounded-lg font-semibold hover:bg-[#42A5F5] transition-all"
         >
@@ -160,7 +160,7 @@ export default function FreightQuoteCalculatorPage() {
                   </div>
                 </div>
                 <div className="pt-6 flex justify-end">
-                  <button onClick={() => handleNext(2)} className="px-8 h-14 bg-[#1565C0] text-[#E8F0FE] rounded-lg font-title-md text-lg hover:bg-[#42A5F5] transition-all flex items-center gap-2 shadow-lg">
+                  <button type="button" onClick={() => handleNext(2)} className="px-8 h-14 bg-[#1565C0] text-[#E8F0FE] rounded-lg font-title-md text-lg hover:bg-[#42A5F5] transition-all flex items-center gap-2 shadow-lg">
                     Next Step <ArrowRight className="w-5 h-5" />
                   </button>
                 </div>
@@ -191,8 +191,8 @@ export default function FreightQuoteCalculatorPage() {
                   </div>
                 </div>
                 <div className="pt-6 flex justify-between">
-                  <button onClick={() => handleNext(1)} className="px-8 h-14 glass text-on-surface rounded-lg font-title-md text-lg hover:bg-white/10 transition-all border border-white/10">Back</button>
-                  <button onClick={() => handleNext(3)} className="px-8 h-14 bg-[#1565C0] text-[#E8F0FE] rounded-lg font-title-md text-lg hover:bg-[#42A5F5] transition-all flex items-center gap-2 shadow-lg">
+                  <button type="button" onClick={() => handleNext(1)} className="px-8 h-14 glass text-on-surface rounded-lg font-title-md text-lg hover:bg-white/10 transition-all border border-white/10">Back</button>
+                  <button type="button" onClick={() => handleNext(3)} className="px-8 h-14 bg-[#1565C0] text-[#E8F0FE] rounded-lg font-title-md text-lg hover:bg-[#42A5F5] transition-all flex items-center gap-2 shadow-lg">
                     Service Options <ArrowRight className="w-5 h-5" />
                   </button>
                 </div>
@@ -208,7 +208,7 @@ export default function FreightQuoteCalculatorPage() {
                     { key: "Standard", icon: Clock, time: "7-12 Business Days" },
                     { key: "Eco", icon: Leaf, label: "Eco-Freight", time: "20-35 Business Days" },
                   ].map(({ key, icon: Icon, label, time }) => (
-                    <button key={key} onClick={() => setService(key)}
+                    <button type="button" key={key} onClick={() => setService(key)}
                       className={cn("group glass p-6 rounded-xl text-left transition-all border-2 relative overflow-hidden", service === key ? "border-tertiary bg-white/5" : "border-transparent hover:border-tertiary/50")}
                     >
                       <Icon className="text-tertiary mb-2 w-8 h-8" />
@@ -222,8 +222,8 @@ export default function FreightQuoteCalculatorPage() {
                 </div>
                 {error && <p className="text-sm text-red-400">{error}</p>}
                 <div className="pt-6 flex justify-between">
-                  <button onClick={() => handleNext(2)} className="px-8 h-14 glass text-on-surface rounded-lg font-title-md text-lg hover:bg-white/10 transition-all border border-white/10">Back</button>
-                  <button onClick={handleSubmit} disabled={submitting}
+                  <button type="button" onClick={() => handleNext(2)} className="px-8 h-14 glass text-on-surface rounded-lg font-title-md text-lg hover:bg-white/10 transition-all border border-white/10">Back</button>
+                  <button type="button" onClick={handleSubmit} disabled={submitting}
                     className="px-8 h-14 bg-tertiary text-[#001d34] rounded-lg font-title-md text-lg hover:brightness-110 transition-all shadow-[0_0_15px_rgba(153,203,255,0.4)] font-bold flex items-center gap-2 disabled:opacity-60"
                   >
                     {submitting ? <><Loader2 className="w-5 h-5 animate-spin" /> Submitting…</> : "Finalize Quote"}
@@ -306,7 +306,7 @@ export default function FreightQuoteCalculatorPage() {
                   <span className="text-on-surface font-mono font-bold">$42.00</span>
                 </div>
               </div>
-              <button onClick={currentStep === 3 ? handleSubmit : () => handleNext(3)} disabled={submitting}
+              <button type="button" onClick={currentStep === 3 ? handleSubmit : () => handleNext(3)} disabled={submitting}
                 className="w-full h-16 bg-[#1565C0] text-[#E8F0FE] rounded-lg font-title-md text-lg hover:bg-[#42A5F5] transition-all flex items-center justify-center gap-3 group shadow-lg font-bold disabled:opacity-60"
               >
                 {submitting ? <><Loader2 className="w-5 h-5 animate-spin" /> Submitting…</> : <>{currentStep === 3 ? "Submit Quote" : "Ship Now"}<Rocket className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" /></>}

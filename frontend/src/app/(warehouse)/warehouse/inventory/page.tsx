@@ -167,7 +167,7 @@ export default function InventoryPage() {
                   <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${STATUS_STYLES[item.status]}`}>{item.status}</span>
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <button onClick={() => openEdit(item)} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary transition-colors" title="Edit"><Edit className="h-4 w-4" /></button>
+                  <button type="button" onClick={() => openEdit(item)} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary transition-colors" title="Edit"><Edit className="h-4 w-4" /></button>
                 </td>
               </tr>
             ))}
@@ -187,7 +187,7 @@ export default function InventoryPage() {
           <div className="w-full max-w-md rounded-2xl border border-white/10 bg-surface-container shadow-2xl">
             <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
               <h2 className="text-base font-bold text-on-surface">Edit Item — <span className="font-mono text-tertiary">{editTarget.sku}</span></h2>
-              <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
             </div>
             <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">

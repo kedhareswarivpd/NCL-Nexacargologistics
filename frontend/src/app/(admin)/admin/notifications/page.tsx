@@ -229,7 +229,7 @@ export default function NotificationsPage() {
         {["all", "email", "sms", "queued", "sent", "failed"].map((f) => {
           const isSelected = filter === f;
           return (
-            <button 
+            <button type="button" 
               key={f} 
               onClick={() => setFilter(f)}
               className={`relative px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-widest overflow-hidden transition-all duration-200`}

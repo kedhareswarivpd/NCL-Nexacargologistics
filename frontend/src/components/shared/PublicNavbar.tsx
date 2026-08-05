@@ -77,12 +77,12 @@ export function PublicNavbar() {
         {isAuthenticated && user ? (
           <>
             <Link href={dashboardHref}>
-              <button className="flex items-center gap-5 rounded-lg bg-gradient-to-r from-[#1E88E5] to-[#00C2FF] px-6 py-2 font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,194,255,0.4)] active:scale-95 shadow-md">
+              <button type="button" className="flex items-center gap-5 rounded-lg bg-gradient-to-r from-[#1E88E5] to-[#00C2FF] px-6 py-2 font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,194,255,0.4)] active:scale-95 shadow-md">
                 <LayoutDashboard className="w-4 h-4" />
                 {dashboardText}
               </button>
             </Link>
-            <button
+            <button type="button"
               onClick={() => logout()}
               className="flex items-center gap-5 rounded-lg border border-gray-200 px-5 py-2 font-bold text-gray-700 transition-all duration-200 hover:-translate-y-0.5 hover:bg-gray-50 hover:text-red-500 active:scale-95"
             >
@@ -93,12 +93,12 @@ export function PublicNavbar() {
         ) : (
           <>
             <Link href="/login">
-              <button className="rounded-lg px-6 py-2 font-bold text-gray-700 transition-all duration-200 hover:-translate-y-0.5 hover:bg-gray-100 active:scale-95">
+              <button type="button" className="rounded-lg px-6 py-2 font-bold text-gray-700 transition-all duration-200 hover:-translate-y-0.5 hover:bg-gray-100 active:scale-95">
                 Login to Portal
               </button>
             </Link>
             <Link href="/register">
-              <button className="rounded-lg bg-gradient-to-r from-[#1E88E5] to-[#00C2FF] px-6 py-2 font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,194,255,0.4)] active:scale-95">
+              <button type="button" className="rounded-lg bg-gradient-to-r from-[#1E88E5] to-[#00C2FF] px-6 py-2 font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,194,255,0.4)] active:scale-95">
                 Create Account
               </button>
             </Link>
@@ -107,7 +107,7 @@ export function PublicNavbar() {
       </div>
 
       {/* Mobile toggle */}
-      <button
+      <button type="button"
         className="text-gray-700 md:hidden"
         onClick={() => setMobileOpen((o) => !o)}
         aria-label={mobileOpen ? "Close menu" : "Open menu"}
@@ -144,7 +144,7 @@ export function PublicNavbar() {
                     <LayoutDashboard className="w-4 h-4" />
                     {dashboardText}
                   </Link>
-                  <button
+                  <button type="button"
                     onClick={() => {
                       logout();
                       closeMobile();

@@ -115,7 +115,7 @@ export default function InvoicesPage() {
           <h1 className="text-3xl font-bold text-on-surface mt-1">Invoices</h1>
           <p className="text-sm text-on-surface-variant mt-1">Generate and manage all client invoices.</p>
         </div>
-        <button
+        <button type="button"
           onClick={() => setShowForm(true)}
           className="flex items-center gap-2 px-4 py-2 rounded-lg bg-tertiary/10 text-tertiary text-sm font-semibold hover:bg-tertiary/20 transition-colors mt-1"
         >
@@ -128,7 +128,7 @@ export default function InvoicesPage() {
         <Card className="p-6 border border-tertiary/20">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">New Invoice</h2>
-            <button onClick={() => setShowForm(false)}><X className="h-4 w-4 text-on-surface-variant" /></button>
+            <button type="button" onClick={() => setShowForm(false)}><X className="h-4 w-4 text-on-surface-variant" /></button>
           </div>
           <form noValidate onSubmit={handleGenerate} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -243,7 +243,7 @@ export default function InvoicesPage() {
                   <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${STATUS_STYLES[inv.status]}`}>{inv.status}</span>
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <button onClick={() => openEdit(inv)} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary transition-colors" title="Edit"><Edit className="h-4 w-4" /></button>
+                  <button type="button" onClick={() => openEdit(inv)} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary transition-colors" title="Edit"><Edit className="h-4 w-4" /></button>
                 </td>
               </tr>
             ))}
@@ -277,7 +277,7 @@ export default function InvoicesPage() {
           <div className="w-full max-w-md rounded-2xl border border-white/10 bg-surface-container shadow-2xl">
             <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
               <h2 className="text-base font-bold text-on-surface">Edit Invoice</h2>
-              <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
             </div>
             <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
               <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>

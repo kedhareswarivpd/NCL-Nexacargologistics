@@ -133,7 +133,7 @@ export default function PricingPage() {
                 ))}
               </ul>
               <Link href={href}>
-                <button
+                <button type="button"
                   className="w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all duration-200"
                   style={highlight
                     ? { background: "linear-gradient(to right, #1E88E5, #00C2FF)", color: "#fff", boxShadow: "0 0 24px rgba(0,194,255,0.3)" }
@@ -175,7 +175,7 @@ export default function PricingPage() {
           <h2 className="text-3xl font-bold text-white mb-3">Still not sure?</h2>
           <p className="text-blue-200/60 mb-6">Book a free 45-minute consultation with one of our logistics specialists.</p>
           <Link href="/industries/consultation">
-            <button className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-[#1E88E5] to-[#00C2FF] text-white font-bold hover:opacity-90 transition-opacity shadow-[0_0_30px_rgba(0,194,255,0.25)]">
+            <button type="button" className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-[#1E88E5] to-[#00C2FF] text-white font-bold hover:opacity-90 transition-opacity shadow-[0_0_30px_rgba(0,194,255,0.25)]">
               Schedule a Free Consultation
             </button>
           </Link>

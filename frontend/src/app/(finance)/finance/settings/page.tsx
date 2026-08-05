@@ -67,7 +67,7 @@ export default function FinanceSettingsPage() {
             <input defaultValue={user?.email ?? ""} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" />
           </div>
         </div>
-        <button className="mt-2 px-4 py-2 rounded-lg bg-tertiary/10 text-tertiary text-sm font-semibold hover:bg-tertiary/20 transition-colors">
+        <button type="button" className="mt-2 px-4 py-2 rounded-lg bg-tertiary/10 text-tertiary text-sm font-semibold hover:bg-tertiary/20 transition-colors">
           Save Changes
         </button>
       </Card>
@@ -86,7 +86,7 @@ export default function FinanceSettingsPage() {
         ].map(({ key, label }) => (
           <div key={key} className="flex items-center justify-between">
             <span className="text-sm text-on-surface">{label}</span>
-            <button
+            <button type="button"
               onClick={() => setNotifications((n) => ({ ...n, [key]: !n[key as keyof typeof n] }))}
               className={`w-10 h-5 rounded-full transition-colors ${notifications[key as keyof typeof notifications] ? "bg-tertiary" : "bg-white/10"}`}
             >
@@ -115,7 +115,7 @@ export default function FinanceSettingsPage() {
           <label className="text-xs uppercase tracking-widest text-on-surface-variant">Invoice Payment Terms (days)</label>
           <input type="number" defaultValue={30} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" />
         </div>
-        <button className="mt-2 px-4 py-2 rounded-lg bg-tertiary/10 text-tertiary text-sm font-semibold hover:bg-tertiary/20 transition-colors">
+        <button type="button" className="mt-2 px-4 py-2 rounded-lg bg-tertiary/10 text-tertiary text-sm font-semibold hover:bg-tertiary/20 transition-colors">
           Save Preferences
         </button>
       </Card>

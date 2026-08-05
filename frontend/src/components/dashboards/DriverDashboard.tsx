@@ -209,7 +209,7 @@ export default function DriverDashboard() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {ACTIONS.map(({ Icon, label, color, glow, href }, i) => (
               <Link href={href} key={label} className="block w-full">
-                <button
+                <button type="button"
                   style={{ animationDelay: `${0.44 + i * 0.07}s` }}
                   className={`w-full animate-fade-up flex flex-col items-center justify-center gap-3 py-6 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/5 transition-all duration-200 active:scale-95 hover:-translate-y-1 ${glow ? "shadow-[0_0_15px_rgba(66,165,245,0.2)]" : ""}`}
                 >
@@ -294,7 +294,7 @@ export default function DriverDashboard() {
                       </option>
                     ))}
                   </select>
-                  <button
+                  <button type="button"
                     onClick={handleSelfAssign}
                     disabled={!selectedShipmentId || assigning}
                     className="w-full py-2.5 rounded-lg bg-[#00C2FF] hover:bg-[#00a8e0] text-[#0B1F3A] text-xs font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-1.5 shadow-[0_4px_16px_rgba(0,194,255,0.2)] active:scale-[0.98]"

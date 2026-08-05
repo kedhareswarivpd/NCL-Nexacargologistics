@@ -261,7 +261,7 @@ export default function IndustrySolutionsPage() {
               </Link>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
-              <button onClick={handleDownload}
+              <button type="button" onClick={handleDownload}
                 className="inline-flex items-center gap-2 text-base px-8 py-3 rounded-xl bg-white/5 border border-white/20 text-white font-semibold hover:bg-white/10 transition-all">
                 <Download className="w-4 h-4" /> Download Brochure
               </button>

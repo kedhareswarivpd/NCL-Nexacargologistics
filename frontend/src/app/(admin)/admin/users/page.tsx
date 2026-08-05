@@ -199,7 +199,7 @@ export default function UserManagementPage() {
           {["All", "Customer", "Driver", "Warehouse", "Finance", "Logistics"].map((r) => {
             const isSelected = roleFilter === r;
             return (
-              <button
+              <button type="button"
                 key={r}
                 onClick={() => setRoleFilter(r)}
                 className={`relative px-3 py-1.5 rounded-lg text-xs font-semibold overflow-hidden transition-all duration-200`}
@@ -282,9 +282,9 @@ export default function UserManagementPage() {
                       <td className="px-4 py-3 text-on-surface-variant text-xs">{u.last}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button onClick={() => openEdit(u)} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary transition-colors" title="Edit"><Edit className="h-4 w-4" /></button>
-                          <button onClick={() => toggleSuspend(u)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant transition-colors" title={u.status === "Active" ? "Suspend" : "Reactivate"}><Ban className="h-4 w-4" /></button>
-                          <button onClick={() => removeUser(u.id)} className="p-1.5 rounded-lg hover:bg-error/10 text-error transition-colors" title="Delete"><Trash2 className="h-4 w-4" /></button>
+                          <button type="button" onClick={() => openEdit(u)} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary transition-colors" title="Edit"><Edit className="h-4 w-4" /></button>
+                          <button type="button" onClick={() => toggleSuspend(u)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant transition-colors" title={u.status === "Active" ? "Suspend" : "Reactivate"}><Ban className="h-4 w-4" /></button>
+                          <button type="button" onClick={() => removeUser(u.id)} className="p-1.5 rounded-lg hover:bg-error/10 text-error transition-colors" title="Delete"><Trash2 className="h-4 w-4" /></button>
                         </div>
                       </td>
                     </motion.tr>
@@ -314,7 +314,7 @@ export default function UserManagementPage() {
           <div className="w-full max-w-md rounded-2xl border border-white/10 bg-surface-container shadow-2xl">
             <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
               <h2 className="text-base font-bold text-on-surface">Edit User</h2>
-              <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
             </div>
             <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
               <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Name</label><input value={editForm.name} onChange={e => { const filtered = e.target.value.replace(/[0-9]/g, ''); setEditForm(p => ({...p, name: filtered})); }} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>

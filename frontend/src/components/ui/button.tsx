@@ -9,7 +9,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "default", size = "default", ...props }, ref) => {
     return (
-      <button
+      <button type="button"
         ref={ref}
         className={cn(
           "inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50 btn-press hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(66,165,245,0.18)] active:translate-y-0 active:scale-[0.98]",

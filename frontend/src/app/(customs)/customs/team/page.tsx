@@ -76,7 +76,7 @@ export default function CustomsTeamPage() {
       {/* Specialization Filter */}
       <div className="flex flex-wrap gap-2 animate-fade-up">
         {SPECIALIZATIONS.map((spec) => (
-          <button
+          <button type="button"
             key={spec}
             className="px-4 py-2 rounded-full text-xs font-medium bg-white/5 hover:bg-white/10 text-on-surface-variant hover:text-on-surface transition-all border border-white/5 hover:border-secondary/30"
           >

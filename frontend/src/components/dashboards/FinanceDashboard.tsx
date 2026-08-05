@@ -211,7 +211,7 @@ export default function FinanceDashboard() {
       <section className="animate-fade-up" style={{ animationDelay: "0.42s" }}>
         <div className="mb-3 flex items-center justify-between">
           <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">Recent Invoices</h2>
-          <button className="flex items-center gap-1 text-xs text-tertiary hover:underline transition-all hover:gap-2">
+          <button type="button" className="flex items-center gap-1 text-xs text-tertiary hover:underline transition-all hover:gap-2">
             <FileText className="h-3 w-3" /> Export <ArrowUpRight className="h-3 w-3" />
           </button>
         </div>
@@ -244,7 +244,7 @@ export default function FinanceDashboard() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <button onClick={() => openEdit(inv)} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary transition-colors" title="Edit"><Edit className="h-4 w-4" /></button>
+                    <button type="button" onClick={() => openEdit(inv)} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary transition-colors" title="Edit"><Edit className="h-4 w-4" /></button>
                   </td>
                 </tr>
               ))}
@@ -285,7 +285,7 @@ export default function FinanceDashboard() {
           <div className="w-full max-w-md rounded-2xl border border-white/10 bg-surface-container shadow-2xl">
             <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
               <h2 className="text-base font-bold text-on-surface">Edit Invoice</h2>
-              <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
             </div>
             <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
               <div>
