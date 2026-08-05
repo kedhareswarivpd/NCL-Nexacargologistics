@@ -19,7 +19,7 @@ from app.models.profile import Profile, UserRole
 from app.models.shipment import Document, Shipment
 from app.schemas.payloads import DocumentCreate
 from app.services import crud
-from app.utils.helpers import serialize, serialize_all
+from app.utils.helpers import serialize, serialize_all, is_safe_file_url
 
 router = APIRouter(prefix="/documents", tags=["documents"])
 
@@ -41,9 +41,13 @@ async def upload_document(
 ):
     """Register an uploaded document (metadata + Storage URL)."""
     url = (payload.file_url or "").strip()
-    if not (url.startswith("http://") or url.startswith("https://")):
-        raise HTTPException(status_code=400, detail="Invalid file URL scheme. Must use http or https.")
+    if not is_safe_file_url(url):
+        raise HTTPException(status_code=400, detail="Invalid file URL. Must be a safe host (e.g. Supabase).")
+    
     shipment_uuid = uuid.UUID(payload.shipment_id) if payload.shipment_id else None
+    if not shipment_uuid and current_user.role not in UserRole.STAFF:
+        raise HTTPException(status_code=403, detail="Only staff can upload unlinked documents.")
+        
     await _assert_shipment_access(db, shipment_uuid, current_user)
     doc = await crud.create_item(db, Document, {
         "shipment_id": shipment_uuid,

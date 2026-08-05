@@ -17,7 +17,7 @@ from app.schemas.payloads import (
 )
 from app.services import crud
 from app.services.notification_service import notify_shipment_update, notify_shipment_created
-from app.utils.helpers import generate_tracking_id, serialize, serialize_all
+from app.utils.helpers import generate_tracking_id, serialize, serialize_all, is_safe_file_url
 
 router = APIRouter(prefix="/shipments", tags=["shipments"])
 
@@ -248,6 +248,10 @@ async def add_document(
     db: AsyncSession = Depends(get_db),
     current_user: Profile = Depends(get_current_user),
 ):
+    url = (payload.file_url or "").strip()
+    if not is_safe_file_url(url):
+        raise HTTPException(status_code=400, detail="Invalid file URL. Must be a safe host (e.g. Supabase).")
+        
     shipment = await crud.get_item(db, Shipment, shipment_id)
     if not shipment:
         raise HTTPException(status_code=404, detail="Shipment not found")
@@ -256,7 +260,7 @@ async def add_document(
         "shipment_id": shipment.id,
         "doc_type": payload.doc_type,
         "file_name": payload.file_name,
-        "file_url": payload.file_url,
+        "file_url": url,
         "uploaded_by": current_user.id,
     })
     return serialize(doc)

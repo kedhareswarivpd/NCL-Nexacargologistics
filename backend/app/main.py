@@ -3,6 +3,7 @@ import logging
 from contextlib import asynccontextmanager
 from fastapi import Depends, FastAPI, Request
 from fastapi.responses import Response
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -59,33 +60,14 @@ async def global_exception_handler(request: Request, exc: Exception):
     )
 
 
-@app.middleware("http")
-async def cors_middleware(request: Request, call_next):
-    origin = request.headers.get("origin", "")
-    allowed = bool(origin) and is_origin_allowed(origin, settings.cors_origin_list)
-
-    if request.method == "OPTIONS":
-        response = Response(status_code=204)
-        if allowed:
-            response.headers["Access-Control-Allow-Origin"] = origin
-            response.headers["Access-Control-Allow-Credentials"] = "true"
-            response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
-            response.headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type, Accept, Origin, X-Requested-With, apikey"
-            response.headers["Access-Control-Max-Age"] = "86400"
-            response.headers["Vary"] = "Origin"
-        return response
-
-    response = await call_next(request)
-
-    if allowed:
-        response.headers["Access-Control-Allow-Origin"] = origin
-        response.headers["Access-Control-Allow-Credentials"] = "true"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
-        response.headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type, Accept, Origin, X-Requested-With, apikey"
-        response.headers["Vary"] = "Origin"
-
-    return response
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origin_list,
+    allow_origin_regex=r"^http://(localhost|127\.0\.0\.1):\d+$|^https://ncl-[a-zA-Z0-9-]+\.vercel\.app$|^https://ncl-nexacargologistics-[a-zA-Z0-9-]+\.onrender\.com$",
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.add_middleware(LoggingMiddleware)
 app.include_router(api_router)

@@ -6,6 +6,7 @@ import re
 import uuid
 from datetime import datetime, timezone
 from enum import Enum
+from urllib.parse import urlparse
 
 
 def _rand(n: int = 6) -> str:
@@ -58,3 +59,21 @@ def serialize_all(items) -> list:
 
 def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+
+def is_safe_file_url(url: str) -> bool:
+    """Validate that the file URL scheme and host are safe (localhost or Supabase)."""
+    if not url or not (url.startswith("http://") or url.startswith("https://")):
+        return False
+    try:
+        parsed = urlparse(url)
+        host = parsed.hostname
+        if not host:
+            return False
+        if host in ("localhost", "127.0.0.1"):
+            return True
+        if host.endswith(".supabase.co") or host == "supabase.co":
+            return True
+        return False
+    except Exception:
+        return False
