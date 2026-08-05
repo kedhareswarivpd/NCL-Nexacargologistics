@@ -41,7 +41,8 @@ def _html_template(subject: str, body: str) -> str:
 
 
 async def send_email(to: str, subject: str, body: str) -> None:
-    if SMTP_HOST and SMTP_USER and SMTP_PASS:
+    is_placeholder = SMTP_USER == "your@gmail.com" or SMTP_PASS == "your_app_password"
+    if SMTP_HOST and SMTP_USER and SMTP_PASS and not is_placeholder:
         try:
             msg = MIMEMultipart("alternative")
             msg["Subject"] = subject
