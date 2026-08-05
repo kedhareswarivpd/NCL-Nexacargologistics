@@ -50,7 +50,7 @@ async def get_current_user(
             id=user_id,
             email=email,
             name=claims.get("name") or (email.split("@")[0] if email else "User"),
-            role=claims.get("role") or UserRole.CUSTOMER,
+            role=UserRole.CUSTOMER,
             phone=claims.get("phone"),
             company=claims.get("company"),
         )

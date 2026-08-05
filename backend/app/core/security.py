@@ -148,16 +148,6 @@ def _verify_local(token: str) -> Optional[dict]:
         return None
 
 
-def _decode_unverified(token: str) -> Optional[dict]:
-    try:
-        payload = jwt.get_unverified_claims(token)
-        if isinstance(payload, dict) and (payload.get("sub") or payload.get("id")):
-            return _normalise(payload)
-    except Exception:
-        pass
-    return None
-
-
 async def _verify_remote(token: str) -> Optional[dict]:
     if not settings.SUPABASE_URL or not settings.SUPABASE_ANON_KEY:
         return None
@@ -175,8 +165,6 @@ async def _verify_remote(token: str) -> Optional[dict]:
 
 async def verify_supabase_token(token: str) -> dict:
     claims = _verify_local(token)
-    if claims is None:
-        claims = _decode_unverified(token)
     if claims is None:
         claims = await _verify_remote(token)
     if claims is None or not claims.get("id"):

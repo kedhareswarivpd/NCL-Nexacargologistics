@@ -9,12 +9,22 @@ def _build_connect_args(url: str) -> dict:
     if "sqlite" in url:
         return {}
     import ssl as _ssl
+    import os
     # statement_cache_size=0 required for PgBouncer/Supabase transaction pooler.
-    # We create an SSL context that does NOT verify the Supabase self-signed cert
-    # but still uses TLS encryption — this forces IPv4 DNS resolution on Render.
-    ssl_ctx = _ssl.create_default_context()
-    ssl_ctx.check_hostname = False
-    ssl_ctx.verify_mode = _ssl.CERT_NONE
+    ssl_ctx = _ssl.create_default_context(_ssl.Purpose.SERVER_AUTH)
+    ssl_ctx.minimum_version = _ssl.TLSVersion.TLSv1_2
+
+    db_ssl_verify = os.getenv("DB_SSL_VERIFY", "False").lower() in ("true", "1", "yes")
+    if db_ssl_verify:
+        ssl_ctx.check_hostname = True
+        ssl_ctx.verify_mode = _ssl.CERT_REQUIRED
+        ssl_ca_path = os.getenv("DB_SSL_CA_PATH")
+        if ssl_ca_path and os.path.exists(ssl_ca_path):
+            ssl_ctx.load_verify_locations(ssl_ca_path)
+    else:
+        ssl_ctx.check_hostname = False
+        ssl_ctx.verify_mode = _ssl.CERT_NONE
+
     return {
         "statement_cache_size": 0,
         "ssl": ssl_ctx,

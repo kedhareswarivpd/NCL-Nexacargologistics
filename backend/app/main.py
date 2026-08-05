@@ -60,6 +60,8 @@ async def global_exception_handler(request: Request, exc: Exception):
     )
 
 
+app.add_middleware(LoggingMiddleware)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origin_list,
@@ -69,7 +71,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.add_middleware(LoggingMiddleware)
 app.include_router(api_router)
 
 
