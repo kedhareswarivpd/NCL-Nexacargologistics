@@ -5,8 +5,17 @@ Email service stub — replace with real SMTP / SendGrid / AWS SES in production
 import logging
 import smtplib
 import os
+import socket
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+
+# Patch getaddrinfo to force IPv4 on Render (fixes Errno 101 Network is unreachable)
+_old_getaddrinfo = socket.getaddrinfo
+def _ipv4_getaddrinfo(*args, **kwargs):
+    responses = _old_getaddrinfo(*args, **kwargs)
+    ipv4_responses = [r for r in responses if r[0] == socket.AF_INET]
+    return ipv4_responses or responses
+socket.getaddrinfo = _ipv4_getaddrinfo
 
 logger = logging.getLogger(__name__)
 
@@ -40,9 +49,14 @@ async def send_email(to: str, subject: str, body: str) -> None:
             msg["To"] = to
             msg.attach(MIMEText(body, "plain"))
             msg.attach(MIMEText(_html_template(subject, body), "html"))
-            with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
+            if SMTP_PORT == 465:
+                server = smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, timeout=30)
+                server.login(SMTP_USER, SMTP_PASS)
+            else:
+                server = smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=30)
                 server.starttls()
                 server.login(SMTP_USER, SMTP_PASS)
+            with server:
                 server.sendmail(SMTP_FROM, to, msg.as_string())
             logger.info("[EMAIL SENT] to=%s subject=%s", to, subject)
         except Exception as e:

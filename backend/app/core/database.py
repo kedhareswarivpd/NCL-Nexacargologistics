@@ -18,6 +18,11 @@ def _build_connect_args(url: str) -> dict:
     return {
         "statement_cache_size": 0,
         "ssl": ssl_ctx,
+        "command_timeout": 60,
+        "server_settings": {
+            "statement_timeout": "60000",
+            "idle_in_transaction_session_timeout": "60000"
+        }
     }
 
 
