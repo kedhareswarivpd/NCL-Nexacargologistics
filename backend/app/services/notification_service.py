@@ -100,20 +100,58 @@ async def notify_shipment_created(
     customer_msg = f"Your shipment has been created. Your tracking ID is {tracking_id}. You can use this to track your shipment."
     staff_msg = f"A new shipment {tracking_id} has been created and is awaiting dispatch."
 
+    notifications = []
+
     # Notify customer (in-app + email)
     if customer_id:
-        await create_notification(db, user_id=customer_id, title=title, message=customer_msg, type="shipment", related_id=tracking_id, related_type="shipment")
+        c_uuid = uuid.UUID(customer_id) if isinstance(customer_id, str) else customer_id
+        notifications.append(Notification(
+            user_id=c_uuid,
+            title=title,
+            message=customer_msg,
+            type="shipment",
+            related_id=tracking_id,
+            related_type="shipment"
+        ))
         if email_to:
-            await create_notification(db, user_id=customer_id, title=title, message=customer_msg, channel="email", type="shipment", related_id=tracking_id, related_type="shipment", email_to=email_to)
+            notifications.append(Notification(
+                user_id=c_uuid,
+                title=title,
+                message=customer_msg,
+                channel="email",
+                type="shipment",
+                related_id=tracking_id,
+                related_type="shipment",
+                email_to=email_to
+            ))
 
     # Notify all logistics + admin users (in-app + email)
     result = await db.execute(
         select(Profile).where(Profile.role.in_([UserRole.LOGISTICS, UserRole.ADMIN])).where(Profile.status == "active")
     )
     for user in result.scalars().all():
-        await create_notification(db, user_id=str(user.id), title=title, message=staff_msg, type="shipment", related_id=tracking_id, related_type="shipment")
+        notifications.append(Notification(
+            user_id=user.id,
+            title=title,
+            message=staff_msg,
+            type="shipment",
+            related_id=tracking_id,
+            related_type="shipment"
+        ))
         if user.email:
-            await create_notification(db, user_id=str(user.id), title=title, message=staff_msg, channel="email", type="shipment", related_id=tracking_id, related_type="shipment", email_to=user.email)
+            notifications.append(Notification(
+                user_id=user.id,
+                title=title,
+                message=staff_msg,
+                channel="email",
+                type="shipment",
+                related_id=tracking_id,
+                related_type="shipment",
+                email_to=user.email
+            ))
+
+    if notifications:
+        db.add_all(notifications)
 
 
 async def notify_shipment_update(
@@ -126,13 +164,31 @@ async def notify_shipment_update(
 ) -> None:
     """Fan out shipment status updates. On Delivered, notify customer + logistics + admins."""
     title = f"Shipment {tracking_id}: {status}"
+    notifications = []
 
     # Always notify the customer (in-app + email)
     if customer_id:
+        c_uuid = uuid.UUID(customer_id) if isinstance(customer_id, str) else customer_id
         customer_msg = f"Your shipment {tracking_id} has been delivered successfully."
-        await create_notification(db, user_id=customer_id, title=title, message=customer_msg, type="shipment", related_id=tracking_id, related_type="shipment")
+        notifications.append(Notification(
+            user_id=c_uuid,
+            title=title,
+            message=customer_msg,
+            type="shipment",
+            related_id=tracking_id,
+            related_type="shipment"
+        ))
         if email_to:
-            await create_notification(db, user_id=customer_id, title=title, message=customer_msg, channel="email", type="shipment", related_id=tracking_id, related_type="shipment", email_to=email_to)
+            notifications.append(Notification(
+                user_id=c_uuid,
+                title=title,
+                message=customer_msg,
+                channel="email",
+                type="shipment",
+                related_id=tracking_id,
+                related_type="shipment",
+                email_to=email_to
+            ))
 
     # On Delivered — also notify all logistics users and admins
     if status == "Delivered":
@@ -142,9 +198,28 @@ async def notify_shipment_update(
         )
         staff_users = result.scalars().all()
         for user in staff_users:
-            await create_notification(db, user_id=str(user.id), title=title, message=staff_msg, type="shipment", related_id=tracking_id, related_type="shipment")
+            notifications.append(Notification(
+                user_id=user.id,
+                title=title,
+                message=staff_msg,
+                type="shipment",
+                related_id=tracking_id,
+                related_type="shipment"
+            ))
             if user.email:
-                await create_notification(db, user_id=str(user.id), title=title, message=staff_msg, channel="email", type="shipment", related_id=tracking_id, related_type="shipment", email_to=user.email)
+                notifications.append(Notification(
+                    user_id=user.id,
+                    title=title,
+                    message=staff_msg,
+                    channel="email",
+                    type="shipment",
+                    related_id=tracking_id,
+                    related_type="shipment",
+                    email_to=user.email
+                ))
+
+    if notifications:
+        db.add_all(notifications)
 
 
 from app.core.database import async_session_factory
