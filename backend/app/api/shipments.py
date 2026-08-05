@@ -1,6 +1,6 @@
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,7 +16,7 @@ from app.schemas.payloads import (
     DocumentCreate,
 )
 from app.services import crud
-from app.services.notification_service import notify_shipment_update, notify_shipment_created
+from app.services.notification_service import run_notify_shipment_update, run_notify_shipment_created
 from app.utils.helpers import generate_tracking_id, serialize, serialize_all, is_safe_file_url
 
 router = APIRouter(prefix="/shipments", tags=["shipments"])
@@ -45,6 +45,7 @@ async def list_shipments(
 @router.post("", status_code=status.HTTP_201_CREATED)
 async def create_shipment(
     payload: ShipmentCreate,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     current_user: Profile = Depends(get_current_user),
 ):
@@ -69,11 +70,11 @@ async def create_shipment(
         note="Shipment created",
         changed_by=current_user.id,
     )
-    await notify_shipment_created(
-        db,
-        customer_id=str(shipment.customer_id) if shipment.customer_id else None,
-        tracking_id=shipment.tracking_id,
-        email_to=shipment.customer_email,
+    background_tasks.add_task(
+        run_notify_shipment_created,
+        str(shipment.customer_id) if shipment.customer_id else None,
+        shipment.tracking_id,
+        shipment.customer_email,
     )
     return serialize(shipment)
 
@@ -123,6 +124,7 @@ async def delete_shipment(
 async def update_status(
     shipment_id: str,
     payload: StatusUpdate,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     current_user: Profile = Depends(ops_guard),
 ):
@@ -145,12 +147,12 @@ async def update_status(
         lng=payload.lng,
         changed_by=current_user.id,
     )
-    await notify_shipment_update(
-        db,
-        customer_id=str(shipment.customer_id) if shipment.customer_id else None,
-        tracking_id=shipment.tracking_id,
-        status=payload.status,
-        email_to=shipment.customer_email,
+    background_tasks.add_task(
+        run_notify_shipment_update,
+        str(shipment.customer_id) if shipment.customer_id else None,
+        shipment.tracking_id,
+        payload.status,
+        shipment.customer_email,
     )
     return serialize(shipment)
 

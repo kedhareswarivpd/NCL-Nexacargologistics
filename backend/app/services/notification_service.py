@@ -145,3 +145,37 @@ async def notify_shipment_update(
             await create_notification(db, user_id=str(user.id), title=title, message=staff_msg, type="shipment", related_id=tracking_id, related_type="shipment")
             if user.email:
                 await create_notification(db, user_id=str(user.id), title=title, message=staff_msg, channel="email", type="shipment", related_id=tracking_id, related_type="shipment", email_to=user.email)
+
+
+from app.core.database import async_session_factory
+
+async def run_notify_shipment_created(
+    customer_id: str | None,
+    tracking_id: str,
+    email_to: str | None = None,
+) -> None:
+    async with async_session_factory() as db:
+        await notify_shipment_created(
+            db,
+            customer_id=customer_id,
+            tracking_id=tracking_id,
+            email_to=email_to,
+        )
+        await db.commit()
+
+
+async def run_notify_shipment_update(
+    customer_id: str | None,
+    tracking_id: str,
+    status: str,
+    email_to: str | None = None,
+) -> None:
+    async with async_session_factory() as db:
+        await notify_shipment_update(
+            db,
+            customer_id=customer_id,
+            tracking_id=tracking_id,
+            status=status,
+            email_to=email_to,
+        )
+        await db.commit()
