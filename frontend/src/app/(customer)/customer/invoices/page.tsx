@@ -145,7 +145,7 @@ export default function InvoicesPage() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-2">
-                        <button
+                        <button type="button"
                           onClick={() => downloadInvoice(inv)}
                           disabled={inv.status !== "Paid"}
                           title={inv.status !== "Paid" ? "Payment required to download PDF" : "Download Invoice PDF"}
@@ -154,7 +154,7 @@ export default function InvoicesPage() {
                           <Download className="h-3.5 w-3.5" /> PDF
                         </button>
                         {inv.status !== "Paid" && (
-                          <button onClick={() => payInvoice(inv)} disabled={payingId === inv.id} className="px-3 py-1.5 rounded-lg bg-[#1E88E5] text-white text-xs font-bold hover:bg-[#1565C0] transition-colors disabled:opacity-50">
+                          <button type="button" onClick={() => payInvoice(inv)} disabled={payingId === inv.id} className="px-3 py-1.5 rounded-lg bg-[#1E88E5] text-white text-xs font-bold hover:bg-[#1565C0] transition-colors disabled:opacity-50">
                             {payingId === inv.id ? "Paying…" : "Pay Now"}
                           </button>
                         )}

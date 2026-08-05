@@ -293,7 +293,7 @@ function BookShipmentContent() {
                 )}
               </div>
 
-              <button
+              <button type="button"
                 onClick={() => {
                   setQuote(null);
                   setQuoteIdInput("");

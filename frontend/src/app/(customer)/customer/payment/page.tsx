@@ -13,6 +13,15 @@ import { generateInvoicePDF } from "@/lib/generateInvoicePDF";
 import { financeApi } from "@/lib/services";
 import { apiError } from "@/lib/api";
 
+const secureRandom = () => {
+  if (typeof window !== "undefined" && window.crypto) {
+    const arr = new Uint32Array(1);
+    window.crypto.getRandomValues(arr);
+    return arr[0] / 4294967296;
+  }
+  return 0.5;
+};
+
 type Invoice = { id: string; rawId: string; shipment: string; route: string; amount: number; amountUsd: number; due: string; status: string };
 
 const USD_TO_INR = 83;
@@ -63,7 +72,7 @@ export default function PaymentPage() {
   const [method,    setMethod]    = useState<PayMethod>("card");
   const [copied,    setCopied]    = useState(false);
   const [payError,  setPayError]  = useState("");
-  const [txRef]     = useState(() => "TXN-" + Math.random().toString(36).slice(2,10).toUpperCase());
+  const [txRef]     = useState(() => "TXN-" + secureRandom().toString(36).slice(2,10).toUpperCase());
 
   async function loadInvoices() {
     try { setInvoices(((await financeApi.invoices()) ?? []).map(mapInvoice)); } catch { setInvoices([]); }
@@ -84,25 +93,34 @@ export default function PaymentPage() {
     setStage("method");
   }
 
+  function validateCard(): boolean {
+    const errs: Record<string, string> = {};
+    if (!card.name.trim()) errs.name = "Name is required.";
+    if (card.number.replace(/\s/g, "").length !== 16) errs.number = "Enter a valid 16-digit card number.";
+    if (!/^\d{2}\/\d{2}$/.test(card.expiry)) errs.expiry = "Use MM/YY format.";
+    else {
+      const [mm, yy] = card.expiry.split("/").map(Number);
+      if (mm < 1 || mm > 12) errs.expiry = "Invalid month.";
+      else if (new Date(2000 + yy, mm - 1) < new Date()) errs.expiry = "Card has expired.";
+    }
+    if (!/^\d{3,4}$/.test(card.cvv)) errs.cvv = "CVV must be 3 or 4 digits.";
+    setCardErrors(errs);
+    return Object.keys(errs).length === 0;
+  }
+
+  function validateBank(): boolean {
+    const errs: Record<string, string> = {};
+    if (!bank.name.trim()) errs.name = "Bank/account name is required.";
+    if (!bank.account.trim()) errs.account = "Account number is required.";
+    setBankErrors(errs);
+    return Object.keys(errs).length === 0;
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (method === "card") {
-      const errs: Record<string, string> = {};
-      if (!card.name.trim()) errs.name = "Name is required.";
-      if (card.number.replace(/\s/g, "").length !== 16) errs.number = "Enter a valid 16-digit card number.";
-      if (!/^\d{2}\/\d{2}$/.test(card.expiry)) errs.expiry = "Use MM/YY format.";
-      else { const [mm, yy] = card.expiry.split("/").map(Number); if (mm < 1 || mm > 12) errs.expiry = "Invalid month."; else if (new Date(2000 + yy, mm - 1) < new Date()) errs.expiry = "Card has expired."; }
-      if (!/^\d{3,4}$/.test(card.cvv)) errs.cvv = "CVV must be 3 or 4 digits.";
-      if (Object.keys(errs).length) { setCardErrors(errs); return; }
-      setCardErrors({});
-    }
-    if (method === "bank") {
-      const errs: Record<string, string> = {};
-      if (!bank.name.trim()) errs.name = "Bank/account name is required.";
-      if (!bank.account.trim()) errs.account = "Account number is required.";
-      if (Object.keys(errs).length) { setBankErrors(errs); return; }
-      setBankErrors({});
-    }
+    if (method === "card" && !validateCard()) return;
+    if (method === "bank" && !validateBank()) return;
+
     setStage("processing");
     setPayError("");
     // Record the payment against the real invoice via the backend.
@@ -193,7 +211,7 @@ export default function PaymentPage() {
                       ₹{inv.amount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
                     </p>
                     {inv.status !== "Paid" ? (
-                      <button onClick={() => startPay(inv)}
+                      <button type="button" onClick={() => startPay(inv)}
                         className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#1E88E5] to-[#00C2FF] text-white text-sm font-bold hover:opacity-90 transition-opacity shadow-[0_0_16px_rgba(0,194,255,0.25)]">
                         <CreditCard className="h-4 w-4" /> Pay Now
                       </button>
@@ -222,7 +240,7 @@ export default function PaymentPage() {
           <motion.div key="method" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
             className="space-y-5">
 
-            <button onClick={() => setStage("list")}
+            <button type="button" onClick={() => setStage("list")}
               className="flex items-center gap-2 text-sm text-[#00C2FF] hover:text-white transition-colors">
               <ArrowLeft className="h-4 w-4" /> Back to Invoices
             </button>
@@ -249,7 +267,7 @@ export default function PaymentPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {PAY_METHODS.map(({ id, label, icon: Icon, desc }) => (
-                <button key={id} onClick={() => setMethod(id)}
+                <button type="button" key={id} onClick={() => setMethod(id)}
                   className={`p-5 rounded-xl border text-left transition-all ${
                     method === id
                       ? "border-[#00C2FF]/60 bg-[#00C2FF]/10 shadow-[0_0_20px_rgba(0,194,255,0.15)]"
@@ -269,7 +287,7 @@ export default function PaymentPage() {
               ))}
             </div>
 
-            <button onClick={() => setStage("details")}
+            <button type="button" onClick={() => setStage("details")}
               className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-gradient-to-r from-[#1E88E5] to-[#00C2FF] text-white font-bold text-sm shadow-[0_0_24px_rgba(0,194,255,0.25)] hover:opacity-90 transition-opacity">
               Continue to Payment Details <ChevronRight className="h-4 w-4" />
             </button>
@@ -281,7 +299,7 @@ export default function PaymentPage() {
           <motion.div key="details" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
             className="space-y-5">
 
-            <button onClick={() => setStage("method")}
+            <button type="button" onClick={() => setStage("method")}
               className="flex items-center gap-2 text-sm text-[#00C2FF] hover:text-white transition-colors">
               <ArrowLeft className="h-4 w-4" /> Back
             </button>
@@ -311,16 +329,16 @@ export default function PaymentPage() {
                 <Card className="p-6 space-y-4 bg-white/[0.02] border border-white/8">
                   <h3 className="text-sm font-bold text-white">Card Details</h3>
                   <div>
-                    <label className={labelCls}>Cardholder Name</label>
-                    <input required value={card.name}
+                    <label htmlFor="card-name-input" className={labelCls}>Cardholder Name</label>
+                    <input id="card-name-input" required value={card.name}
                       onChange={e => { setCard({...card, name: e.target.value}); setCardErrors(p => ({...p, name: ""})); }}
                       placeholder="John Smith" className={`${inputCls} ${cardErrors.name ? "border-red-500" : ""}`} />
                     {cardErrors.name && <p className="text-xs text-red-400 mt-1">{cardErrors.name}</p>}
                   </div>
                   <div>
-                    <label className={labelCls}>Card Number</label>
+                    <label htmlFor="card-number-input" className={labelCls}>Card Number</label>
                     <div className="relative">
-                      <input required value={card.number}
+                      <input id="card-number-input" required value={card.number}
                         onChange={e => { setCard({...card, number: formatCard(e.target.value)}); setCardErrors(p => ({...p, number: ""})); }}
                         placeholder="0000 0000 0000 0000"
                         maxLength={19} className={`${inputCls} pr-12 ${cardErrors.number ? "border-red-500" : ""}`} />
@@ -333,15 +351,15 @@ export default function PaymentPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className={labelCls}>Expiry (MM/YY)</label>
-                      <input required value={card.expiry}
+                      <label htmlFor="card-expiry-input" className={labelCls}>Expiry (MM/YY)</label>
+                      <input id="card-expiry-input" required value={card.expiry}
                         onChange={e => { setCard({...card, expiry: formatExpiry(e.target.value)}); setCardErrors(p => ({...p, expiry: ""})); }}
                         placeholder="08/27" maxLength={5} className={`${inputCls} ${cardErrors.expiry ? "border-red-500" : ""}`} />
                       {cardErrors.expiry && <p className="text-xs text-red-400 mt-1">{cardErrors.expiry}</p>}
                     </div>
                     <div>
-                      <label className={labelCls}>CVV</label>
-                      <input required type="password" value={card.cvv}
+                      <label htmlFor="card-cvv-input" className={labelCls}>CVV</label>
+                      <input id="card-cvv-input" required type="password" value={card.cvv}
                         onChange={e => { setCard({...card, cvv: e.target.value.slice(0,4)}); setCardErrors(p => ({...p, cvv: ""})); }}
                         placeholder="•••" maxLength={4} className={`${inputCls} ${cardErrors.cvv ? "border-red-500" : ""}`} />
                       {cardErrors.cvv && <p className="text-xs text-red-400 mt-1">{cardErrors.cvv}</p>}
@@ -376,15 +394,15 @@ export default function PaymentPage() {
                     ))}
                   </div>
                   <div>
-                    <label className={labelCls}>Your Bank / Account Name</label>
-                    <input required value={bank.name}
+                    <label htmlFor="bank-name-input" className={labelCls}>Your Bank / Account Name</label>
+                    <input id="bank-name-input" required value={bank.name}
                       onChange={e => { setBank({...bank, name: e.target.value}); setBankErrors(p => ({...p, name: ""})); }}
                       placeholder="Acme Corp Ltd." className={`${inputCls} ${bankErrors.name ? "border-red-500" : ""}`} />
                     {bankErrors.name && <p className="text-xs text-red-400 mt-1">{bankErrors.name}</p>}
                   </div>
                   <div>
-                    <label className={labelCls}>Your Account Number</label>
-                    <input required value={bank.account}
+                    <label htmlFor="bank-account-input" className={labelCls}>Your Account Number</label>
+                    <input id="bank-account-input" required value={bank.account}
                       onChange={e => { setBank({...bank, account: e.target.value}); setBankErrors(p => ({...p, account: ""})); }}
                       placeholder="IBAN or account number" className={`${inputCls} ${bankErrors.account ? "border-red-500" : ""}`} />
                     {bankErrors.account && <p className="text-xs text-red-400 mt-1">{bankErrors.account}</p>}
@@ -540,14 +558,12 @@ export default function PaymentPage() {
                 ["Payment Method",  PAY_METHODS.find(m=>m.id===method)?.label ?? "", false],
                 ["Date & Time",     new Date().toLocaleString("en-US",{dateStyle:"medium",timeStyle:"short"}), false],
                 ["Status",          "CONFIRMED",           false],
-              ].map(([k, v, isTx]) => (
-                <div key={k as string} className="flex justify-between items-center gap-2">
-                  <span className="text-xs text-white/40">{k as string}</span>
-                  <div className="flex items-center gap-1.5">
-                    <span className={`text-xs font-mono font-semibold ${
-                      (k as string) === "Status" ? "text-green-400" :
-                      (isTx as boolean) ? "text-[#00C2FF]" : "text-white"
-                    }`}>{v as string}</span>
+                    const statusClass = (k as string) === "Status" ? "text-green-400" : ((isTx as boolean) ? "text-[#00C2FF]" : "text-white");
+                    return (
+                      <div key={k as string} className="flex justify-between items-center gap-2">
+                        <span className="text-xs text-white/40">{k as string}</span>
+                        <div className="flex items-center gap-1.5">
+                          <span className={`text-xs font-mono font-semibold ${statusClass}`}>{v as string}</span>
                     {(isTx as boolean) && (
                       <button type="button" onClick={copyRef} className="text-white/30 hover:text-white/60 transition-colors">
                         {copied ? <Check className="h-3 w-3 text-green-400" /> : <Copy className="h-3 w-3" />}
@@ -559,7 +575,7 @@ export default function PaymentPage() {
             </Card>
 
             <div className="flex gap-3 flex-wrap justify-center">
-              <button
+              <button type="button"
                 onClick={() => generateInvoicePDF({
                   txRef,
                   invoiceId: invoice.id,
@@ -572,13 +588,13 @@ export default function PaymentPage() {
                 className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#1E88E5] to-[#00C2FF] text-white font-bold text-sm hover:opacity-90 transition-opacity shadow-[0_0_20px_rgba(0,194,255,0.2)]">
                 <Download className="h-4 w-4" /> Download Invoice PDF
               </button>
-              <button
+              <button type="button"
                 onClick={() => { setStage("list"); setInvoice(null); }}
                 className="px-6 py-3 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-white/70 hover:bg-white/10 hover:text-white transition-all">
                 Back to Invoices
               </button>
               <Link href="/customer">
-                <button className="px-6 py-3 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-white/70 hover:bg-white/10 hover:text-white transition-all">
+                <button type="button" className="px-6 py-3 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-white/70 hover:bg-white/10 hover:text-white transition-all">
                   Go to Dashboard
                 </button>
               </Link>

@@ -198,13 +198,14 @@ function TrackShipmentsContent() {
               {TIMELINE_STEPS.map((step, i) => {
                 const done = i <= currentStep;
                 const active = i === currentStep;
+                const textColor = active ? "text-tertiary" : (done ? "text-on-surface" : "text-on-surface-variant");
                 return (
-                  <li key={i} className="relative">
+                  <li key={step.label} className="relative">
                     <span className={`absolute -left-[41px] flex h-6 w-6 items-center justify-center rounded-full transition-all
                       ${done ? "bg-tertiary text-white" : "border border-white/20 bg-surface-container text-on-surface-variant"}`}>
                       {done ? <CheckCircle2 className="h-4 w-4" /> : <step.Icon className="h-3.5 w-3.5" />}
                     </span>
-                    <p className={`text-sm font-semibold ${active ? "text-tertiary" : done ? "text-on-surface" : "text-on-surface-variant"}`}>
+                    <p className={`text-sm font-semibold ${textColor}`}>
                       {step.label}
                     </p>
                     {active && <p className="text-xs text-on-surface-variant mt-0.5">{shipment.origin} · Now</p>}
@@ -224,7 +225,7 @@ function TrackShipmentsContent() {
                   <p className="text-xs text-on-surface-variant">Receive SMS & email alerts automatically.</p>
                 </div>
               </div>
-              <button onClick={() => setNotified(true)}
+              <button type="button" onClick={() => setNotified(true)}
                 className="px-5 py-2.5 rounded-lg bg-[#1E88E5] text-white text-sm font-bold hover:bg-[#1565C0] transition-colors shrink-0 flex items-center gap-2">
                 <Bell className="h-4 w-4" /> Enable SMS & Email Alerts
               </button>
@@ -278,7 +279,7 @@ function TrackShipmentsContent() {
                     </td>
                     <td className="px-4 py-3 text-on-surface-variant text-xs">{s.eta ?? "—"}</td>
                     <td className="px-4 py-3">
-                      <button onClick={() => { setQuery(s.tracking_id); setShipment(s); }}
+                      <button type="button" onClick={() => { setQuery(s.tracking_id); setShipment(s); }}
                         className="px-3 py-1.5 rounded-lg bg-white/10 text-sm font-semibold text-white hover:bg-[#1E88E5] hover:text-white transition-colors whitespace-nowrap">
                         Track This
                       </button>

@@ -14,6 +14,15 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 
+const secureRandom = () => {
+  if (typeof window !== "undefined" && window.crypto) {
+    const arr = new Uint32Array(1);
+    window.crypto.getRandomValues(arr);
+    return arr[0] / 4294967296;
+  }
+  return 0.5;
+};
+
 const LiveMap = dynamic(() => import("@/components/ui/LiveMap"), { ssr: false });
 
 const STAGES = [
@@ -374,7 +383,7 @@ export default function WorkflowSimulationPage() {
       }
       setInvoice(updatedInv);
       setPayment({
-        payment_ref: `PAY-${Math.floor(100000 + Math.random() * 900000)}`,
+        payment_ref: `PAY-${Math.floor(100000 + secureRandom() * 900000)}`,
         amount: invoice.total || invoice.amount,
         status: "completed"
       });
@@ -415,7 +424,7 @@ export default function WorkflowSimulationPage() {
             Experience and trigger the complete logistics pipeline from order placement to payment settlement.
           </p>
         </div>
-        <button
+        <button type="button"
           onClick={resetDemo}
           className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-xs text-on-surface hover:bg-white/10 transition-colors"
         >
@@ -474,7 +483,7 @@ export default function WorkflowSimulationPage() {
                     <CheckCircle2 className="h-5 w-5 shrink-0" />
                     <p className="font-semibold">Registered & Logged in as: {user?.name} ({user?.email})</p>
                   </div>
-                  <button
+                  <button type="button"
                     onClick={handleNext}
                     className="flex items-center gap-2 py-3 px-6 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] transition-colors"
                   >
@@ -490,8 +499,9 @@ export default function WorkflowSimulationPage() {
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-white/[0.02] p-4 rounded-xl border border-white/5">
                     <div className="space-y-1 relative">
-                      <label className="text-[11px] uppercase tracking-widest text-on-surface-variant font-semibold">Origin Port / City</label>
+                      <label htmlFor="sim-origin-input" className="text-[11px] uppercase tracking-widest text-on-surface-variant font-semibold">Origin Port / City</label>
                       <input 
+                        id="sim-origin-input"
                         type="text" 
                         value={simForm.origin} 
                         onChange={(e) => {
@@ -522,8 +532,9 @@ export default function WorkflowSimulationPage() {
                       )}
                     </div>
                     <div className="space-y-1 relative">
-                      <label className="text-[11px] uppercase tracking-widest text-on-surface-variant font-semibold">Destination Port / City</label>
+                      <label htmlFor="sim-dest-input" className="text-[11px] uppercase tracking-widest text-on-surface-variant font-semibold">Destination Port / City</label>
                       <input 
+                        id="sim-dest-input"
                         type="text" 
                         value={simForm.destination} 
                         onChange={(e) => {
@@ -554,8 +565,9 @@ export default function WorkflowSimulationPage() {
                       )}
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[11px] uppercase tracking-widest text-on-surface-variant font-semibold">Cargo Type</label>
+                      <label htmlFor="sim-cargo-input" className="text-[11px] uppercase tracking-widest text-on-surface-variant font-semibold">Cargo Type</label>
                       <input 
+                        id="sim-cargo-input"
                         type="text" 
                         value={simForm.cargoType} 
                         onChange={(e) => {
@@ -567,8 +579,9 @@ export default function WorkflowSimulationPage() {
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[11px] uppercase tracking-widest text-on-surface-variant font-semibold">Shipping Mode</label>
+                      <label htmlFor="sim-mode-select" className="text-[11px] uppercase tracking-widest text-on-surface-variant font-semibold">Shipping Mode</label>
                       <select 
+                        id="sim-mode-select"
                         value={simForm.mode} 
                         onChange={(e) => setSimForm({ ...simForm, mode: e.target.value })}
                         className={inputCls}
@@ -579,8 +592,9 @@ export default function WorkflowSimulationPage() {
                       </select>
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[11px] uppercase tracking-widest text-on-surface-variant font-semibold">Weight (kg)</label>
+                      <label htmlFor="sim-weight-input" className="text-[11px] uppercase tracking-widest text-on-surface-variant font-semibold">Weight (kg)</label>
                       <input 
+                        id="sim-weight-input"
                         type="number" 
                         value={simForm.weight} 
                         onChange={(e) => setSimForm({ ...simForm, weight: e.target.value })}
@@ -589,8 +603,9 @@ export default function WorkflowSimulationPage() {
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[11px] uppercase tracking-widest text-on-surface-variant font-semibold">Volume (m³)</label>
+                      <label htmlFor="sim-volume-input" className="text-[11px] uppercase tracking-widest text-on-surface-variant font-semibold">Volume (m³)</label>
                       <input 
+                        id="sim-volume-input"
                         type="number" 
                         value={simForm.volume} 
                         onChange={(e) => setSimForm({ ...simForm, volume: e.target.value })}
@@ -599,7 +614,7 @@ export default function WorkflowSimulationPage() {
                       />
                     </div>
                   </div>
-                  <button
+                  <button type="button"
                     onClick={requestQuote}
                     disabled={loading || !simForm.origin.trim() || !simForm.destination.trim() || !simForm.weight.trim()}
                     className="flex items-center gap-2 py-3 px-6 rounded-xl bg-tertiary text-white font-bold text-sm hover:bg-tertiary/90 transition-colors disabled:opacity-50"
@@ -631,7 +646,7 @@ export default function WorkflowSimulationPage() {
                         </div>
                       </div>
                     )}
-                    <button
+                    <button type="button"
                       onClick={bookShipment}
                       disabled={loading}
                       className="flex items-center gap-2 py-3 px-6 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] transition-colors"
@@ -651,7 +666,7 @@ export default function WorkflowSimulationPage() {
                   <p className="text-sm text-on-surface-variant">
                     Your cargo is now scheduled for pickup and listed in the logistics dashboard. An invoice has been automatically generated in pending state.
                   </p>
-                  <button
+                  <button type="button"
                     onClick={handleNext}
                     className="flex items-center gap-2 py-3 px-6 rounded-xl bg-tertiary text-white font-bold text-sm hover:bg-tertiary/90 transition-colors"
                   >
@@ -673,8 +688,9 @@ export default function WorkflowSimulationPage() {
                     </div>
 
                     <div className="space-y-1.5 border-t border-white/5 pt-3">
-                      <label className="text-[11px] uppercase tracking-widest text-on-surface-variant font-semibold">Select Driver (Admin Action)</label>
+                      <label htmlFor="admin-driver-select" className="text-[11px] uppercase tracking-widest text-on-surface-variant font-semibold">Select Driver (Admin Action)</label>
                       <select
+                        id="admin-driver-select"
                         value={selectedDriverId}
                         onChange={(e) => setSelectedDriverId(e.target.value)}
                         className="w-full px-3 py-2.5 rounded-lg bg-surface-container border border-white/10 text-xs text-on-surface focus:outline-none focus:border-tertiary/50"
@@ -688,7 +704,7 @@ export default function WorkflowSimulationPage() {
                     </div>
                   </div>
 
-                  <button
+                  <button type="button"
                     onClick={assignDriverAsAdmin}
                     disabled={loading || !selectedDriverId}
                     className="flex items-center gap-2 py-3 px-6 rounded-xl bg-[#00C2FF] hover:bg-[#00a8e0] text-[#0B1F3A] font-bold text-sm transition-colors shadow-[0_4px_16px_rgba(0,194,255,0.2)] active:scale-[0.98] disabled:opacity-50"
@@ -715,7 +731,7 @@ export default function WorkflowSimulationPage() {
                   <p className="text-sm text-on-surface-variant">
                     The task has been registered on the driver portal. The driver is preparing to pick up the cargo.
                   </p>
-                  <button
+                  <button type="button"
                     onClick={driverPickUp}
                     disabled={loading}
                     className="flex items-center gap-2 py-3 px-6 rounded-xl bg-tertiary text-white font-bold text-sm hover:bg-tertiary/90 transition-colors"
@@ -734,7 +750,7 @@ export default function WorkflowSimulationPage() {
                   <p className="text-sm text-on-surface-variant">
                     The driver/vessel has departed from the origin port and is moving towards the destination.
                   </p>
-                  <button
+                  <button type="button"
                     onClick={updateGPS}
                     disabled={loading}
                     className="flex items-center gap-2 py-3 px-6 rounded-xl bg-tertiary text-white font-bold text-sm hover:bg-tertiary/90 transition-colors"
@@ -754,7 +770,7 @@ export default function WorkflowSimulationPage() {
                     <div>Coordinates: <span className="font-mono text-on-surface-variant">{delivery.lat}, {delivery.lng}</span></div>
                     <div>Transit Progress: <span className="font-semibold text-on-surface">{delivery.progress}% completed</span></div>
                   </div>
-                  <button
+                  <button type="button"
                     onClick={markDelivered}
                     disabled={loading}
                     className="flex items-center gap-2 py-3 px-6 rounded-xl bg-tertiary text-white font-bold text-sm hover:bg-tertiary/90 transition-colors"
@@ -773,7 +789,7 @@ export default function WorkflowSimulationPage() {
                   <p className="text-sm text-on-surface-variant">
                     Cargo has arrived safely at destination gateway. Custom clearance handles handover. Invoice is now ready for customer payment.
                   </p>
-                  <button
+                  <button type="button"
                     onClick={handleNext}
                     className="flex items-center gap-2 py-3 px-6 rounded-xl bg-tertiary text-white font-bold text-sm hover:bg-tertiary/90 transition-colors"
                   >
@@ -792,7 +808,7 @@ export default function WorkflowSimulationPage() {
                     <div className="flex justify-between"><span>Amount due:</span><span className="font-mono text-tertiary font-bold">${Number(invoice.total || invoice.amount).toLocaleString()} USD</span></div>
                     <div className="flex justify-between"><span>Status:</span><span className="rounded-full px-2 py-0.5 bg-amber-400/10 text-amber-400 border border-amber-400/20 font-bold uppercase text-[9px]">{invoice.status}</span></div>
                   </div>
-                  <button
+                  <button type="button"
                     onClick={payInvoice}
                     disabled={loading}
                     className="flex items-center gap-2 py-4 px-6 rounded-xl bg-green-500 hover:bg-green-600 text-white font-bold text-sm transition-colors shadow-[0_0_20px_rgba(74,222,128,0.3)]"
@@ -831,7 +847,7 @@ export default function WorkflowSimulationPage() {
                     </Card>
                   </div>
 
-                  <button
+                  <button type="button"
                     onClick={resetDemo}
                     className="w-full py-3.5 rounded-xl bg-tertiary text-white font-bold text-sm hover:bg-tertiary/90 transition-colors shadow-[0_4px_16px_rgba(66,165,245,0.25)]"
                   >

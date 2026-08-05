@@ -532,7 +532,7 @@ export default function RequestQuotesPage() {
       {/* Service highlights */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {SERVICES.map(({ icon: Icon, label, desc, type, color }) => (
-          <button key={label} onClick={() => selectService(type)}
+          <button type="button" key={label} onClick={() => selectService(type)}
             className={`text-left p-4 flex items-start gap-3 rounded-xl border transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(0,194,255,0.12)] ${
               form.type === type || (type === "FCL 20FT" && ["FCL 20FT","FCL 40FT","FCL 40HQ","LCL"].includes(form.type))
                 ? "border-[#00C2FF]/40 bg-[#00C2FF]/5 shadow-[0_0_16px_rgba(0,194,255,0.1)]"

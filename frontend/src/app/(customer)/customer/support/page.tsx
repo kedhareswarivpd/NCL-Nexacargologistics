@@ -119,7 +119,7 @@ export default function SupportTicketsPage() {
                   <span className="text-[11px] text-tertiary">{availability}</span>
                 </div>
               </div>
-              <button className="shrink-0 px-3 py-1.5 rounded-lg bg-white/8 border border-white/10 text-xs font-bold text-on-surface hover:bg-[#1E88E5] hover:text-white hover:border-[#1E88E5] transition-all whitespace-nowrap">
+              <button type="button" className="shrink-0 px-3 py-1.5 rounded-lg bg-white/8 border border-white/10 text-xs font-bold text-on-surface hover:bg-[#1E88E5] hover:text-white hover:border-[#1E88E5] transition-all whitespace-nowrap">
                 {action}
               </button>
             </Card>
@@ -147,16 +147,16 @@ export default function SupportTicketsPage() {
 
           <form noValidate onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-xs uppercase tracking-widest text-on-surface-variant">Subject</label>
-              <input value={form.subject} onChange={(e) => { const v = e.target.value.replace(/[^a-zA-Z\s]/g, ""); setForm({ ...form, subject: v }); setErrors(p => ({ ...p, subject: "" })); }}
+              <label htmlFor="subject-input" className="text-xs uppercase tracking-widest text-on-surface-variant">Subject</label>
+              <input id="subject-input" value={form.subject} onChange={(e) => { const v = e.target.value.replace(/[^a-zA-Z\s]/g, ""); setForm({ ...form, subject: v }); setErrors(p => ({ ...p, subject: "" })); }}
                 placeholder="Brief description of your issue"
                 className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 ${errors.subject ? "border-red-500" : "border-white/10"}`} />
               {errors.subject && <p className="text-xs text-error mt-1">{errors.subject}</p>}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-xs uppercase tracking-widest text-on-surface-variant">Category</label>
-                <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}
+                <label htmlFor="category-select" className="text-xs uppercase tracking-widest text-on-surface-variant">Category</label>
+                <select id="category-select" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}
                   className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
                   <option>Shipment Issue</option>
                   <option>Billing</option>
@@ -166,8 +166,8 @@ export default function SupportTicketsPage() {
                 </select>
               </div>
               <div>
-                <label className="text-xs uppercase tracking-widest text-on-surface-variant">Priority</label>
-                <select value={form.priority} onChange={(e) => setForm({ ...form, priority: e.target.value })}
+                <label htmlFor="priority-select" className="text-xs uppercase tracking-widest text-on-surface-variant">Priority</label>
+                <select id="priority-select" value={form.priority} onChange={(e) => setForm({ ...form, priority: e.target.value })}
                   className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
                   <option>Low</option>
                   <option>Medium</option>
@@ -176,8 +176,8 @@ export default function SupportTicketsPage() {
               </div>
             </div>
             <div>
-              <label className="text-xs uppercase tracking-widest text-on-surface-variant">Message</label>
-              <textarea value={form.message} onChange={(e) => { const v = e.target.value.replace(/[^a-zA-Z\s]/g, ""); setForm({ ...form, message: v }); setErrors(p => ({ ...p, message: "" })); }} rows={4}
+              <label htmlFor="message-textarea" className="text-xs uppercase tracking-widest text-on-surface-variant">Message</label>
+              <textarea id="message-textarea" value={form.message} onChange={(e) => { const v = e.target.value.replace(/[^a-zA-Z\s]/g, ""); setForm({ ...form, message: v }); setErrors(p => ({ ...p, message: "" })); }} rows={4}
                 placeholder="Describe your issue in detail…"
                 className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 resize-none ${errors.message ? "border-red-500" : "border-white/10"}`} />
               {errors.message && <p className="text-xs text-error mt-1">{errors.message}</p>}
@@ -195,8 +195,8 @@ export default function SupportTicketsPage() {
             <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant mb-3">FAQs</h2>
             <Card className="divide-y divide-white/5">
               {FAQS.map((faq, i) => (
-                <div key={i}>
-                  <button
+                <div key={faq.q}>
+                  <button type="button"
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
                     className="w-full flex items-center justify-between gap-3 p-4 text-left hover:bg-white/5 transition-colors"
                     aria-expanded={openFaq === i}
@@ -246,7 +246,7 @@ export default function SupportTicketsPage() {
                         <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold capitalize ${TICKET_STATUS_STYLES[t.status] ?? "bg-white/5"}`}>
                           {String(t.status).replace("_", " ")}
                         </span>
-                        <button onClick={() => openEdit(t)} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary transition-colors" title="Edit"><Edit className="h-3.5 w-3.5" /></button>
+                        <button type="button" onClick={() => openEdit(t)} className="p-1.5 rounded-lg hover:bg-tertiary/10 text-tertiary transition-colors" title="Edit"><Edit className="h-3.5 w-3.5" /></button>
                       </div>
                     </div>
                 ))}
@@ -260,7 +260,7 @@ export default function SupportTicketsPage() {
           <div className="w-full max-w-md rounded-2xl border border-white/10 bg-surface-container shadow-2xl">
             <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
               <h2 className="text-base font-bold text-on-surface">Edit Ticket</h2>
-              <button onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
             </div>
             <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
               <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Subject</label><input value={editForm.subject} onChange={e => setEditForm(p => ({...p, subject: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>

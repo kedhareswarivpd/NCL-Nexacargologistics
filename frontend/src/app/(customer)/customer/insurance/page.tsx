@@ -120,7 +120,7 @@ export default function CargoInsurancePage() {
         <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant mb-3">Choose a Plan</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {PLANS.map(({ name, coverage, rate, icon: Icon, color, features, recommended }) => (
-            <button
+            <button type="button"
               key={name}
               onClick={() => setSelectedPlan(name)}
               className={`relative p-5 rounded-xl border text-left transition-all space-y-3 ${
@@ -184,11 +184,12 @@ export default function CargoInsurancePage() {
 
           <form noValidate onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-xs uppercase tracking-widest text-on-surface-variant">Shipment ID</label>
+              <label htmlFor="shipment-select" className="text-xs uppercase tracking-widest text-on-surface-variant">Shipment ID</label>
               {shipments.length === 0 && !loading ? (
                 <p className="mt-2 text-sm text-amber-400">No shipments created yet. Please book a shipment first.</p>
               ) : (
                 <select
+                  id="shipment-select"
                   value={form.shipment}
                   onChange={(e) => { setForm({ ...form, shipment: e.target.value }); setErrors(p => ({ ...p, shipment: "" })); }}
                   className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface focus:outline-none focus:border-tertiary/50 ${errors.shipment ? "border-red-500" : "border-white/10"}`}
@@ -204,8 +205,9 @@ export default function CargoInsurancePage() {
               {errors.shipment && <p className="text-xs text-error mt-1">{errors.shipment}</p>}
             </div>
             <div>
-              <label className="text-xs uppercase tracking-widest text-on-surface-variant">Declared Cargo Value (USD)</label>
+              <label htmlFor="cargo-value-input" className="text-xs uppercase tracking-widest text-on-surface-variant">Declared Cargo Value (USD)</label>
               <input
+                id="cargo-value-input"
                 type="number" min="1" max="500000" step="1"
                 value={form.value}
                 onChange={(e) => {
@@ -220,8 +222,8 @@ export default function CargoInsurancePage() {
               {errors.value && <p className="text-xs text-error mt-1">{errors.value}</p>}
             </div>
             <div>
-              <label className="text-xs uppercase tracking-widest text-on-surface-variant">Selected Plan</label>
-              <input readOnly value={selectedPlan}
+              <label htmlFor="selected-plan-input" className="text-xs uppercase tracking-widest text-on-surface-variant">Selected Plan</label>
+              <input id="selected-plan-input" readOnly value={selectedPlan}
                 className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-tertiary/30 text-sm text-tertiary cursor-default" />
             </div>
             <button type="submit" disabled={saving || shipments.length === 0} className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] transition-colors shadow-[0_0_20px_rgba(30,136,229,0.3)] disabled:opacity-50">
