@@ -23,6 +23,8 @@ from app.middleware.auth import get_current_user
 from app.models.profile import Profile, UserRole
 from app.models.shipment import Shipment, ShipmentStatusHistory
 from app.schemas.payloads import LocationUpdate
+
+ERROR_SHIPMENT_NOT_FOUND = "Shipment not found"
 from app.services import crud
 from app.utils.helpers import serialize
 
@@ -70,7 +72,7 @@ async def shipment_location(
 ):
     shipment = await crud.get_item(db, Shipment, shipment_id)
     if not shipment:
-        raise HTTPException(status_code=404, detail="Shipment not found")
+        raise HTTPException(status_code=404, detail=ERROR_SHIPMENT_NOT_FOUND)
     if current_user.role not in UserRole.STAFF and shipment.customer_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not allowed")
     return {
@@ -90,7 +92,7 @@ async def shipment_location_history(
 ):
     shipment = await crud.get_item(db, Shipment, shipment_id)
     if not shipment:
-        raise HTTPException(status_code=404, detail="Shipment not found")
+        raise HTTPException(status_code=404, detail=ERROR_SHIPMENT_NOT_FOUND)
     if current_user.role not in UserRole.STAFF and shipment.customer_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not allowed")
     return [serialize(e) for e in await _events(db, shipment.id)]
@@ -105,7 +107,7 @@ async def location_update(
     """Ingest a location ping (and optional status) from a driver/device."""
     shipment = await crud.get_item(db, Shipment, payload.shipment_id)
     if not shipment:
-        raise HTTPException(status_code=404, detail="Shipment not found")
+        raise HTTPException(status_code=404, detail=ERROR_SHIPMENT_NOT_FOUND)
     shipment.lat = payload.lat
     shipment.lng = payload.lng
     if payload.status:
@@ -159,7 +161,7 @@ async def live_tracking(websocket: WebSocket, shipment_id: str):
         user = await db.get(Profile, user_id)
         shipment = await db.get(Shipment, sid)
         if shipment is None:
-            await websocket.send_json({"error": "Shipment not found"})
+            await websocket.send_json({"error": ERROR_SHIPMENT_NOT_FOUND})
             await websocket.close(code=1008)
             return
         role = claims.get("role") or (user.role if user else "customer")
@@ -174,7 +176,7 @@ async def live_tracking(websocket: WebSocket, shipment_id: str):
             async with async_session_factory() as db:
                 shipment = await db.get(Shipment, sid)
             if shipment is None:
-                await websocket.send_json({"error": "Shipment not found"})
+                await websocket.send_json({"error": ERROR_SHIPMENT_NOT_FOUND})
                 break
             await websocket.send_json({
                 "tracking_id": shipment.tracking_id,

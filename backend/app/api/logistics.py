@@ -24,6 +24,7 @@ router = APIRouter(prefix="/logistics", tags=["logistics"])
 
 logistics_guard = require_roles(UserRole.LOGISTICS)
 _UUID_FIELDS = {"shipment_id", "driver_id", "vehicle_id", "route_id"}
+STATUS_IN_TRANSIT = "In Transit"
 
 
 def _coerce_uuids(data: dict) -> dict:
@@ -149,8 +150,8 @@ async def update_delivery(
         shipment = await crud.get_item(db, Shipment, obj.shipment_id)
         if shipment:
             mapped = {
-                "Picked Up": "In Transit",
-                "In Transit": "In Transit",
+                "Picked Up": STATUS_IN_TRANSIT,
+                STATUS_IN_TRANSIT: STATUS_IN_TRANSIT,
                 "Delivered": "Delivered",
                 "Failed": "Delayed",
             }.get(data["status"], shipment.status)

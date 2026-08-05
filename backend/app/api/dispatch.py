@@ -22,8 +22,10 @@ router = APIRouter(prefix="/dispatch", tags=["dispatch"])
 
 dispatch_guard = require_roles(UserRole.LOGISTICS, UserRole.ADMIN, UserRole.DRIVER, UserRole.CUSTOMER)
 
+STATUS_IN_TRANSIT = "In Transit"
+
 # Shipment statuses considered "active" (still in the pipeline).
-ACTIVE_STATUSES = ("Awaiting Dispatch", "In Transit", "Out for Delivery", "Customs Hold", "Delayed")
+ACTIVE_STATUSES = ("Awaiting Dispatch", STATUS_IN_TRANSIT, "Out for Delivery", "Customs Hold", "Delayed")
 
 
 @router.post("/assign-driver", status_code=status.HTTP_201_CREATED)
@@ -42,7 +44,7 @@ async def assign_driver(
             "origin": "Singapore Port",
             "destination": "Los Angeles Port",
             "mode": "sea",
-            "status": "In Transit",
+            "status": STATUS_IN_TRANSIT,
         })
 
     driver_uuid = uuid.UUID(payload.driver_id) if isinstance(payload.driver_id, str) else payload.driver_id
@@ -69,11 +71,11 @@ async def assign_driver(
         "eta": payload.eta,
     })
     # Move shipment into transit + mark driver on a trip.
-    shipment.status = "In Transit"
+    shipment.status = STATUS_IN_TRANSIT;
     driver.status = "on_trip"
     db.add(ShipmentStatusHistory(
         shipment_id=shipment.id,
-        status="In Transit",
+        status=STATUS_IN_TRANSIT,
         note=f"Assigned to driver {driver.name}",
         changed_by=current_user.id,
     ))
@@ -106,7 +108,7 @@ async def reassign_driver(
     if delivery.shipment_id:
         db.add(ShipmentStatusHistory(
             shipment_id=delivery.shipment_id,
-            status="In Transit",
+            status=STATUS_IN_TRANSIT,
             note=f"Reassigned to driver {driver.name}",
             changed_by=current_user.id,
         ))

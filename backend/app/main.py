@@ -1,4 +1,5 @@
 import logging
+from typing import Annotated
 
 from contextlib import asynccontextmanager
 from fastapi import Depends, FastAPI, Request
@@ -75,7 +76,7 @@ app.include_router(api_router)
 
 
 @app.get("/health")
-async def health(db: AsyncSession = Depends(get_db)):
+async def health(db: Annotated[AsyncSession, Depends(get_db)]):
     await db.execute(text("SELECT 1"))
     return {"status": "ok", "service": settings.APP_NAME, "version": settings.VERSION}
 
@@ -87,4 +88,6 @@ async def root():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+    import os
+    host = os.getenv("HOST", "127.0.0.1")
+    uvicorn.run("app.main:app", host=host, port=8000, reload=True)

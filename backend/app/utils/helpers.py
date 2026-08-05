@@ -63,10 +63,12 @@ def now_iso() -> str:
 
 def is_safe_file_url(url: str) -> bool:
     """Validate that the file URL scheme and host are safe (localhost or Supabase)."""
-    if not url or not (url.startswith("http://") or url.startswith("https://")):
+    if not url:
         return False
     try:
         parsed = urlparse(url)
+        if parsed.scheme not in ("http", "https"):
+            return False
         host = parsed.hostname
         if not host:
             return False
