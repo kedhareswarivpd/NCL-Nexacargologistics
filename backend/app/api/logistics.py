@@ -165,3 +165,11 @@ async def update_delivery(
                 lng=data.get("lng"),
             ))
     return serialize(updated)
+
+
+@router.delete("/deliveries/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_delivery(item_id: str, db: AsyncSession = Depends(get_db), _: Profile = Depends(logistics_guard)):
+    obj = await crud.get_item(db, Delivery, item_id)
+    if obj:
+        await crud.delete_item(db, obj)
+    return None
