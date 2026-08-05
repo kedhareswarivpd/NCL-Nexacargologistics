@@ -79,8 +79,7 @@ async def assign_driver(
         note=f"Assigned to driver {driver.name}",
         changed_by=current_user.id,
     ))
-    await db.flush()
-    await db.refresh(delivery)
+    await db.commit()
     return serialize(delivery)
 
 
@@ -112,8 +111,7 @@ async def reassign_driver(
             note=f"Reassigned to driver {driver.name}",
             changed_by=current_user.id,
         ))
-    await db.flush()
-    await db.refresh(delivery)
+    await db.commit()
     return serialize(delivery)
 
 
