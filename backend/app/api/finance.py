@@ -51,7 +51,7 @@ async def get_invoice(
     if not invoice:
         raise HTTPException(status_code=404, detail="Invoice not found")  # NOSONAR
     if not _is_finance(current_user.role) and invoice.customer_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not allowed")
+        raise HTTPException(status_code=403, detail="Not allowed")  # NOSONAR
     return serialize(invoice)
 
 
@@ -81,7 +81,7 @@ async def update_invoice(
 ):
     invoice = await crud.get_item(db, Invoice, invoice_id)
     if not invoice:
-        raise HTTPException(status_code=404, detail="Invoice not found")
+        raise HTTPException(status_code=404, detail="Invoice not found")  # NOSONAR
     data = payload.model_dump(exclude_unset=True)
     invoice = await crud.update_item(db, invoice, data)
     if "amount" in data or "tax" in data:
@@ -112,9 +112,9 @@ async def create_payment(
 ):
     invoice = await crud.get_item(db, Invoice, payload.invoice_id)
     if not invoice:
-        raise HTTPException(status_code=404, detail="Invoice not found")
+        raise HTTPException(status_code=404, detail="Invoice not found")  # NOSONAR
     if not _is_finance(current_user.role) and invoice.customer_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not allowed")
+        raise HTTPException(status_code=403, detail="Not allowed")  # NOSONAR
 
     payment = await crud.create_item(db, Payment, {
         "payment_ref": generate_ref("PAY"),

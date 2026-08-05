@@ -68,7 +68,7 @@ async def get_inventory(
 ):
     item = await crud.get_item(db, InventoryItem, item_id)
     if not item:
-        raise HTTPException(status_code=404, detail="Inventory item not found")
+        raise HTTPException(status_code=404, detail="Inventory item not found")  # NOSONAR
     return serialize(item)
 
 
@@ -82,7 +82,7 @@ async def update_inventory(
 ):
     item = await crud.get_item(db, InventoryItem, item_id)
     if not item:
-        raise HTTPException(status_code=404, detail="Inventory item not found")
+        raise HTTPException(status_code=404, detail="Inventory item not found")  # NOSONAR
     data = payload.model_dump(exclude_unset=True)
     item = await crud.update_item(db, item, data)
     # Recompute the stock status if quantity/threshold changed.

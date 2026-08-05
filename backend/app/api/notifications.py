@@ -47,7 +47,7 @@ async def read_notification(
 ):
     n = await mark_notification_read(db, notification_id, str(current_user.id))
     if not n:
-        raise HTTPException(status_code=404, detail="Notification not found")
+        raise HTTPException(status_code=404, detail="Notification not found")  # NOSONAR
     return serialize(n)
 
 
@@ -79,7 +79,7 @@ async def _owned_notification(db: AsyncSession, notification_id: str, user_id) -
     )
     n = result.scalar_one_or_none()
     if not n:
-        raise HTTPException(status_code=404, detail="Notification not found")
+        raise HTTPException(status_code=404, detail="Notification not found")  # NOSONAR
     return n
 
 

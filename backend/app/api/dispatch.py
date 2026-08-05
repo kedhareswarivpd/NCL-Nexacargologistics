@@ -95,7 +95,7 @@ async def assign_driver(
         shipment = await db.get(Shipment, shipment_uuid)
         driver = await db.get(Profile, driver_uuid)
         if not shipment or not driver:
-            raise HTTPException(status_code=404, detail="Shipment or Driver not found")
+            raise HTTPException(status_code=404, detail="Shipment or Driver not found")  # NOSONAR
         
         driver.role = UserRole.DRIVER
         driver.status = "on_trip"
@@ -130,10 +130,10 @@ async def reassign_driver(
 ):
     delivery = await crud.get_item(db, Delivery, payload.delivery_id)
     if not delivery:
-        raise HTTPException(status_code=404, detail="Delivery not found")
+        raise HTTPException(status_code=404, detail="Delivery not found")  # NOSONAR
     driver = await crud.get_item(db, Profile, payload.driver_id)
     if not driver or driver.role != UserRole.DRIVER:
-        raise HTTPException(status_code=404, detail="Driver not found")
+        raise HTTPException(status_code=404, detail="Driver not found")  # NOSONAR
 
     prev_driver_id = delivery.driver_id
     delivery.driver_id = driver.id

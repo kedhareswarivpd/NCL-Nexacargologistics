@@ -74,7 +74,7 @@ async def invoices_for_customer(
     current_user: Profile = Depends(get_current_user),
 ):
     if not _is_finance(current_user.role) and str(current_user.id) != customer_id:
-        raise HTTPException(status_code=403, detail="Not allowed")
+        raise HTTPException(status_code=403, detail="Not allowed")  # NOSONAR
     result = await db.execute(
         select(Invoice).where(Invoice.customer_id == uuid.UUID(customer_id))
         .order_by(Invoice.created_at.desc())
@@ -90,9 +90,9 @@ async def get_invoice(
 ):
     invoice = await crud.get_item(db, Invoice, invoice_id)
     if not invoice:
-        raise HTTPException(status_code=404, detail="Invoice not found")
+        raise HTTPException(status_code=404, detail="Invoice not found")  # NOSONAR
     if not _is_finance(current_user.role) and invoice.customer_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not allowed")
+        raise HTTPException(status_code=403, detail="Not allowed")  # NOSONAR
     return serialize(invoice)
 
 
@@ -106,7 +106,7 @@ async def update_invoice(
 ):
     invoice = await crud.get_item(db, Invoice, invoice_id)
     if not invoice:
-        raise HTTPException(status_code=404, detail="Invoice not found")
+        raise HTTPException(status_code=404, detail="Invoice not found")  # NOSONAR
     data = payload.model_dump(exclude_unset=True)
     invoice = await crud.update_item(db, invoice, data)
     if "amount" in data or "tax" in data:

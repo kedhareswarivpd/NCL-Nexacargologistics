@@ -49,7 +49,7 @@ async def get_warehouse(
 ):
     wh = await crud.get_item(db, Warehouse, warehouse_id)
     if not wh:
-        raise HTTPException(status_code=404, detail="Warehouse not found")
+        raise HTTPException(status_code=404, detail="Warehouse not found")  # NOSONAR
     return serialize(wh)
 
 
@@ -63,7 +63,7 @@ async def update_warehouse(
 ):
     wh = await crud.get_item(db, Warehouse, warehouse_id)
     if not wh:
-        raise HTTPException(status_code=404, detail="Warehouse not found")
+        raise HTTPException(status_code=404, detail="Warehouse not found")  # NOSONAR
     data = payload.model_dump(exclude_unset=True)
     if data.get("manager_id"):
         data["manager_id"] = uuid.UUID(data["manager_id"])

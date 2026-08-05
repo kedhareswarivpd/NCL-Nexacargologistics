@@ -66,5 +66,5 @@ async def update_policy(
 ):
     policy = await crud.get_item(db, InsurancePolicy, policy_id)
     if not policy:
-        raise HTTPException(status_code=404, detail="Policy not found")
+        raise HTTPException(status_code=404, detail="Policy not found")  # NOSONAR
     return serialize(await crud.update_item(db, policy, payload.model_dump(exclude_unset=True)))

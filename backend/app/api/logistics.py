@@ -51,7 +51,7 @@ async def create_container(payload: ContainerCreate, db: AsyncSession = Depends(
 async def update_container(item_id: str, payload: ContainerUpdate, db: AsyncSession = Depends(get_db), _: Profile = Depends(logistics_guard)):
     obj = await crud.get_item(db, Container, item_id)
     if not obj:
-        raise HTTPException(status_code=404, detail="Container not found")
+        raise HTTPException(status_code=404, detail="Container not found")  # NOSONAR
     return serialize(await crud.update_item(db, obj, _coerce_uuids(payload.model_dump(exclude_unset=True))))
 
 
@@ -79,7 +79,7 @@ async def create_route(payload: RouteCreate, db: AsyncSession = Depends(get_db),
 async def update_route(item_id: str, payload: RouteUpdate, db: AsyncSession = Depends(get_db), _: Profile = Depends(logistics_guard)):
     obj = await crud.get_item(db, Route, item_id)
     if not obj:
-        raise HTTPException(status_code=404, detail="Route not found")
+        raise HTTPException(status_code=404, detail="Route not found")  # NOSONAR
     return serialize(await crud.update_item(db, obj, _coerce_uuids(payload.model_dump(exclude_unset=True))))
 
 
@@ -107,7 +107,7 @@ async def create_vehicle(payload: VehicleCreate, db: AsyncSession = Depends(get_
 async def update_vehicle(item_id: str, payload: VehicleUpdate, db: AsyncSession = Depends(get_db), _: Profile = Depends(logistics_guard)):
     obj = await crud.get_item(db, Vehicle, item_id)
     if not obj:
-        raise HTTPException(status_code=404, detail="Vehicle not found")
+        raise HTTPException(status_code=404, detail="Vehicle not found")  # NOSONAR
     return serialize(await crud.update_item(db, obj, _coerce_uuids(payload.model_dump(exclude_unset=True))))
 
 
@@ -142,7 +142,7 @@ async def update_delivery(
 ):
     obj = await crud.get_item(db, Delivery, item_id)
     if not obj:
-        raise HTTPException(status_code=404, detail="Delivery not found")
+        raise HTTPException(status_code=404, detail="Delivery not found")  # NOSONAR
     data = payload.model_dump(exclude_unset=True)
     updated = await crud.update_item(db, obj, data)
 

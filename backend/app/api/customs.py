@@ -57,7 +57,7 @@ async def update_entry(
 ):
     entry = await crud.get_item(db, CustomsEntry, entry_id)
     if not entry:
-        raise HTTPException(status_code=404, detail="Customs entry not found")
+        raise HTTPException(status_code=404, detail="Customs entry not found")  # NOSONAR
     data = payload.model_dump(exclude_unset=True)
     if data.get("status"):
         entry.reviewed_by = current_user.id

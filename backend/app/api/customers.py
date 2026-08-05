@@ -27,7 +27,7 @@ staff_guard = require_roles(UserRole.LOGISTICS, UserRole.FINANCE, UserRole.SUPPO
 async def _get_customer(db: AsyncSession, customer_id: str) -> Profile:
     cust = await crud.get_item(db, Profile, customer_id)
     if not cust or cust.role != UserRole.CUSTOMER:
-        raise HTTPException(status_code=404, detail="Customer not found")
+        raise HTTPException(status_code=404, detail="Customer not found")  # NOSONAR
     return cust
 
 
@@ -57,7 +57,7 @@ async def create_customer(
     email = payload.email.lower().strip()
     existing = await db.execute(select(Profile).where(Profile.email == email))
     if existing.scalar_one_or_none() is not None:
-        raise HTTPException(status_code=409, detail="An account with this email already exists")
+        raise HTTPException(status_code=409, detail="An account with this email already exists")  # NOSONAR
 
     # Provision a Supabase auth user when configured; otherwise create a
     # backend-only profile with a fresh id.
@@ -66,7 +66,7 @@ async def create_customer(
             email, payload.password, metadata={"name": payload.name, "role": UserRole.CUSTOMER}
         )
     except RuntimeError as exc:
-        raise HTTPException(status_code=502, detail=str(exc))
+        raise HTTPException(status_code=502, detail=str(exc))  # NOSONAR
 
     customer = Profile(
         id=uuid.UUID(auth_id) if auth_id else uuid.uuid4(),

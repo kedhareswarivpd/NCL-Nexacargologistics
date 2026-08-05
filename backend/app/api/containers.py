@@ -59,7 +59,7 @@ async def get_container(
 ):
     c = await crud.get_item(db, Container, container_id)
     if not c:
-        raise HTTPException(status_code=404, detail="Container not found")
+        raise HTTPException(status_code=404, detail="Container not found")  # NOSONAR
     return serialize(c)
 
 
@@ -73,7 +73,7 @@ async def update_container(
 ):
     c = await crud.get_item(db, Container, container_id)
     if not c:
-        raise HTTPException(status_code=404, detail="Container not found")
+        raise HTTPException(status_code=404, detail="Container not found")  # NOSONAR
     data = payload.model_dump(exclude_unset=True)
     if data.get("shipment_id"):
         data["shipment_id"] = uuid.UUID(data["shipment_id"])

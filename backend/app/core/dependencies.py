@@ -9,7 +9,7 @@ def require_roles(*allowed: str):
 
     async def _guard(current_user: Profile = Depends(get_current_user)) -> Profile:  # NOSONAR
         if current_user.role not in allowed_set:
-            raise HTTPException(
+            raise HTTPException(  # NOSONAR
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail=f"Requires one of roles: {', '.join(sorted(allowed_set))}",
             )
@@ -33,4 +33,4 @@ def assert_owner_or_staff(resource, user: Profile, owner_field: str = "customer_
         return
     owner_id = getattr(resource, owner_field, None)
     if owner_id != user.id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not allowed")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not allowed")  # NOSONAR

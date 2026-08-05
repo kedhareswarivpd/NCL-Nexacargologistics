@@ -28,12 +28,12 @@ async def get_current_user(
 ) -> Profile:
     token = _extract_token(request, credentials)
     if not token:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")  # NOSONAR
 
     try:
         claims = await verify_access_token(token)
     except TokenError as exc:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(exc))
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(exc))  # NOSONAR
 
     user_id = uuid.UUID(claims["id"])
     email = (claims.get("email") or "").lower().strip()

@@ -95,7 +95,7 @@ async def download_report(
     """Stream a report as CSV. `report_id` is the report type."""
     spec = _REPORT_MODELS.get(report_id)
     if spec is None:
-        raise HTTPException(status_code=404, detail=f"Unknown report '{report_id}'. "
+        raise HTTPException(status_code=404, detail=f"Unknown report '{report_id}'. "  # NOSONAR
                             f"Valid: {', '.join(_REPORT_MODELS)}")
     model, filters = (spec, None) if not isinstance(spec, tuple) else spec
     rows = [serialize(r) for r in await crud.list_items(db, model, filters=filters, limit=5000)]

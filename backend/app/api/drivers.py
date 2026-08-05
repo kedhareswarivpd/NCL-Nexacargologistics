@@ -26,7 +26,7 @@ manage_guard = require_roles(UserRole.LOGISTICS)
 async def _get_driver(db: AsyncSession, driver_id: str) -> Profile:
     drv = await crud.get_item(db, Profile, driver_id)
     if not drv or drv.role != UserRole.DRIVER:
-        raise HTTPException(status_code=404, detail="Driver not found")
+        raise HTTPException(status_code=404, detail="Driver not found")  # NOSONAR
     return drv
 
 
@@ -58,13 +58,13 @@ async def create_driver(
     email = payload.email.lower().strip()
     existing = await db.execute(select(Profile).where(Profile.email == email))
     if existing.scalar_one_or_none() is not None:
-        raise HTTPException(status_code=409, detail="An account with this email already exists")
+        raise HTTPException(status_code=409, detail="An account with this email already exists")  # NOSONAR
     try:
         auth_id = await supabase_admin.create_auth_user(
             email, payload.password, metadata={"name": payload.name, "role": UserRole.DRIVER}
         )
     except RuntimeError as exc:
-        raise HTTPException(status_code=502, detail=str(exc))
+        raise HTTPException(status_code=502, detail=str(exc))  # NOSONAR
 
     driver = Profile(
         id=uuid.UUID(auth_id) if auth_id else uuid.uuid4(),

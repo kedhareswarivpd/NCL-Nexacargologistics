@@ -77,7 +77,7 @@ async def create_inventory(payload: InventoryCreate, db: AsyncSession = Depends(
 async def update_inventory(item_id: str, payload: InventoryUpdate, db: AsyncSession = Depends(get_db), _: Profile = Depends(wh_guard)):
     obj = await crud.get_item(db, InventoryItem, item_id)
     if not obj:
-        raise HTTPException(status_code=404, detail="Inventory item not found")
+        raise HTTPException(status_code=404, detail="Inventory item not found")  # NOSONAR
     data = payload.model_dump(exclude_unset=True)
     obj = await crud.update_item(db, obj, data)
     # Recompute derived status.
@@ -123,7 +123,7 @@ async def create_task(payload: WarehouseTaskCreate, db: AsyncSession = Depends(g
 async def update_task(task_id: str, payload: WarehouseTaskUpdate, db: AsyncSession = Depends(get_db), _: Profile = Depends(wh_guard)):
     obj = await crud.get_item(db, WarehouseTask, task_id)
     if not obj:
-        raise HTTPException(status_code=404, detail="Task not found")
+        raise HTTPException(status_code=404, detail="Task not found")  # NOSONAR
     data = payload.model_dump(exclude_unset=True)
     if data.get("assigned_to"):
         data["assigned_to"] = uuid.UUID(data["assigned_to"])

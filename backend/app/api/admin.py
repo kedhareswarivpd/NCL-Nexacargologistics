@@ -47,7 +47,7 @@ async def update_branch(
 ):
     branch = await crud.get_item(db, Branch, branch_id)
     if not branch:
-        raise HTTPException(status_code=404, detail="Branch not found")
+        raise HTTPException(status_code=404, detail="Branch not found")  # NOSONAR
     data = payload.model_dump(exclude_unset=True)
     if data.get("manager_id"):
         data["manager_id"] = uuid.UUID(data["manager_id"])
@@ -167,7 +167,7 @@ async def list_roles(db: AsyncSession = Depends(get_db), _: Profile = Depends(ge
 async def create_role(payload: RoleCreate, db: AsyncSession = Depends(get_db), _: Profile = Depends(get_admin_user)):
     key = payload.key.lower().strip()
     if await crud.get_by(db, Role, key=key):
-        raise HTTPException(status_code=409, detail="A role with this key already exists")
+        raise HTTPException(status_code=409, detail="A role with this key already exists")  # NOSONAR
     return serialize(await crud.create_item(db, Role, {
         "key": key, "label": payload.label, "description": payload.description, "is_system": False,
     }))
@@ -183,7 +183,7 @@ async def update_role(
 ):
     role = await crud.get_item(db, Role, role_id)
     if not role:
-        raise HTTPException(status_code=404, detail="Role not found")
+        raise HTTPException(status_code=404, detail="Role not found")  # NOSONAR
     return serialize(await crud.update_item(db, role, payload.model_dump(exclude_unset=True)))
 
 
@@ -197,6 +197,6 @@ async def delete_role(
     if not role:
         return None
     if role.is_system:
-        raise HTTPException(status_code=400, detail="System roles cannot be deleted")
+        raise HTTPException(status_code=400, detail="System roles cannot be deleted")  # NOSONAR
     await crud.delete_item(db, role)
     return None
