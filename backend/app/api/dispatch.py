@@ -37,41 +37,45 @@ async def assign_driver(
     shipment_uuid = uuid.UUID(payload.shipment_id) if isinstance(payload.shipment_id, str) else payload.shipment_id
     shipment = await crud.get_item(db, Shipment, shipment_uuid)
     if not shipment:
-        shipment = await crud.create_item(db, Shipment, {
-            "id": shipment_uuid,
-            "tracking_id": generate_ref("TRK"),
-            "customer_id": current_user.id,
-            "origin": "Singapore Port",
-            "destination": "Los Angeles Port",
-            "mode": "sea",
-            "status": STATUS_IN_TRANSIT,
-        })
+        shipment = Shipment(
+            id=shipment_uuid,
+            tracking_id=generate_ref("TRK"),
+            customer_id=current_user.id,
+            origin="Singapore Port",
+            destination="Los Angeles Port",
+            mode="sea",
+            status=STATUS_IN_TRANSIT,
+        )
+        db.add(shipment)
 
     driver_uuid = uuid.UUID(payload.driver_id) if isinstance(payload.driver_id, str) else payload.driver_id
     driver = await crud.get_item(db, Profile, driver_uuid)
     if not driver:
-        driver = await crud.create_item(db, Profile, {
-            "id": driver_uuid,
-            "email": f"driver_{str(driver_uuid)[:8]}@nexacargo.com",
-            "name": "Marcus Johnson",
-            "role": UserRole.DRIVER,
-            "status": "on_trip",
-        })
+        driver = Profile(
+            id=driver_uuid,
+            email=f"driver_{str(driver_uuid)[:8]}@nexacargo.com",
+            name="Marcus Johnson",
+            role=UserRole.DRIVER,
+            status="on_trip",
+        )
+        db.add(driver)
     else:
         driver.role = UserRole.DRIVER
         driver.status = "on_trip"
 
-    delivery = await crud.create_item(db, Delivery, {
-        "delivery_code": generate_ref("DLV"),
-        "shipment_id": shipment.id,
-        "driver_id": driver.id,
-        "vehicle_id": uuid.UUID(payload.vehicle_id) if payload.vehicle_id else None,
-        "route_id": uuid.UUID(payload.route_id) if payload.route_id else None,
-        "status": "Pending",
-        "eta": payload.eta,
-    })
+    delivery = Delivery(
+        delivery_code=generate_ref("DLV"),
+        shipment_id=shipment.id,
+        driver_id=driver.id,
+        vehicle_id=uuid.UUID(payload.vehicle_id) if payload.vehicle_id else None,
+        route_id=uuid.UUID(payload.route_id) if payload.route_id else None,
+        status="Pending",
+        eta=payload.eta,
+    )
+    db.add(delivery)
+
     # Move shipment into transit + mark driver on a trip.
-    shipment.status = STATUS_IN_TRANSIT;
+    shipment.status = STATUS_IN_TRANSIT
     driver.status = "on_trip"
     db.add(ShipmentStatusHistory(
         shipment_id=shipment.id,
