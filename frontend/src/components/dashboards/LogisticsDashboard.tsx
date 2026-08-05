@@ -329,12 +329,12 @@ export default function LogisticsDashboard() {
 
                 {/* Auto-generated Shipment ID */}
                 <div>
-                  <label className={labelCls}>
-                    Shipment ID
+                  <div className={labelCls}>
+                    Shipment ID{" "}
                     <span className="ml-2 text-[#00C2FF] normal-case tracking-normal font-normal text-[11px]">
                       auto-generated
                     </span>
-                  </label>
+                  </div>
                   <div className="mt-1 flex items-center gap-2">
                     <div className="flex-1 flex items-center gap-3 px-4 py-2.5 rounded-xl bg-[#1E88E5]/10 border border-[#1E88E5]/35">
                       <Package className="h-4 w-4 text-[#00C2FF] shrink-0" />
@@ -360,14 +360,14 @@ export default function LogisticsDashboard() {
                 {/* Origin & Destination */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className={labelCls}>Origin Port / City *</label>
-                    <input required value={form.origin}
+                    <label htmlFor="shipment-origin" className={labelCls}>Origin Port / City *</label>
+                    <input id="shipment-origin" required value={form.origin}
                       onChange={(e) => setForm({ ...form, origin: e.target.value })}
                       placeholder="e.g. Shanghai, CN" className={inputCls} />
                   </div>
                   <div>
-                    <label className={labelCls}>Destination Port / City *</label>
-                    <input required value={form.destination}
+                    <label htmlFor="shipment-destination" className={labelCls}>Destination Port / City *</label>
+                    <input id="shipment-destination" required value={form.destination}
                       onChange={(e) => setForm({ ...form, destination: e.target.value })}
                       placeholder="e.g. Rotterdam, NL" className={inputCls} />
                   </div>
@@ -376,14 +376,14 @@ export default function LogisticsDashboard() {
                 {/* Customer & Cargo Type */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className={labelCls}>Customer</label>
-                    <input value={form.customer}
+                    <label htmlFor="shipment-customer" className={labelCls}>Customer</label>
+                    <input id="shipment-customer" value={form.customer}
                       onChange={(e) => setForm({ ...form, customer: e.target.value })}
                       placeholder="e.g. Acme Corp" className={inputCls} />
                   </div>
                   <div>
-                    <label className={labelCls}>Cargo Type</label>
-                    <select value={form.cargo_type}
+                    <label htmlFor="shipment-cargo-type" className={labelCls}>Cargo Type</label>
+                    <select id="shipment-cargo-type" value={form.cargo_type}
                       onChange={(e) => setForm({ ...form, cargo_type: e.target.value })}
                       className={inputCls}>
                       {CARGO_TYPES.map((t) => <option key={t}>{t}</option>)}
@@ -394,14 +394,14 @@ export default function LogisticsDashboard() {
                 {/* Weight & ETA */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className={labelCls}>Weight</label>
-                    <input value={form.weight}
+                    <label htmlFor="shipment-weight" className={labelCls}>Weight</label>
+                    <input id="shipment-weight" value={form.weight}
                       onChange={(e) => setForm({ ...form, weight: e.target.value })}
                       placeholder="e.g. 12,000 kg" className={inputCls} />
                   </div>
                   <div>
-                    <label className={labelCls}>ETA</label>
-                    <input type="date" value={form.eta}
+                    <label htmlFor="shipment-eta" className={labelCls}>ETA</label>
+                    <input id="shipment-eta" type="date" value={form.eta}
                       onChange={(e) => setForm({ ...form, eta: e.target.value })}
                       className={inputCls} />
                   </div>
@@ -409,7 +409,7 @@ export default function LogisticsDashboard() {
 
                 {/* Status */}
                 <div>
-                  <label className={labelCls}>Initial Status</label>
+                  <div className={labelCls}>Initial Status</div>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {(["Awaiting Dispatch", "In Transit", "Delayed"] as const).map((s) => (
                       <button key={s} type="button"

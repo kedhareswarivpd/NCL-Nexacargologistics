@@ -167,11 +167,11 @@ export default function DeliveriesPage() {
 
   
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Delivery Code</label><input required value={form.delivery_code} onChange={(e) => setForm({ ...form, delivery_code: e.target.value })} placeholder="e.g. DEL-9000" className={inputCls} /></div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Driver</label><input required value={form.driver} onChange={(e) => setForm({ ...form, driver: e.target.value })} placeholder="e.g. Marcus Johnson" className={inputCls} /></div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Current Location</label><input value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="e.g. North Sea" className={inputCls} /></div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Progress (%)</label><input type="number" min="0" max="100" value={form.progress} onChange={(e) => setForm({ ...form, progress: e.target.value })} className={inputCls} /></div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">ETA</label><input value={form.eta} onChange={(e) => setForm({ ...form, eta: e.target.value })} placeholder="e.g. May 24, 14:00" className={inputCls} /></div>
+              <div><label htmlFor="add-delivery-code" className="text-xs uppercase tracking-widest text-on-surface-variant">Delivery Code</label><input id="add-delivery-code" required value={form.delivery_code} onChange={(e) => setForm({ ...form, delivery_code: e.target.value })} placeholder="e.g. DEL-9000" className={inputCls} /></div>
+              <div><label htmlFor="add-driver" className="text-xs uppercase tracking-widest text-on-surface-variant">Driver</label><input id="add-driver" required value={form.driver} onChange={(e) => setForm({ ...form, driver: e.target.value })} placeholder="e.g. Marcus Johnson" className={inputCls} /></div>
+              <div><label htmlFor="add-location" className="text-xs uppercase tracking-widest text-on-surface-variant">Current Location</label><input id="add-location" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="e.g. North Sea" className={inputCls} /></div>
+              <div><label htmlFor="add-progress" className="text-xs uppercase tracking-widest text-on-surface-variant">Progress (%)</label><input id="add-progress" type="number" min="0" max="100" value={form.progress} onChange={(e) => setForm({ ...form, progress: e.target.value })} className={inputCls} /></div>
+              <div><label htmlFor="add-eta" className="text-xs uppercase tracking-widest text-on-surface-variant">ETA</label><input id="add-eta" value={form.eta} onChange={(e) => setForm({ ...form, eta: e.target.value })} placeholder="e.g. May 24, 14:00" className={inputCls} /></div>
             </div>
             <div className="flex gap-3">
               <button type="submit" disabled={saving} className="px-4 py-2 rounded-lg bg-tertiary/20 text-tertiary text-sm font-semibold hover:bg-tertiary/30 transition-colors disabled:opacity-50">{saving ? "Saving…" : "Save"}</button>
@@ -223,11 +223,11 @@ export default function DeliveriesPage() {
               <button type="button" onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
             </div>
             <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Location</label><input value={editForm.location} onChange={e => setEditForm(p => ({...p, location: e.target.value}))} className={inputCls} /></div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Progress (%)</label><input type="number" min="0" max="100" value={editForm.progress} onChange={e => setEditForm(p => ({...p, progress: e.target.value}))} className={inputCls} /></div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">ETA</label><input value={editForm.eta} onChange={e => setEditForm(p => ({...p, eta: e.target.value}))} className={inputCls} /></div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
-                <select value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className={inputCls}>
+              <div><label htmlFor="edit-location" className="text-xs uppercase tracking-widest text-on-surface-variant">Location</label><input id="edit-location" value={editForm.location} onChange={e => setEditForm(p => ({...p, location: e.target.value}))} className={inputCls} /></div>
+              <div><label htmlFor="edit-progress" className="text-xs uppercase tracking-widest text-on-surface-variant">Progress (%)</label><input id="edit-progress" type="number" min="0" max="100" value={editForm.progress} onChange={e => setEditForm(p => ({...p, progress: e.target.value}))} className={inputCls} /></div>
+              <div><label htmlFor="edit-eta" className="text-xs uppercase tracking-widest text-on-surface-variant">ETA</label><input id="edit-eta" value={editForm.eta} onChange={e => setEditForm(p => ({...p, eta: e.target.value}))} className={inputCls} /></div>
+              <div><label htmlFor="edit-status" className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
+                <select id="edit-status" value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className={inputCls}>
                   <option>Pending</option><option>In Transit</option><option>Delayed</option><option>Delivered</option>
                 </select>
               </div>

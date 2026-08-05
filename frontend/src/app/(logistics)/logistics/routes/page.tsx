@@ -119,23 +119,23 @@ export default function RoutesPage() {
           <form noValidate onSubmit={handleAdd} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="text-xs uppercase tracking-widest text-on-surface-variant">Route Code</label>
-                <input required value={form.route_code} onChange={(e) => { setForm({ ...form, route_code: e.target.value }); setRouteErrors(p => ({...p, route_code: ""})); }} placeholder="e.g. RTE-2300" className={`${inputCls} ${routeErrors.route_code ? "border-red-500" : ""}`} />
+                <label htmlFor="add-route-code" className="text-xs uppercase tracking-widest text-on-surface-variant">Route Code</label>
+                <input id="add-route-code" required value={form.route_code} onChange={(e) => { setForm({ ...form, route_code: e.target.value }); setRouteErrors(p => ({...p, route_code: ""})); }} placeholder="e.g. RTE-2300" className={`${inputCls} ${routeErrors.route_code ? "border-red-500" : ""}`} />
                 {routeErrors.route_code && <p className="text-xs text-error mt-1">{routeErrors.route_code}</p>}
               </div>
               <div>
-                <label className="text-xs uppercase tracking-widest text-on-surface-variant">Origin</label>
-                <input required value={form.origin} onChange={(e) => { setForm({ ...form, origin: e.target.value }); setRouteErrors(p => ({...p, origin: ""})); }} placeholder="e.g. Shanghai" className={`${inputCls} ${routeErrors.origin ? "border-red-500" : ""}`} />
+                <label htmlFor="add-origin" className="text-xs uppercase tracking-widest text-on-surface-variant">Origin</label>
+                <input id="add-origin" required value={form.origin} onChange={(e) => { setForm({ ...form, origin: e.target.value }); setRouteErrors(p => ({...p, origin: ""})); }} placeholder="e.g. Shanghai" className={`${inputCls} ${routeErrors.origin ? "border-red-500" : ""}`} />
                 {routeErrors.origin && <p className="text-xs text-error mt-1">{routeErrors.origin}</p>}
               </div>
               <div>
-                <label className="text-xs uppercase tracking-widest text-on-surface-variant">Destination</label>
-                <input required value={form.destination} onChange={(e) => { setForm({ ...form, destination: e.target.value }); setRouteErrors(p => ({...p, destination: ""})); }} placeholder="e.g. Rotterdam" className={`${inputCls} ${routeErrors.destination ? "border-red-500" : ""}`} />
+                <label htmlFor="add-destination" className="text-xs uppercase tracking-widest text-on-surface-variant">Destination</label>
+                <input id="add-destination" required value={form.destination} onChange={(e) => { setForm({ ...form, destination: e.target.value }); setRouteErrors(p => ({...p, destination: ""})); }} placeholder="e.g. Rotterdam" className={`${inputCls} ${routeErrors.destination ? "border-red-500" : ""}`} />
                 {routeErrors.destination && <p className="text-xs text-error mt-1">{routeErrors.destination}</p>}
               </div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Distance</label><input value={form.distance} onChange={(e) => setForm({ ...form, distance: e.target.value })} placeholder="e.g. 19,500 km" className={inputCls} /></div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Duration</label><input value={form.duration} onChange={(e) => setForm({ ...form, duration: e.target.value })} placeholder="e.g. 25 days" className={inputCls} /></div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Driver</label><input value={form.driver} onChange={(e) => setForm({ ...form, driver: e.target.value })} placeholder="e.g. Elena Rodriguez" className={inputCls} /></div>
+              <div><label htmlFor="add-distance" className="text-xs uppercase tracking-widest text-on-surface-variant">Distance</label><input id="add-distance" value={form.distance} onChange={(e) => setForm({ ...form, distance: e.target.value })} placeholder="e.g. 19,500 km" className={inputCls} /></div>
+              <div><label htmlFor="add-duration" className="text-xs uppercase tracking-widest text-on-surface-variant">Duration</label><input id="add-duration" value={form.duration} onChange={(e) => setForm({ ...form, duration: e.target.value })} placeholder="e.g. 25 days" className={inputCls} /></div>
+              <div><label htmlFor="add-driver" className="text-xs uppercase tracking-widest text-on-surface-variant">Driver</label><input id="add-driver" value={form.driver} onChange={(e) => setForm({ ...form, driver: e.target.value })} placeholder="e.g. Elena Rodriguez" className={inputCls} /></div>
             </div>
             <div className="flex gap-3">
               <button type="submit" disabled={saving} className="px-4 py-2 rounded-lg bg-tertiary/20 text-tertiary text-sm font-semibold hover:bg-tertiary/30 transition-colors disabled:opacity-50">{saving ? "Saving…" : "Save Route"}</button>
@@ -189,12 +189,12 @@ export default function RoutesPage() {
             </div>
             <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Origin</label><input value={editForm.origin} onChange={e => setEditForm(p => ({...p, origin: e.target.value}))} className={inputCls} /></div>
-                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Destination</label><input value={editForm.destination} onChange={e => setEditForm(p => ({...p, destination: e.target.value}))} className={inputCls} /></div>
-                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Distance</label><input value={editForm.distance} onChange={e => setEditForm(p => ({...p, distance: e.target.value}))} className={inputCls} /></div>
-                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Duration</label><input value={editForm.duration} onChange={e => setEditForm(p => ({...p, duration: e.target.value}))} className={inputCls} /></div>
-                <div className="col-span-2"><label className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
-                  <select value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className={inputCls}>
+                <div><label htmlFor="edit-origin" className="text-xs uppercase tracking-widest text-on-surface-variant">Origin</label><input id="edit-origin" value={editForm.origin} onChange={e => setEditForm(p => ({...p, origin: e.target.value}))} className={inputCls} /></div>
+                <div><label htmlFor="edit-destination" className="text-xs uppercase tracking-widest text-on-surface-variant">Destination</label><input id="edit-destination" value={editForm.destination} onChange={e => setEditForm(p => ({...p, destination: e.target.value}))} className={inputCls} /></div>
+                <div><label htmlFor="edit-distance" className="text-xs uppercase tracking-widest text-on-surface-variant">Distance</label><input id="edit-distance" value={editForm.distance} onChange={e => setEditForm(p => ({...p, distance: e.target.value}))} className={inputCls} /></div>
+                <div><label htmlFor="edit-duration" className="text-xs uppercase tracking-widest text-on-surface-variant">Duration</label><input id="edit-duration" value={editForm.duration} onChange={e => setEditForm(p => ({...p, duration: e.target.value}))} className={inputCls} /></div>
+                <div className="col-span-2"><label htmlFor="edit-status" className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
+                  <select id="edit-status" value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className={inputCls}>
                     <option>Active</option><option>Scheduled</option><option>Delayed</option><option>Completed</option>
                   </select>
                 </div>

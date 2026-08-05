@@ -107,14 +107,14 @@ export default function ContainersPage() {
           <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">New Container</h2>
           <form noValidate onSubmit={handleAdd} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Container No</label><input required value={form.container_no} onChange={(e) => setForm({ ...form, container_no: e.target.value })} placeholder="e.g. CNTR-5001" className={inputCls} /></div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Type</label>
-                <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} className={inputCls}>
+              <div><label htmlFor="add-container-no" className="text-xs uppercase tracking-widest text-on-surface-variant">Container No</label><input id="add-container-no" required value={form.container_no} onChange={(e) => setForm({ ...form, container_no: e.target.value })} placeholder="e.g. CNTR-5001" className={inputCls} /></div>
+              <div><label htmlFor="add-type" className="text-xs uppercase tracking-widest text-on-surface-variant">Type</label>
+                <select id="add-type" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} className={inputCls}>
                   <option>FCL 20FT</option><option>FCL 40FT</option><option>FCL 40HQ</option><option>LCL</option><option>Reefer 20FT</option>
                 </select>
               </div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Location</label><input value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="e.g. Dubai Port" className={inputCls} /></div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Capacity</label><input value={form.capacity} onChange={(e) => setForm({ ...form, capacity: e.target.value })} placeholder="e.g. 33 CBM" className={inputCls} /></div>
+              <div><label htmlFor="add-location" className="text-xs uppercase tracking-widest text-on-surface-variant">Location</label><input id="add-location" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="e.g. Dubai Port" className={inputCls} /></div>
+              <div><label htmlFor="add-capacity" className="text-xs uppercase tracking-widest text-on-surface-variant">Capacity</label><input id="add-capacity" value={form.capacity} onChange={(e) => setForm({ ...form, capacity: e.target.value })} placeholder="e.g. 33 CBM" className={inputCls} /></div>
             </div>
             <div className="flex gap-3">
               <button type="submit" disabled={saving} className="px-4 py-2 rounded-lg bg-tertiary/20 text-tertiary text-sm font-semibold hover:bg-tertiary/30 transition-colors disabled:opacity-50">{saving ? "Saving…" : "Save Container"}</button>
@@ -166,15 +166,15 @@ export default function ContainersPage() {
               <button type="button" onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
             </div>
             <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Type</label>
-                <select value={editForm.type} onChange={e => setEditForm(p => ({...p, type: e.target.value}))} className={inputCls}>
+              <div><label htmlFor="edit-type" className="text-xs uppercase tracking-widest text-on-surface-variant">Type</label>
+                <select id="edit-type" value={editForm.type} onChange={e => setEditForm(p => ({...p, type: e.target.value}))} className={inputCls}>
                   <option>FCL 20FT</option><option>FCL 40FT</option><option>FCL 40HQ</option><option>LCL</option><option>Reefer 20FT</option>
                 </select>
               </div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Location</label><input value={editForm.location} onChange={e => setEditForm(p => ({...p, location: e.target.value}))} className={inputCls} /></div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Capacity</label><input value={editForm.capacity} onChange={e => setEditForm(p => ({...p, capacity: e.target.value}))} className={inputCls} /></div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
-                <select value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className={inputCls}>
+              <div><label htmlFor="edit-location" className="text-xs uppercase tracking-widest text-on-surface-variant">Location</label><input id="edit-location" value={editForm.location} onChange={e => setEditForm(p => ({...p, location: e.target.value}))} className={inputCls} /></div>
+              <div><label htmlFor="edit-capacity" className="text-xs uppercase tracking-widest text-on-surface-variant">Capacity</label><input id="edit-capacity" value={editForm.capacity} onChange={e => setEditForm(p => ({...p, capacity: e.target.value}))} className={inputCls} /></div>
+              <div><label htmlFor="edit-status" className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
+                <select id="edit-status" value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className={inputCls}>
                   <option>Available</option><option>In Use</option><option>Maintenance</option>
                 </select>
               </div>
