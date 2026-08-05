@@ -8,6 +8,7 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import IntegrityError
 
 from app.core.database import get_db
 from app.core.dependencies import require_roles
@@ -35,6 +36,8 @@ async def assign_driver(
     current_user: Profile = Depends(dispatch_guard),
 ):
     shipment_uuid = uuid.UUID(payload.shipment_id) if isinstance(payload.shipment_id, str) else payload.shipment_id
+    driver_uuid = uuid.UUID(payload.driver_id) if isinstance(payload.driver_id, str) else payload.driver_id
+
     shipment = await crud.get_item(db, Shipment, shipment_uuid)
     if not shipment:
         shipment = Shipment(
@@ -48,7 +51,6 @@ async def assign_driver(
         )
         db.add(shipment)
 
-    driver_uuid = uuid.UUID(payload.driver_id) if isinstance(payload.driver_id, str) else payload.driver_id
     driver = await crud.get_item(db, Profile, driver_uuid)
     if not driver:
         driver = Profile(
@@ -83,7 +85,40 @@ async def assign_driver(
         note=f"Assigned to driver {driver.name}",
         changed_by=current_user.id,
     ))
-    await db.commit()
+
+    try:
+        await db.commit()
+    except IntegrityError:
+        await db.rollback()
+        # Concurrent transaction created the shipment/driver in the meantime.
+        # Reload them and perform delivery linking on the already existing rows.
+        shipment = await db.get(Shipment, shipment_uuid)
+        driver = await db.get(Profile, driver_uuid)
+        if not shipment or not driver:
+            raise HTTPException(status_code=404, detail="Shipment or Driver not found")
+        
+        driver.role = UserRole.DRIVER
+        driver.status = "on_trip"
+        shipment.status = STATUS_IN_TRANSIT
+
+        delivery = Delivery(
+            delivery_code=generate_ref("DLV"),
+            shipment_id=shipment.id,
+            driver_id=driver.id,
+            vehicle_id=uuid.UUID(payload.vehicle_id) if payload.vehicle_id else None,
+            route_id=uuid.UUID(payload.route_id) if payload.route_id else None,
+            status="Pending",
+            eta=payload.eta,
+        )
+        db.add(delivery)
+        db.add(ShipmentStatusHistory(
+            shipment_id=shipment.id,
+            status=STATUS_IN_TRANSIT,
+            note=f"Assigned to driver {driver.name}",
+            changed_by=current_user.id,
+        ))
+        await db.commit()
+
     return serialize(delivery)
 
 
