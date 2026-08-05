@@ -558,20 +558,22 @@ export default function PaymentPage() {
                 ["Payment Method",  PAY_METHODS.find(m=>m.id===method)?.label ?? "", false],
                 ["Date & Time",     new Date().toLocaleString("en-US",{dateStyle:"medium",timeStyle:"short"}), false],
                 ["Status",          "CONFIRMED",           false],
-                    const statusClass = (k as string) === "Status" ? "text-green-400" : ((isTx as boolean) ? "text-[#00C2FF]" : "text-white");
-                    return (
-                      <div key={k as string} className="flex justify-between items-center gap-2">
-                        <span className="text-xs text-white/40">{k as string}</span>
-                        <div className="flex items-center gap-1.5">
-                          <span className={`text-xs font-mono font-semibold ${statusClass}`}>{v as string}</span>
-                    {(isTx as boolean) && (
-                      <button type="button" onClick={copyRef} className="text-white/30 hover:text-white/60 transition-colors">
-                        {copied ? <Check className="h-3 w-3 text-green-400" /> : <Copy className="h-3 w-3" />}
-                      </button>
-                    )}
+              ].map(([k, v, isTx]) => {
+                const statusClass = (k as string) === "Status" ? "text-green-400" : ((isTx as boolean) ? "text-[#00C2FF]" : "text-white");
+                return (
+                  <div key={k as string} className="flex justify-between items-center gap-2">
+                    <span className="text-xs text-white/40">{k as string}</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className={`text-xs font-mono font-semibold ${statusClass}`}>{v as string}</span>
+                      {(isTx as boolean) && (
+                        <button type="button" onClick={copyRef} className="text-white/30 hover:text-white/60 transition-colors">
+                          {copied ? <Check className="h-3 w-3 text-green-400" /> : <Copy className="h-3 w-3" />}
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </Card>
 
             <div className="flex gap-3 flex-wrap justify-center">
