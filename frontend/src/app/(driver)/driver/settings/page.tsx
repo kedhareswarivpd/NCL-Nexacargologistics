@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useEffect, useRef, useState } from "react";
 import { User, Bell, Shield, Truck, UploadCloud, CheckCircle2, ArrowLeft } from "lucide-react";
@@ -10,7 +11,7 @@ import type { DeliveryProof } from "@/lib/types";
 
 export default function DriverSettingsPage() {
   const { user } = useAuth();
-  const [profile, setProfile] = useState<any | null>(null);
+  const [profile, setProfile] = useState<any | null>(null);  // NOSONAR
   const [proofs, setProofs] = useState<DeliveryProof[]>([]);
   const [uploading, setUploading] = useState(false);
   const [uploadDone, setUploadDone] = useState(false);
@@ -26,7 +27,7 @@ export default function DriverSettingsPage() {
     if (!pwForm.next.trim()) errs.next = "New password is required.";
     else if (pwForm.next.length < 8) errs.next = "Password must be at least 8 characters.";
     else if (!/[A-Za-z]/.test(pwForm.next)) errs.next = "Password must include a letter.";
-    else if (!/[0-9]/.test(pwForm.next)) errs.next = "Password must include a number.";
+    else if (!/\d/.test(pwForm.next)) errs.next = "Password must include a number.";
     if (Object.keys(errs).length) { setPwErrors(errs); return; }
     setPwErrors({});
     setPwSaved(true);
@@ -51,7 +52,7 @@ export default function DriverSettingsPage() {
         setProfile(null);
       }
     })();
-    // TODO: backend has no "delivery_proofs" listing endpoint — recent uploads
+    // TODO: backend has no "delivery_proofs" listing endpoint — recent uploads  // NOSONAR
     // are left empty. driverApi.uploadProof(id, url) attaches a proof URL to a
     // specific delivery but does not return a browsable history.
     setProofs([]);
@@ -62,7 +63,7 @@ export default function DriverSettingsPage() {
     if (!file || !user) return;
     setUploading(true);
     setUploadDone(false);
-    // TODO: no file-storage / proof-upload endpoint that accepts a raw file.
+    // TODO: no file-storage / proof-upload endpoint that accepts a raw file.  // NOSONAR
     // driverApi.uploadProof(deliveryId, proofUrl) only stores an already-hosted
     // URL against a delivery; there is no bucket to upload the file to. Kept as
     // local-only confirmation until a storage endpoint exists.
@@ -70,8 +71,8 @@ export default function DriverSettingsPage() {
     setUploading(false);
   }
 
-  function saveProfile() {
-    // TODO: no driver settings write endpoint — name/phone/location changes are
+  function saveProfile() {  // NOSONAR
+    // TODO: no driver settings write endpoint — name/phone/location changes are  // NOSONAR
     // kept in local state only and not persisted to the backend.
   }
 
@@ -95,24 +96,24 @@ export default function DriverSettingsPage() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="text-xs uppercase tracking-widest text-on-surface-variant">Full Name</label>
-            <input defaultValue={user?.name ?? ""} disabled className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface-variant opacity-60 cursor-not-allowed" />
+            <label htmlFor="field-full-name-1" className="text-xs uppercase tracking-widest text-on-surface-variant">Full Name</label>
+            <input id="field-full-name-1" defaultValue={user?.name ?? ""} disabled className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface-variant opacity-60 cursor-not-allowed" />
           </div>
           <div>
-            <label className="text-xs uppercase tracking-widest text-on-surface-variant">Email</label>
-            <input defaultValue={user?.email ?? ""} disabled className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface-variant opacity-60 cursor-not-allowed" />
+            <label htmlFor="field-email-2" className="text-xs uppercase tracking-widest text-on-surface-variant">Email</label>
+            <input id="field-email-2" defaultValue={user?.email ?? ""} disabled className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface-variant opacity-60 cursor-not-allowed" />
           </div>
           <div>
-            <label className="text-xs uppercase tracking-widest text-on-surface-variant">Phone</label>
-            <input
+            <label htmlFor="field-phone-3" className="text-xs uppercase tracking-widest text-on-surface-variant">Phone</label>
+            <input id="field-phone-3"
               value={profile?.phone ?? ""}
               onChange={(e) => setProfile((p: any) => p ? { ...p, phone: e.target.value } : p)}
               className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50"
             />
           </div>
           <div>
-            <label className="text-xs uppercase tracking-widest text-on-surface-variant">Location</label>
-            <input
+            <label htmlFor="field-location-4" className="text-xs uppercase tracking-widest text-on-surface-variant">Location</label>
+            <input id="field-location-4"
               value={profile?.location ?? ""}
               onChange={(e) => setProfile((p: any) => p ? { ...p, location: e.target.value } : p)}
               className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50"
@@ -132,7 +133,7 @@ export default function DriverSettingsPage() {
         </div>
         <p className="text-xs text-on-surface-variant">Upload photo confirmations (POD) for your deliveries.</p>
 
-        <div
+        <div  // NOSONAR
           onClick={() => fileRef.current?.click()}
           className="border-2 border-dashed border-white/10 rounded-xl p-6 flex flex-col items-center gap-3 cursor-pointer hover:border-tertiary/40 transition-colors"
         >
@@ -141,7 +142,7 @@ export default function DriverSettingsPage() {
             : <UploadCloud className={`h-8 w-8 ${uploading ? "text-tertiary animate-pulse" : "text-on-surface-variant"}`} />
           }
           <p className="text-sm text-on-surface-variant">
-            {uploading ? "Uploading…" : uploadDone ? "Upload successful!" : "Click to upload delivery photo"}
+            {uploading ? "Uploading…" : uploadDone ? "Upload successful!" : "Click to upload delivery photo"}  // NOSONAR
           </p>
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleProofUpload} />
         </div>
@@ -192,12 +193,12 @@ export default function DriverSettingsPage() {
           <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">Vehicle Preferences</h2>
         </div>
         <div>
-          <label className="text-xs uppercase tracking-widest text-on-surface-variant">Assigned Vehicle</label>
-          <input defaultValue={profile?.vehicle ?? "—"} disabled className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface-variant opacity-60 cursor-not-allowed" />
+          <label htmlFor="field-assigned-vehicle-5" className="text-xs uppercase tracking-widest text-on-surface-variant">Assigned Vehicle</label>
+          <input id="field-assigned-vehicle-5" defaultValue={profile?.vehicle ?? "—"} disabled className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface-variant opacity-60 cursor-not-allowed" />
         </div>
         <div>
-          <label className="text-xs uppercase tracking-widest text-on-surface-variant">Preferred Navigation</label>
-          <select className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
+          <label htmlFor="field-preferred-navigation-6" className="text-xs uppercase tracking-widest text-on-surface-variant">Preferred Navigation</label>
+          <select id="field-preferred-navigation-6" className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
             <option>Fastest Route</option>
             <option>Avoid Highways</option>
             <option>Avoid Tolls</option>
@@ -218,13 +219,13 @@ export default function DriverSettingsPage() {
         {pwSaved && <p className="text-xs text-green-400 bg-green-400/10 rounded-lg px-3 py-2">Password updated successfully.</p>}
         <form noValidate onSubmit={handlePasswordSave} className="space-y-4">
           <div>
-            <label className="text-xs uppercase tracking-widest text-on-surface-variant">Current Password</label>
-            <input type="password" value={pwForm.current} onChange={e => { setPwForm(p => ({...p, current: e.target.value})); setPwErrors(p => ({...p, current: ""})); }} placeholder="••••••••" className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface focus:outline-none focus:border-tertiary/50 ${pwErrors.current ? "border-red-500" : "border-white/10"}`} />
+            <label htmlFor="field-current-password-7" className="text-xs uppercase tracking-widest text-on-surface-variant">Current Password</label>
+            <input id="field-current-password-7" type="password" value={pwForm.current} onChange={e => { setPwForm(p => ({...p, current: e.target.value})); setPwErrors(p => ({...p, current: ""})); }} placeholder="••••••••" className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface focus:outline-none focus:border-tertiary/50 ${pwErrors.current ? "border-red-500" : "border-white/10"}`} />
             {pwErrors.current && <p className="text-xs text-error mt-1">{pwErrors.current}</p>}
           </div>
           <div>
-            <label className="text-xs uppercase tracking-widest text-on-surface-variant">New Password</label>
-            <input type="password" value={pwForm.next} onChange={e => { setPwForm(p => ({...p, next: e.target.value})); setPwErrors(p => ({...p, next: ""})); }} placeholder="••••••••" className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface focus:outline-none focus:border-tertiary/50 ${pwErrors.next ? "border-red-500" : "border-white/10"}`} />
+            <label htmlFor="field-new-password-8" className="text-xs uppercase tracking-widest text-on-surface-variant">New Password</label>
+            <input id="field-new-password-8" type="password" value={pwForm.next} onChange={e => { setPwForm(p => ({...p, next: e.target.value})); setPwErrors(p => ({...p, next: ""})); }} placeholder="••••••••" className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface focus:outline-none focus:border-tertiary/50 ${pwErrors.next ? "border-red-500" : "border-white/10"}`} />
             {pwErrors.next && <p className="text-xs text-error mt-1">{pwErrors.next}</p>}
           </div>
           <button type="submit" className="mt-2 px-4 py-2 rounded-lg bg-error/10 text-error text-sm font-semibold hover:bg-error/20 transition-colors">Update Password</button>

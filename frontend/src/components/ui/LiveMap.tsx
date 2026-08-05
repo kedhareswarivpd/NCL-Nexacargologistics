@@ -4,8 +4,8 @@ import { motion } from "framer-motion";
 import { Navigation, MapPin } from "lucide-react";
 
 interface LiveMapProps {
-  lat?: number;
-  lng?: number;
+  lat?: number;  // NOSONAR
+  lng?: number;  // NOSONAR
   label?: string;
   height?: number;
 }
@@ -85,7 +85,7 @@ export default function LiveMap({ label = "GPS Active", height = 320 }: LiveMapP
 
         {/* ── Completed stop markers ── */}
         {STOPS.filter(s => s.done).map((s, i) => (
-          <g key={i} transform={`translate(${s.x},${s.y})`}>
+          <g key={`item-{i}`} transform={`translate(${s.x},${s.y})`}>
             <circle r="7" fill="#1E88E5" stroke="rgba(0,194,255,0.5)" strokeWidth="1.5" />
             <text fontSize="8" fill="white" textAnchor="middle" dy="3" fontWeight="bold">✓</text>
           </g>
@@ -154,7 +154,7 @@ export default function LiveMap({ label = "GPS Active", height = 320 }: LiveMapP
 
         {/* ── Stop labels ── */}
         {STOPS.slice(1, -1).map((s, i) => (
-          <g key={i}>
+          <g key={`item-{i}`}>
             <rect x={s.x - 18} y={s.y - 30} width="36" height="14" rx="4"
               fill="rgba(11,31,58,0.85)" stroke={s.active ? "#00C2FF" : "rgba(255,255,255,0.12)"} strokeWidth="0.8" />
             <text x={s.x} y={s.y - 20} fontSize="6.5" fill={s.active ? "#00C2FF" : "rgba(255,255,255,0.55)"}

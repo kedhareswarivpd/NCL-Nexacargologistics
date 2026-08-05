@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -66,7 +67,7 @@ function DriverSidebar() {
   );
 }
 
-export default function DriverLayout({ children }: { children: React.ReactNode }) {
+export default function DriverLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <ProtectedRoute allow={["driver", "admin"]}>
       <div className="flex bg-background text-on-surface min-h-screen">

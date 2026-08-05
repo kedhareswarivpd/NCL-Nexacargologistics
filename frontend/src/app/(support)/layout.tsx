@@ -6,7 +6,7 @@ import { SupportSidebar } from "@/components/shared/SupportSidebar";
 import { PortalHeader } from "@/components/shared/PortalHeader";
 import { MobileSidebarWrapper } from "@/components/shared/MobileSidebarWrapper";
 
-export default function SupportLayout({ children }: { children: ReactNode }) {
+export default function SupportLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <ProtectedRoute allow={["support", "admin"]}>
       <div className="flex bg-background text-on-surface min-h-screen">

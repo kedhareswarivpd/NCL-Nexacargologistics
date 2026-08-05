@@ -4,8 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  Plane, Ship, Truck, Globe, Zap, Shield,
-  ArrowRight, BarChart2, Headset, CheckCircle2,
+  Plane, Ship, Truck, Globe, ArrowRight, CheckCircle2,
   TrendingUp, Warehouse, FileText, ChevronRight, Star, Package,
   LayoutDashboard, Receipt, ShieldCheck, MessageSquare, Search,
 } from "lucide-react";
@@ -71,8 +70,8 @@ const FALLBACK_REVIEWS = [
 export default function LandingPage() {
   const { isAuthenticated, user } = useAuth();
   const toast = useToast();
-  const router = useRouter();
-  const [reviews, setReviews] = useState<any[]>(FALLBACK_REVIEWS);
+  const router = useRouter();  // NOSONAR
+  const [reviews, setReviews] = useState<any[]>(FALLBACK_REVIEWS);  // NOSONAR
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

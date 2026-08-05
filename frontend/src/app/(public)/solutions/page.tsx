@@ -1,6 +1,6 @@
 "use client";
 
-import { Shirt, Syringe, ShoppingCart, Package, Globe, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Shirt, Syringe, ShoppingCart, Package, Globe, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import Link from "next/link";

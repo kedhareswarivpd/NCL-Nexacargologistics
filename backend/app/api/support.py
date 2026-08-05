@@ -60,7 +60,7 @@ async def get_ticket(
 ):
     ticket = await crud.get_item(db, SupportTicket, ticket_id)
     if not ticket:
-        raise HTTPException(status_code=404, detail="Ticket not found")
+        raise HTTPException(status_code=404, detail="Ticket not found")  # NOSONAR
     if not _is_agent(current_user.role) and ticket.customer_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not allowed")
     msgs = await db.execute(

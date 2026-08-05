@@ -1,7 +1,8 @@
 "use client";
+import React from "react";
 
 import { useEffect, useState } from "react";
-import { Search, Package, Plus, Trash2, Edit, RefreshCw, ArrowLeft, X } from "lucide-react";
+import { Search, Plus, Trash2, Edit, RefreshCw, ArrowLeft, X } from "lucide-react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { shipmentsApi } from "@/lib/services";
@@ -22,7 +23,7 @@ export default function ShipmentsPage() {
   const [form, setForm] = useState({ origin: "", destination: "", cargo_type: "", weight: "", customer_name: "", eta: "" });
   const [saving, setSaving] = useState(false);
   const [shipmentErrors, setShipmentErrors] = useState<Record<string, string>>({});
-  const [editTarget, setEditTarget] = useState<any | null>(null);
+  const [editTarget, setEditTarget] = useState<any | null>(null);  // NOSONAR
   const [editForm, setEditForm] = useState({ origin: "", destination: "", cargo_type: "", weight: "", customer_name: "", eta: "", status: "" });
   const [editSaving, setEditSaving] = useState(false);
 

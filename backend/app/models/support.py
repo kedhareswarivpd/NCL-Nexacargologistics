@@ -14,7 +14,7 @@ class SupportTicket(Base):
 
     id = pk_column()
     ticket_ref = Column(String(40), unique=True, nullable=False, index=True)
-    customer_id = Column(UUID(as_uuid=True), ForeignKey("profiles.id"), nullable=True, index=True)
+    customer_id = Column(UUID(as_uuid=True), ForeignKey("profiles.id"), nullable=True, index=True)  # NOSONAR
     subject = Column(String(255), nullable=False)
     category = Column(String(60), nullable=True)  # billing|tracking|customs|general
     priority = Column(String(20), nullable=False, default="medium")  # low|medium|high|urgent

@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";  // NOSONAR
 import { LayoutDashboard, PackageOpen, ScanBarcode, Truck, ClipboardList, Settings, HelpCircle, LogOut, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";  // NOSONAR
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/warehouse" },

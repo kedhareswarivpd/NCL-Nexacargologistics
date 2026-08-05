@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useEffect, useState } from "react";
 import {
@@ -289,14 +290,14 @@ export default function FinanceDashboard() {
             </div>
             <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
               <div>
-                <label className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
-                <select value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
+                <label htmlFor="field-status-1" className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
+                <select id="field-status-1" value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
                   <option>Pending</option><option>Paid</option><option>Overdue</option>
                 </select>
               </div>
               <div>
-                <label className="text-xs uppercase tracking-widest text-on-surface-variant">Due Date</label>
-                <input type="date" value={editForm.due_date} onChange={e => setEditForm(p => ({...p, due_date: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" />
+                <label htmlFor="field-due-date-2" className="text-xs uppercase tracking-widest text-on-surface-variant">Due Date</label>
+                <input id="field-due-date-2" type="date" value={editForm.due_date} onChange={e => setEditForm(p => ({...p, due_date: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" />
               </div>
               <div className="flex gap-3 pt-2">
                 <button type="submit" disabled={editSaving} className="flex-1 py-2.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] disabled:opacity-50">{editSaving ? "Saving…" : "Save Changes"}</button>

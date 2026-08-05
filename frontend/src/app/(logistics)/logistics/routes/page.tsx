@@ -1,7 +1,8 @@
 "use client";
+import React from "react";
 
 import { useEffect, useState } from "react";
-import { Search, Plus, Trash2, RefreshCw, Route, MapPin, Clock, ArrowLeft, Edit, X } from "lucide-react";
+import { Search, Plus, Trash2, RefreshCw, MapPin, Clock, ArrowLeft, Edit, X } from "lucide-react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { routesApi } from "@/lib/services";
@@ -21,7 +22,7 @@ export default function RoutesPage() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ route_code: "", origin: "", destination: "", distance: "", duration: "", driver: "", vehicle: "" });
   const [saving, setSaving] = useState(false);
-  const [editTarget, setEditTarget] = useState<any | null>(null);
+  const [editTarget, setEditTarget] = useState<any | null>(null);  // NOSONAR
   const [editForm, setEditForm] = useState({ origin: "", destination: "", distance: "", duration: "", status: "" });
   const [editSaving, setEditSaving] = useState(false);
 

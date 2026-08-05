@@ -82,8 +82,8 @@ export default function PrivacyPolicyPage() {
       {/* Hero */}
       <section className="relative py-24 px-6 max-w-4xl mx-auto text-center overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_40%,rgba(0,194,255,0.07),transparent_70%)]" />
-        {[...Array(10)].map((_, i) => (
-          <motion.span key={i}
+        {[...new Array(10)].map((_, i) => (
+          <motion.span key={`item-{i}`}
             className="absolute rounded-full bg-tertiary/20 blur-sm pointer-events-none"
             style={{ left: `${(i * 11 + 4) % 96}%`, top: `${(i * 17 + 5) % 88}%`, width: `${6 + (i % 3) * 3}px`, height: `${6 + (i % 3) * 3}px` }}
             animate={{ y: [0, -14, 0], opacity: [0.15, 0.6, 0.15] }}

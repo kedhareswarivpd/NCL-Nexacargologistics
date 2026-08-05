@@ -6,7 +6,7 @@ import { CustomsSidebar } from "@/components/shared/CustomsSidebar";
 import { PortalHeader } from "@/components/shared/PortalHeader";
 import { MobileSidebarWrapper } from "@/components/shared/MobileSidebarWrapper";
 
-export default function CustomsLayout({ children }: { children: ReactNode }) {
+export default function CustomsLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <ProtectedRoute allow={["customs", "admin"]}>
       <div className="flex bg-background text-on-surface min-h-screen">

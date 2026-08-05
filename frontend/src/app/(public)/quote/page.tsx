@@ -143,18 +143,18 @@ export default function FreightQuoteCalculatorPage() {
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="font-label-caps text-xs tracking-widest uppercase text-on-surface-variant ml-2">Origin City/Port</label>
+                    <label htmlFor="field-origin-city-1" className="font-label-caps text-xs tracking-widest uppercase text-on-surface-variant ml-2">Origin City/Port</label>
                     <div className="relative">
                       <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-tertiary w-5 h-5" />
-                      <input value={fields.origin} onChange={e => { set("origin", e.target.value); setStepErrors(p => ({ ...p, origin: "" })); }} className={`w-full h-14 pl-12 pr-6 rounded-lg bg-black/20 border focus:ring-1 outline-none transition-all text-on-surface ${stepErrors.origin ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-white/10 focus:border-tertiary focus:ring-tertiary"}`} placeholder="e.g. Shanghai, China" type="text" />
+                      <input id="field-origin-city-1" value={fields.origin} onChange={e => { set("origin", e.target.value); setStepErrors(p => ({ ...p, origin: "" })); }} className={`w-full h-14 pl-12 pr-6 rounded-lg bg-black/20 border focus:ring-1 outline-none transition-all text-on-surface ${stepErrors.origin ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-white/10 focus:border-tertiary focus:ring-tertiary"}`} placeholder="e.g. Shanghai, China" type="text" />
                     </div>
                     {stepErrors.origin && <p className="text-xs text-red-400 ml-2">{stepErrors.origin}</p>}
                   </div>
                   <div className="space-y-2">
-                    <label className="font-label-caps text-xs tracking-widest uppercase text-on-surface-variant ml-2">Destination City/Port</label>
+                    <label htmlFor="field-destination-city-2" className="font-label-caps text-xs tracking-widest uppercase text-on-surface-variant ml-2">Destination City/Port</label>
                     <div className="relative">
                       <Flag className="absolute left-4 top-1/2 -translate-y-1/2 text-tertiary w-5 h-5" />
-                      <input value={fields.destination} onChange={e => { set("destination", e.target.value); setStepErrors(p => ({ ...p, destination: "" })); }} className={`w-full h-14 pl-12 pr-6 rounded-lg bg-black/20 border focus:ring-1 outline-none transition-all text-on-surface ${stepErrors.destination ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-white/10 focus:border-tertiary focus:ring-tertiary"}`} placeholder="e.g. Los Angeles, USA" type="text" />
+                      <input id="field-destination-city-2" value={fields.destination} onChange={e => { set("destination", e.target.value); setStepErrors(p => ({ ...p, destination: "" })); }} className={`w-full h-14 pl-12 pr-6 rounded-lg bg-black/20 border focus:ring-1 outline-none transition-all text-on-surface ${stepErrors.destination ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-white/10 focus:border-tertiary focus:ring-tertiary"}`} placeholder="e.g. Los Angeles, USA" type="text" />
                     </div>
                     {stepErrors.destination && <p className="text-xs text-red-400 ml-2">{stepErrors.destination}</p>}
                   </div>
@@ -172,8 +172,8 @@ export default function FreightQuoteCalculatorPage() {
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="space-y-2">
-                    <label className="font-label-caps text-xs tracking-widest uppercase text-on-surface-variant ml-2">Cargo Type</label>
-                    <select value={fields.cargoType} onChange={e => set("cargoType", e.target.value)} className="w-full h-14 px-6 rounded-lg bg-black/20 border border-white/10 focus:border-tertiary focus:ring-1 focus:ring-tertiary outline-none transition-all text-on-surface appearance-none">
+                    <label htmlFor="field-cargo-type-3" className="font-label-caps text-xs tracking-widest uppercase text-on-surface-variant ml-2">Cargo Type</label>
+                    <select id="field-cargo-type-3" value={fields.cargoType} onChange={e => set("cargoType", e.target.value)} className="w-full h-14 px-6 rounded-lg bg-black/20 border border-white/10 focus:border-tertiary focus:ring-1 focus:ring-tertiary outline-none transition-all text-on-surface appearance-none">
                       <option className="bg-surface">General Cargo</option>
                       <option className="bg-surface">Hazardous Materials</option>
                       <option className="bg-surface">Perishables</option>
@@ -181,13 +181,13 @@ export default function FreightQuoteCalculatorPage() {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="font-label-caps text-xs tracking-widest uppercase text-on-surface-variant ml-2">Weight (KG)</label>
-                    <input value={fields.weight || ""} onChange={e => { set("weight", parseFloat(e.target.value) || 0); setStepErrors(p => ({ ...p, weight: "" })); }} className={`w-full h-14 px-6 rounded-lg bg-black/20 border focus:ring-1 outline-none transition-all text-on-surface ${stepErrors.weight ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-white/10 focus:border-tertiary focus:ring-tertiary"}`} placeholder="0" type="number" />
+                    <label htmlFor="field-weight-4" className="font-label-caps text-xs tracking-widest uppercase text-on-surface-variant ml-2">Weight (KG)</label>
+                    <input id="field-weight-4" value={fields.weight || ""} onChange={e => { set("weight", parseFloat(e.target.value) || 0); setStepErrors(p => ({ ...p, weight: "" })); }} className={`w-full h-14 px-6 rounded-lg bg-black/20 border focus:ring-1 outline-none transition-all text-on-surface ${stepErrors.weight ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-white/10 focus:border-tertiary focus:ring-tertiary"}`} placeholder="0" type="number" />
                     {stepErrors.weight && <p className="text-xs text-red-400">{stepErrors.weight}</p>}
                   </div>
                   <div className="space-y-2">
-                    <label className="font-label-caps text-xs tracking-widest uppercase text-on-surface-variant ml-2">Volume (m³)</label>
-                    <input value={fields.volume || ""} onChange={e => set("volume", parseFloat(e.target.value) || 0)} className="w-full h-14 px-6 rounded-lg bg-black/20 border border-white/10 focus:border-tertiary focus:ring-1 focus:ring-tertiary outline-none transition-all text-on-surface" placeholder="0" type="number" />
+                    <label htmlFor="field-volume-5" className="font-label-caps text-xs tracking-widest uppercase text-on-surface-variant ml-2">Volume (m³)</label>
+                    <input id="field-volume-5" value={fields.volume || ""} onChange={e => set("volume", parseFloat(e.target.value) || 0)} className="w-full h-14 px-6 rounded-lg bg-black/20 border border-white/10 focus:border-tertiary focus:ring-1 focus:ring-tertiary outline-none transition-all text-on-surface" placeholder="0" type="number" />
                   </div>
                 </div>
                 <div className="pt-6 flex justify-between">

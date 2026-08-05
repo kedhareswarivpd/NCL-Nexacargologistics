@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, FileText, Globe, Calculator, Shield, HelpCircle, LogOut, Users } from "lucide-react";
+import { LayoutDashboard, FileText, Calculator, Shield, HelpCircle, LogOut, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";

@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useEffect, useState } from "react";
 import { Search, Receipt, Clock, CheckCircle2, AlertTriangle, Plus, X, ArrowLeft, Edit } from "lucide-react";
@@ -70,7 +71,7 @@ export default function InvoicesPage() {
     const errs: Record<string, string> = {};
     if (!form.client.trim()) errs.client = "Client name is required.";
     if (!form.amount.trim()) errs.amount = "Amount is required.";
-    else if (isNaN(Number(form.amount)) || Number(form.amount) <= 0) errs.amount = "Enter a valid positive amount.";
+    else if (Number.isNaN(Number(form.amount)) || Number(form.amount) <= 0) errs.amount = "Enter a valid positive amount.";
     if (!form.due) errs.due = "Due date is required.";
     else if (new Date(form.due) < new Date(new Date().toDateString())) errs.due = "Due date must be today or later.";
     if (Object.keys(errs).length) { setFormErrors(errs); return; }
@@ -132,8 +133,8 @@ export default function InvoicesPage() {
           </div>
           <form noValidate onSubmit={handleGenerate} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="text-xs uppercase tracking-widest text-on-surface-variant">Client Name</label>
-              <input
+              <label htmlFor="field-client-name-4" className="text-xs uppercase tracking-widest text-on-surface-variant">Client Name</label>
+              <input id="field-client-name-4"
                 value={form.client}
                 onChange={(e) => { setForm((f) => ({ ...f, client: e.target.value })); setFormErrors(p => ({...p, client: ""})); }}
                 placeholder="e.g. Amazon EU"
@@ -142,8 +143,8 @@ export default function InvoicesPage() {
               {formErrors.client && <p className="text-xs text-error mt-1">{formErrors.client}</p>}
             </div>
             <div>
-              <label className="text-xs uppercase tracking-widest text-on-surface-variant">Amount (USD)</label>
-              <input
+              <label htmlFor="field-amount-5" className="text-xs uppercase tracking-widest text-on-surface-variant">Amount (USD)</label>
+              <input id="field-amount-5"
                 type="number" min="0" step="0.01"
                 value={form.amount}
                 onChange={(e) => { setForm((f) => ({ ...f, amount: e.target.value })); setFormErrors(p => ({...p, amount: ""})); }}
@@ -153,8 +154,8 @@ export default function InvoicesPage() {
               {formErrors.amount && <p className="text-xs text-error mt-1">{formErrors.amount}</p>}
             </div>
             <div>
-              <label className="text-xs uppercase tracking-widest text-on-surface-variant">Due Date</label>
-              <input
+              <label htmlFor="field-due-date-6" className="text-xs uppercase tracking-widest text-on-surface-variant">Due Date</label>
+              <input id="field-due-date-6"
                 type="date"
                 value={form.due}
                 onChange={(e) => { setForm((f) => ({ ...f, due: e.target.value })); setFormErrors(p => ({...p, due: ""})); }}
@@ -163,8 +164,8 @@ export default function InvoicesPage() {
               {formErrors.due && <p className="text-xs text-error mt-1">{formErrors.due}</p>}
             </div>
             <div>
-              <label className="text-xs uppercase tracking-widest text-on-surface-variant">Description</label>
-              <input
+              <label htmlFor="field-description-7" className="text-xs uppercase tracking-widest text-on-surface-variant">Description</label>
+              <input id="field-description-7"
                 value={form.description}
                 onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
                 placeholder="Optional"
@@ -280,13 +281,13 @@ export default function InvoicesPage() {
               <button type="button" onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
             </div>
             <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
-                <select value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
+              <div><label htmlFor="field-status-1" className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
+                <select id="field-status-1" value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
                   <option>Pending</option><option>Paid</option><option>Overdue</option>
                 </select>
               </div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Due Date</label><input type="date" value={editForm.due_date} onChange={e => setEditForm(p => ({...p, due_date: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Description</label><input value={editForm.description} onChange={e => setEditForm(p => ({...p, description: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+              <div><label htmlFor="field-due-date-2" className="text-xs uppercase tracking-widest text-on-surface-variant">Due Date</label><input id="field-due-date-2" type="date" value={editForm.due_date} onChange={e => setEditForm(p => ({...p, due_date: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+              <div><label htmlFor="field-description-3" className="text-xs uppercase tracking-widest text-on-surface-variant">Description</label><input id="field-description-3" value={editForm.description} onChange={e => setEditForm(p => ({...p, description: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
               <div className="flex gap-3 pt-2">
                 <button type="submit" disabled={editSaving} className="flex-1 py-2.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] disabled:opacity-50">{editSaving ? "Saving…" : "Save Changes"}</button>
                 <button type="button" onClick={() => setEditTarget(null)} className="px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-on-surface-variant hover:bg-white/10">Cancel</button>

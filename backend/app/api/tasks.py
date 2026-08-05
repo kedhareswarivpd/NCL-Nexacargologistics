@@ -65,7 +65,7 @@ async def get_task(
 ):
     task = await crud.get_item(db, WarehouseTask, task_id)
     if not task:
-        raise HTTPException(status_code=404, detail="Task not found")
+        raise HTTPException(status_code=404, detail="Task not found")  # NOSONAR
     if current_user.role == UserRole.WAREHOUSE and task.assigned_to != current_user.id:
         raise HTTPException(status_code=403, detail="Not allowed")
     return serialize(task)

@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -22,7 +23,7 @@ export default function ConsultationPage() {
     else if (form.name.trim().length < 2) e.name = "Name must be at least 2 characters.";
     if (!form.email.trim())    e.email    = "Please fill out this field";
     else if (!/^[^\s@]+@[^\s@]+\.com$/i.test(form.email.trim())) e.email = "Email must contain @ and end with .com";
-    if (form.phone.trim() && !/^\+?[\d\s\-().]{7,20}$/.test(form.phone.trim())) e.phone = "Enter a valid phone number.";
+    if (form.phone.trim() && !/^\+?[\d\s-().]{7,20}$/.test(form.phone.trim())) e.phone = "Enter a valid phone number.";
     if (!form.company.trim())  e.company  = "Please fill out this field";
     else if (form.company.trim().length < 2) e.company = "Company name must be at least 2 characters.";
     if (!form.industry)        e.industry = "Please select an industry";
@@ -42,8 +43,8 @@ export default function ConsultationPage() {
 
   const set = (key: string, val: string) => {
     if (key === "name")    val = val.replace(/[^a-zA-Z\s]/g, "");
-    if (key === "phone")   val = val.replace(/[^\d+\s\-().]/g, "");
-    if (key === "company") val = val.replace(/[^a-zA-Z0-9\s&.\-]/g, "");
+    if (key === "phone")   val = val.replace(/[^\d+\s-().]/g, "");
+    if (key === "company") val = val.replace(/[^a-zA-Z0-9\s&.-]/g, "");
     if (key === "message") val = val.replace(/[^a-zA-Z\s]/g, "");
     setForm(p => ({ ...p, [key]: val }));
     setErrors(p => ({ ...p, [key]: "" }));
@@ -130,8 +131,8 @@ export default function ConsultationPage() {
 
             {/* Industry */}
             <div>
-              <label className="text-xs uppercase tracking-widest text-blue-200/60 mb-1 block">Industry *</label>
-              <select value={form.industry} onChange={e => set("industry", e.target.value)}
+              <label htmlFor="field-industry-1" className="text-xs uppercase tracking-widest text-blue-200/60 mb-1 block">Industry *</label>
+              <select id="field-industry-1" value={form.industry} onChange={e => set("industry", e.target.value)}
                 className={`w-full px-3 py-2.5 rounded-lg bg-[#0d2545] border text-sm text-white focus:outline-none focus:border-[#00C2FF]/50 ${errors.industry ? "border-red-500" : "border-white/10"}`}>
                 <option value="">Select your industry…</option>
                 {INDUSTRIES.map(i => <option key={i} value={i}>{i}</option>)}
@@ -160,8 +161,8 @@ export default function ConsultationPage() {
 
             {/* Message */}
             <div>
-              <label className="text-xs uppercase tracking-widest text-blue-200/60 mb-1 block">Tell us about your logistics challenge</label>
-              <textarea value={form.message} onChange={e => set("message", e.target.value)} rows={3}
+              <label htmlFor="field-tell-us-about-your-logistics-challenge-2" className="text-xs uppercase tracking-widest text-blue-200/60 mb-1 block">Tell us about your logistics challenge</label>
+              <textarea id="field-tell-us-about-your-logistics-challenge-2" value={form.message} onChange={e => set("message", e.target.value)} rows={3}
                 placeholder="Describe your current supply chain pain points, volumes, routes…"
                 className={`w-full px-3 py-2.5 rounded-lg bg-[#0d2545] border text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#00C2FF]/50 resize-none ${errors.message ? "border-red-500" : "border-white/10"}`} />
               {errors.message && <p className="text-xs text-red-400 mt-1">{errors.message}</p>}

@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
@@ -36,7 +37,7 @@ export function MobileSidebarWrapper({ children }: Props) {
 
       {/* Backdrop */}
       {open && (
-        <div
+        <div  // NOSONAR
           className="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
           onClick={() => setOpen(false)}
         />

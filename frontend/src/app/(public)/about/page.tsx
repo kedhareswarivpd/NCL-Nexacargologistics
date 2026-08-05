@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Target, Globe, Shield, Leaf, Zap, ArrowRight } from "lucide-react";
+import { Target, Globe, Shield, Leaf, Zap } from "lucide-react";
 import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -58,9 +58,9 @@ export default function AboutPage() {
           />
         </motion.div>
         <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/60 to-background" />
-        {[...Array(20)].map((_, i) => (
+        {[...new Array(20)].map((_, i) => (
           <motion.span
-            key={i}
+            key={`item-{i}`}
             className="absolute rounded-full bg-tertiary/30 blur-sm"
             style={{
               left: `${(i * 7 + 4) % 100}%`,

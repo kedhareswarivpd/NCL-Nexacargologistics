@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useEffect, useState } from "react";
 import { Bell, Mail, MessageSquare, CheckCircle2, Clock, XCircle, RefreshCw, Send, ArrowLeft } from "lucide-react";
@@ -199,19 +200,19 @@ export default function NotificationsPage() {
               <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">New Notification</h2>
               <form noValidate onSubmit={handleSend} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Recipient Name</label><input required value={form.recipient_name} onChange={(e) => { const filtered = e.target.value.replace(/[0-9]/g, ''); setForm({ ...form, recipient_name: filtered }); }} placeholder="e.g. John Smith" className={inputCls} /></div>
-                  <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Email</label><input type="email" value={form.recipient_email} onChange={(e) => setForm({ ...form, recipient_email: e.target.value })} placeholder="john@example.com" className={inputCls} /></div>
-                  <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Phone</label><input value={form.recipient_phone} onChange={(e) => setForm({ ...form, recipient_phone: e.target.value })} placeholder="+1234567890" className={inputCls} /></div>
-                  <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Subject</label><input value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} placeholder="Shipment Update" className={inputCls} /></div>
-                  <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Channel</label>
-                    <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value as "sms" | "email" | "both" })} className={inputCls}>
+                  <div><label htmlFor="field-recipient-name-1" className="text-xs uppercase tracking-widest text-on-surface-variant">Recipient Name</label><input id="field-recipient-name-1" required value={form.recipient_name} onChange={(e) => { const filtered = e.target.value.replace(/\d/g, ''); setForm({ ...form, recipient_name: filtered }); }} placeholder="e.g. John Smith" className={inputCls} /></div>
+                  <div><label htmlFor="field-email-2" className="text-xs uppercase tracking-widest text-on-surface-variant">Email</label><input id="field-email-2" type="email" value={form.recipient_email} onChange={(e) => setForm({ ...form, recipient_email: e.target.value })} placeholder="john@example.com" className={inputCls} /></div>
+                  <div><label htmlFor="field-phone-3" className="text-xs uppercase tracking-widest text-on-surface-variant">Phone</label><input id="field-phone-3" value={form.recipient_phone} onChange={(e) => setForm({ ...form, recipient_phone: e.target.value })} placeholder="+1234567890" className={inputCls} /></div>
+                  <div><label htmlFor="field-subject-4" className="text-xs uppercase tracking-widest text-on-surface-variant">Subject</label><input id="field-subject-4" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} placeholder="Shipment Update" className={inputCls} /></div>
+                  <div><label htmlFor="field-channel-5" className="text-xs uppercase tracking-widest text-on-surface-variant">Channel</label>
+                    <select id="field-channel-5" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value as "sms" | "email" | "both" })} className={inputCls}>
                       <option value="both">SMS + Email</option>
                       <option value="email">Email only</option>
                       <option value="sms">SMS only</option>
                     </select>
                   </div>
                 </div>
-                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Message</label><textarea required rows={3} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="Your shipment SHP-XXXXX is now In Transit..." className={`${inputCls} resize-none`} /></div>
+                <div><label htmlFor="field-message-6" className="text-xs uppercase tracking-widest text-on-surface-variant">Message</label><textarea id="field-message-6" required rows={3} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="Your shipment SHP-XXXXX is now In Transit..." className={`${inputCls} resize-none`} /></div>
                 <div className="flex gap-3">
                   <button type="submit" disabled={sending} className="px-4 py-2 rounded-lg bg-tertiary/20 text-tertiary text-sm font-semibold hover:bg-tertiary/30 transition-colors disabled:opacity-50">
                     {sending ? "Sending…" : "Send"}

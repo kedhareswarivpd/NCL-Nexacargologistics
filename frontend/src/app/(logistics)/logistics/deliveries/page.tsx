@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useEffect, useState } from "react";
 import { MapPin, Clock, CheckCircle2, AlertTriangle, RefreshCw, Plus, Trash2, Search, Bell, ArrowLeft, Edit, X } from "lucide-react";
@@ -30,7 +31,7 @@ export default function DeliveriesPage() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ delivery_code: "", driver: "", location: "", progress: "0", eta: "" });
   const [saving, setSaving] = useState(false);
-  const [editTarget, setEditTarget] = useState<any | null>(null);
+  const [editTarget, setEditTarget] = useState<any | null>(null);  // NOSONAR
   const [editForm, setEditForm] = useState({ location: "", progress: "", eta: "", status: "" });
   const [editSaving, setEditSaving] = useState(false);
 

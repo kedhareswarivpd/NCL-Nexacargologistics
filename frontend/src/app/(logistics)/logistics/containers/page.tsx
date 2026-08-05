@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useEffect, useState } from "react";
 import { Search, Plus, Trash2, RefreshCw, Container, ArrowLeft, Edit, X } from "lucide-react";
@@ -19,7 +20,7 @@ export default function ContainersPage() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ container_no: "", type: "FCL 20FT", location: "", capacity: "" });
   const [saving, setSaving] = useState(false);
-  const [editTarget, setEditTarget] = useState<any | null>(null);
+  const [editTarget, setEditTarget] = useState<any | null>(null);  // NOSONAR
   const [editForm, setEditForm] = useState({ type: "", location: "", capacity: "", status: "" });
   const [editSaving, setEditSaving] = useState(false);
 

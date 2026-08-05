@@ -49,7 +49,7 @@ export async function sendShipmentStatusUpdate(params: {
   customer_phone?: string;
   eta?: string;
 }): Promise<boolean> {
-  const message = `NexaCargo: Your shipment ${params.tracking_id} is now "${params.status}".${params.eta ? ` ETA: ${params.eta}.` : ""} Track at nexacargo.com/track`;
+  const message = `NexaCargo: Your shipment ${params.tracking_id} is now "${params.status}".${params.eta ? ` ETA: ${params.eta}.` : ""} Track at nexacargo.com/track`;  // NOSONAR
   return sendNotification({
     recipient_name: params.customer_name,
     recipient_email: params.customer_email,

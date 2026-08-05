@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 /**
  * Composes all client-side context providers into a single component so the
@@ -10,7 +11,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { ToastProvider } from "@/context/ToastContext";
 import { SplashScreen } from "@/components/ui/SplashScreen";
 
-export function AppProviders({ children }: { children: React.ReactNode }) {
+export function AppProviders({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <ToastProvider>
       <AuthProvider>

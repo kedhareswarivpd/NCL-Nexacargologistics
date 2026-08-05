@@ -1,11 +1,12 @@
 "use client";
+import React from "react";
 
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { CustomerSidebar } from "@/components/shared/CustomerSidebar";
 import { PortalHeader } from "@/components/shared/PortalHeader";
 import { MobileSidebarWrapper } from "@/components/shared/MobileSidebarWrapper";
 
-export default function CustomerLayout({ children }: { children: React.ReactNode }) {
+export default function CustomerLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <ProtectedRoute allow={["customer", "admin"]}>
       <div className="h-screen w-screen flex bg-background text-on-surface overflow-hidden">

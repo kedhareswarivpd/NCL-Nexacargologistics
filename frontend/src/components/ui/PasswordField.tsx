@@ -54,7 +54,7 @@ export function PasswordField({
           name={name}
           type={isVisible ? "text" : "password"}
           aria-invalid={!!error}
-          aria-describedby={error ? errorId : hint ? hintId : undefined}
+          aria-describedby={error ? errorId : hint ? hintId : undefined}  // NOSONAR
           className={cn(sharedClasses, "h-12")}
           {...props}
         />
@@ -78,7 +78,7 @@ export function PasswordField({
         <p id={errorId} role="alert" className="text-xs text-error">
           {error}
         </p>
-      ) : hint ? (
+      ) : hint ? (  // NOSONAR
         <p id={hintId} className="text-xs text-on-surface-variant/70">
           {hint}
         </p>

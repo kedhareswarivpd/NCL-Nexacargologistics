@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Search, Loader2, Package, Ship, Truck, CheckCircle2, MapPin } from "lucide-react";
+import { Search, Loader2, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
@@ -50,8 +50,8 @@ export default function TrackPage() {
       <section className="relative mx-auto max-w-3xl px-6 py-20 text-center">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_30%,rgba(0,93,183,0.18),transparent_70%)]" />
 
-        {[...Array(12)].map((_, i) => (
-          <motion.span key={i}
+        {[...new Array(12)].map((_, i) => (
+          <motion.span key={`item-{i}`}
             className="absolute rounded-full bg-tertiary/25 blur-sm pointer-events-none"
             style={{ left: `${(i * 11 + 5) % 96}%`, top: `${(i * 17 + 8) % 90}%`, width: `${6 + (i % 3) * 3}px`, height: `${6 + (i % 3) * 3}px` }}
             animate={{ y: [0, -14, 0], opacity: [0.2, 0.7, 0.2] }}
@@ -115,7 +115,7 @@ export default function TrackPage() {
               {events.length > 0 && (
                 <ol className="relative space-y-8 border-l border-white/10 pl-8">
                   {events.map((e: any, i: number) => (
-                    <motion.li key={i} className="relative"
+                    <motion.li key={`item-{i}`} className="relative"
                       initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.15 + i * 0.1 }}
                     >

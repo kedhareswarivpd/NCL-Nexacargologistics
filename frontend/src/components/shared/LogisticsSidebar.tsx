@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Package, Container, Route, Truck, MapPin, HelpCircle, LogOut, Users } from "lucide-react";
+import { LayoutDashboard, Package, Container, Route, MapPin, HelpCircle, LogOut, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";

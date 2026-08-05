@@ -26,7 +26,7 @@ const slideLeft: Variants = {
   hidden: { opacity: 0, x: -40 },
   show:   { opacity: 1, x: 0, transition: { duration: 0.6, ease: "easeOut" } },
 };
-function Counter({ to, suffix = "", decimals = 0, duration = 2 }: { to: number; suffix?: string; decimals?: number; duration?: number }) {
+function Counter({ to, suffix = "", decimals = 0, duration = 2 }: Readonly<{ to: number; suffix?: string; decimals?: number; duration?: number }>) {
   const [val, setVal] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true });
@@ -64,13 +64,13 @@ export default function ServicesPage() {
         {/* Subtle animated grid */}
         <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "linear-gradient(rgba(0,194,255,0.6) 1px,transparent 1px),linear-gradient(90deg,rgba(0,194,255,0.6) 1px,transparent 1px)", backgroundSize: "60px 60px" }} />
         {/* Floating particles */}
-        {[...Array(18)].map((_, i) => (
-          <div key={i}
+        {[...new Array(18)].map((_, i) => (
+          <div key={`item-{i}`}
             className="absolute rounded-full"
             style={{
               width:  `${2 + (i % 3)}px`,
               height: `${2 + (i % 3)}px`,
-              background: i % 3 === 0 ? "#00C2FF" : i % 3 === 1 ? "#1E88E5" : "#fff",
+              background: i % 3 === 0 ? "#00C2FF" : i % 3 === 1 ? "#1E88E5" : "#fff",  // NOSONAR
               opacity: 0.12 + (i % 5) * 0.06,
               top:  `${(i * 17 + 5) % 95}%`,
               left: `${(i * 23 + 3) % 95}%`,

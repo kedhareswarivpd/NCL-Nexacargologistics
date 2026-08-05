@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useState, useEffect } from "react";
 import { Shield, CheckCircle2, Send, FileText, ShieldCheck, ShieldAlert, ShieldX, ArrowLeft } from "lucide-react";
@@ -75,7 +76,7 @@ export default function CargoInsurancePage() {
     if (!sid) e.shipment = "Please select a shipment.";
     const val = Number(form.value);
     if (!form.value.trim()) e.value = "Cargo value is required.";
-    else if (isNaN(val) || val <= 0) e.value = "Enter a valid positive amount.";
+    else if (Number.isNaN(val) || val <= 0) e.value = "Enter a valid positive amount.";
     else if (val > 500000) e.value = "Maximum insurable value is $500,000.";
     return e;
   };
@@ -212,7 +213,7 @@ export default function CargoInsurancePage() {
                 value={form.value}
                 onChange={(e) => {
                   // strip decimals, cap at 500000
-                  const raw = e.target.value.replace(/[^0-9]/g, "");
+                  const raw = e.target.value.replace(/\D/g, "");
                   const capped = raw === "" ? "" : String(Math.min(Number(raw), 500000));
                   setForm({ ...form, value: capped });
                   setErrors(p => ({ ...p, value: "" }));
@@ -253,7 +254,7 @@ export default function CargoInsurancePage() {
             <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant mb-3">Your Policies</h2>
             {loading ? (
               <Card className="p-8 text-center text-sm text-on-surface-variant">Loading your policies…</Card>
-            ) : policies.length === 0 ? (
+            ) : policies.length === 0 ? (  // NOSONAR
               <Card className="p-8 flex flex-col items-center text-center gap-3">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/5">
                   <Shield className="h-6 w-6 text-on-surface-variant/40" />

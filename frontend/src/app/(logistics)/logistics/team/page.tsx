@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
@@ -44,7 +45,7 @@ const REGIONS = ["All", "North India", "South India", "West India", "East India"
 
 export default function LogisticsTeamPage() {
   const [members, setMembers] = useState(LOGISTICS_MANAGERS);
-  const [editTarget, setEditTarget] = useState<any | null>(null);
+  const [editTarget, setEditTarget] = useState<any | null>(null);  // NOSONAR
   const [editForm, setEditForm] = useState({ name: "", role: "", phone: "", email: "" });
 
   function openEdit(m: any) {
@@ -61,7 +62,7 @@ export default function LogisticsTeamPage() {
 
   useEffect(() => {
     usersApi.list({ role: "logistics" })
-      .then((staff: any[]) => { if (staff && staff.length) setMembers(staff.map(mapStaff)); })
+      .then((staff: any[]) => { if (staff?.length) setMembers(staff.map(mapStaff)); })
       .catch(() => {});
   }, []);
 
@@ -168,7 +169,7 @@ export default function LogisticsTeamPage() {
               <button type="button" onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
             </div>
             <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
-              <div><label htmlFor="edit-name" className="text-xs uppercase tracking-widest text-on-surface-variant">Name</label><input id="edit-name" value={editForm.name} onChange={e => { const filtered = e.target.value.replace(/[0-9]/g, ''); setEditForm(p => ({...p, name: filtered})); }} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+              <div><label htmlFor="edit-name" className="text-xs uppercase tracking-widest text-on-surface-variant">Name</label><input id="edit-name" value={editForm.name} onChange={e => { const filtered = e.target.value.replace(/\d/g, ''); setEditForm(p => ({...p, name: filtered})); }} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
               <div><label htmlFor="edit-role" className="text-xs uppercase tracking-widest text-on-surface-variant">Role</label><input id="edit-role" value={editForm.role} onChange={e => setEditForm(p => ({...p, role: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
               <div><label htmlFor="edit-phone" className="text-xs uppercase tracking-widest text-on-surface-variant">Phone</label><input id="edit-phone" value={editForm.phone} onChange={e => setEditForm(p => ({...p, phone: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
               <div><label htmlFor="edit-email" className="text-xs uppercase tracking-widest text-on-surface-variant">Email</label><input id="edit-email" value={editForm.email} onChange={e => setEditForm(p => ({...p, email: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>

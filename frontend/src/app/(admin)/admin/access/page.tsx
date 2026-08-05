@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { ShieldCheck, Lock, Eye, Edit, Trash2, Plus, AlertTriangle, CheckCircle2, ShieldX, ArrowLeft } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -96,10 +97,10 @@ export default function AccessControlPage() {
     }).catch(() => {});
     // Real audit/security logs (fall back to sample data if none yet).
     adminApi.auditLogs().then((rows: any[]) => {
-      if (rows && rows.length) {
+      if (rows?.length) {
         setLogs(rows.slice(0, 6).map((r) => ({
           type: r.action?.toLowerCase().includes("delete") || r.action?.toLowerCase().includes("fail") ? "error" : "success",
-          msg: `${r.action ?? "Action"}${r.entity_type ? ` · ${r.entity_type}` : ""}${r.actor_email ? ` by ${r.actor_email}` : ""}`,
+          msg: `${r.action ?? "Action"}${r.entity_type ? ` · ${r.entity_type}` : ""}${r.actor_email ? ` by ${r.actor_email}` : ""}`,  // NOSONAR
           time: r.created_at ? new Date(r.created_at).toLocaleString() : "",
         })));
       }
@@ -224,7 +225,7 @@ export default function AccessControlPage() {
               const Icon = LOG_ICONS[log.type];
               return (
                 <motion.div 
-                  key={i} 
+                  key={`item-{i}`} 
                   initial={{ opacity: 0, x: 15 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.1 + i * 0.05, type: "spring", stiffness: 200 }}

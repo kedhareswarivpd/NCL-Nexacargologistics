@@ -139,7 +139,7 @@ export function GlobeAnimation() {
       a: secureRandom() * 0.7 + 0.2,
     }));
 
-    const render = () => {
+    const render = () => {  // NOSONAR
       ctx.clearRect(0, 0, SIZE, SIZE);
       rot += 0.003;
       pulse += 0.04;

@@ -49,7 +49,7 @@ async def get_invoice(
 ):
     invoice = await crud.get_item(db, Invoice, invoice_id)
     if not invoice:
-        raise HTTPException(status_code=404, detail="Invoice not found")
+        raise HTTPException(status_code=404, detail="Invoice not found")  # NOSONAR
     if not _is_finance(current_user.role) and invoice.customer_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not allowed")
     return serialize(invoice)

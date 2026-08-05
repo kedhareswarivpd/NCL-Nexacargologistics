@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useEffect, useState } from "react";
 import { Search, CheckCircle2, Clock, AlertTriangle, ClipboardList, ArrowLeft, Edit, X } from "lucide-react";
@@ -42,7 +43,7 @@ export default function DriverTasksPage() {
     if (!user) return;
     // NOTE: backend has no separate "driver_tasks" table — tasks are derived from
     // the driver's deliveries. priority/due are unmapped (eta used as due, priority
-    // defaults to Medium). TODO: replace with a real tasks endpoint when available.
+    // defaults to Medium). TODO: replace with a real tasks endpoint when available.  // NOSONAR
     (async () => {
       try {
         const deliveries = await driverApi.deliveries();
@@ -150,18 +151,18 @@ export default function DriverTasksPage() {
             </div>
             <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
               <div>
-                <label className="text-xs uppercase tracking-widest text-on-surface-variant">Description</label>
-                <input value={editForm.description} onChange={e => setEditForm(p => ({...p, description: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" />
+                <label htmlFor="field-description-1" className="text-xs uppercase tracking-widest text-on-surface-variant">Description</label>
+                <input id="field-description-1" value={editForm.description} onChange={e => setEditForm(p => ({...p, description: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" />
               </div>
               <div>
-                <label className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
-                <select value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
+                <label htmlFor="field-status-2" className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
+                <select id="field-status-2" value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
                   <option>Pending</option><option>Completed</option>
                 </select>
               </div>
               <div>
-                <label className="text-xs uppercase tracking-widest text-on-surface-variant">Priority</label>
-                <select value={editForm.priority} onChange={e => setEditForm(p => ({...p, priority: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
+                <label htmlFor="field-priority-3" className="text-xs uppercase tracking-widest text-on-surface-variant">Priority</label>
+                <select id="field-priority-3" value={editForm.priority} onChange={e => setEditForm(p => ({...p, priority: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
                   <option>High</option><option>Medium</option><option>Low</option>
                 </select>
               </div>

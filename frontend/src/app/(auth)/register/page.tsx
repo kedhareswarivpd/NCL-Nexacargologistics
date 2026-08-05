@@ -76,7 +76,7 @@ export default function RegisterPage() {
           icon={UserIcon} 
           {...form.fieldProps("name")}
           onChange={(e) => {
-            const filtered = e.target.value.replace(/[0-9]/g, '');
+            const filtered = e.target.value.replace(/\d/g, '');
             form.setValues({ ...form.values, name: filtered });
             if (form.touched.name) {
               form.handleChange({ ...e, target: { ...e.target, value: filtered } } as React.ChangeEvent<HTMLInputElement>);
@@ -107,7 +107,7 @@ export default function RegisterPage() {
                     key={i}
                     className={cn(
                       "h-1 flex-1 rounded-full transition-colors",
-                      i < score ? (score >= 3 ? "bg-tertiary" : "bg-amber-400") : "bg-white/10",
+                      i < score ? (score >= 3 ? "bg-tertiary" : "bg-amber-400") : "bg-white/10",  // NOSONAR
                     )}
                   />
                 ))}

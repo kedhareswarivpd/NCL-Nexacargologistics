@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useState } from "react";
 import { User, Bell, Shield, Warehouse, ArrowLeft } from "lucide-react";
@@ -21,7 +22,7 @@ export default function SettingsPage() {
     if (!pwForm.next.trim()) errs.next = "New password is required.";
     else if (pwForm.next.length < 8) errs.next = "Must be at least 8 characters.";
     else if (!/[A-Za-z]/.test(pwForm.next)) errs.next = "Must include a letter.";
-    else if (!/[0-9]/.test(pwForm.next)) errs.next = "Must include a number.";
+    else if (!/\d/.test(pwForm.next)) errs.next = "Must include a number.";
     if (pwForm.confirm !== pwForm.next) errs.confirm = "Passwords do not match.";
     if (Object.keys(errs).length) { setPwErrors(errs); return; }
     setPwErrors({});
@@ -52,15 +53,15 @@ export default function SettingsPage() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="text-xs uppercase tracking-widest text-on-surface-variant">Full Name</label>
-            <input
+            <label htmlFor="field-full-name-2" className="text-xs uppercase tracking-widest text-on-surface-variant">Full Name</label>
+            <input id="field-full-name-2"
               defaultValue={user?.name ?? ""}
               className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50"
             />
           </div>
           <div>
-            <label className="text-xs uppercase tracking-widest text-on-surface-variant">Email</label>
-            <input
+            <label htmlFor="field-email-3" className="text-xs uppercase tracking-widest text-on-surface-variant">Email</label>
+            <input id="field-email-3"
               defaultValue={user?.email ?? ""}
               className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50"
             />
@@ -104,8 +105,8 @@ export default function SettingsPage() {
           <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">Warehouse Preferences</h2>
         </div>
         <div>
-          <label className="text-xs uppercase tracking-widest text-on-surface-variant">Default Zone View</label>
-          <select className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
+          <label htmlFor="field-default-zone-view-4" className="text-xs uppercase tracking-widest text-on-surface-variant">Default Zone View</label>
+          <select id="field-default-zone-view-4" className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
             <option>All Zones</option>
             <option>Zone A — Dry Goods</option>
             <option>Zone B — Electronics</option>
@@ -114,8 +115,8 @@ export default function SettingsPage() {
           </select>
         </div>
         <div>
-          <label className="text-xs uppercase tracking-widest text-on-surface-variant">Low Stock Threshold (%)</label>
-          <input
+          <label htmlFor="field-low-stock-threshold-5" className="text-xs uppercase tracking-widest text-on-surface-variant">Low Stock Threshold (%)</label>
+          <input id="field-low-stock-threshold-5"
             type="number"
             defaultValue={20}
             className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50"
@@ -135,18 +136,18 @@ export default function SettingsPage() {
         {pwSaved && <p className="text-xs text-green-400 bg-green-400/10 rounded-lg px-3 py-2">Password updated successfully.</p>}
         <form noValidate onSubmit={handlePasswordSave} className="space-y-4">
           <div>
-            <label className="text-xs uppercase tracking-widest text-on-surface-variant">Current Password</label>
-            <input type="password" value={pwForm.current} onChange={e => { setPwForm(p => ({...p, current: e.target.value})); setPwErrors(p => ({...p, current: ""})); }} placeholder="••••••••" className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface focus:outline-none focus:border-tertiary/50 ${pwErrors.current ? "border-red-500" : "border-white/10"}`} />
+            <label htmlFor="field-current-password-6" className="text-xs uppercase tracking-widest text-on-surface-variant">Current Password</label>
+            <input id="field-current-password-6" type="password" value={pwForm.current} onChange={e => { setPwForm(p => ({...p, current: e.target.value})); setPwErrors(p => ({...p, current: ""})); }} placeholder="••••••••" className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface focus:outline-none focus:border-tertiary/50 ${pwErrors.current ? "border-red-500" : "border-white/10"}`} />
             {pwErrors.current && <p className="text-xs text-error mt-1">{pwErrors.current}</p>}
           </div>
           <div>
-            <label className="text-xs uppercase tracking-widest text-on-surface-variant">New Password</label>
-            <input type="password" value={pwForm.next} onChange={e => { setPwForm(p => ({...p, next: e.target.value})); setPwErrors(p => ({...p, next: ""})); }} placeholder="••••••••" className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface focus:outline-none focus:border-tertiary/50 ${pwErrors.next ? "border-red-500" : "border-white/10"}`} />
+            <label htmlFor="field-new-password-7" className="text-xs uppercase tracking-widest text-on-surface-variant">New Password</label>
+            <input id="field-new-password-7" type="password" value={pwForm.next} onChange={e => { setPwForm(p => ({...p, next: e.target.value})); setPwErrors(p => ({...p, next: ""})); }} placeholder="••••••••" className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface focus:outline-none focus:border-tertiary/50 ${pwErrors.next ? "border-red-500" : "border-white/10"}`} />
             {pwErrors.next && <p className="text-xs text-error mt-1">{pwErrors.next}</p>}
           </div>
           <div>
-            <label className="text-xs uppercase tracking-widest text-on-surface-variant">Confirm New Password</label>
-            <input type="password" value={pwForm.confirm} onChange={e => { setPwForm(p => ({...p, confirm: e.target.value})); setPwErrors(p => ({...p, confirm: ""})); }} placeholder="••••••••" className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface focus:outline-none focus:border-tertiary/50 ${pwErrors.confirm ? "border-red-500" : "border-white/10"}`} />
+            <label htmlFor="field-confirm-new-password-1" className="text-xs uppercase tracking-widest text-on-surface-variant">Confirm New Password</label>
+            <input id="field-confirm-new-password-1" type="password" value={pwForm.confirm} onChange={e => { setPwForm(p => ({...p, confirm: e.target.value})); setPwErrors(p => ({...p, confirm: ""})); }} placeholder="••••••••" className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface focus:outline-none focus:border-tertiary/50 ${pwErrors.confirm ? "border-red-500" : "border-white/10"}`} />
             {pwErrors.confirm && <p className="text-xs text-error mt-1">{pwErrors.confirm}</p>}
           </div>
           <button type="submit" className="mt-2 px-4 py-2 rounded-lg bg-error/10 text-error text-sm font-semibold hover:bg-error/20 transition-colors">Update Password</button>

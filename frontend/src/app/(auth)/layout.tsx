@@ -1,3 +1,4 @@
+import React from "react";
 import Link from "next/link";
 import { TrendingUp, Globe, Zap } from "lucide-react";
 
@@ -6,7 +7,7 @@ import { TrendingUp, Globe, Zap } from "lucide-react";
  * Left: brand + live-stats visual narrative (hidden on small screens).
  * Right: the active auth form (the route's page).
  */
-export default function AuthLayout({ children }: { children: React.ReactNode }) {
+export default function AuthLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <main className="flex min-h-screen flex-col bg-background text-on-surface md:flex-row">
       {/* Visual narrative panel */}

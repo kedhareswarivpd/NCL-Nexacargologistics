@@ -1,7 +1,8 @@
 "use client";
+import React from "react";
 
 import { useEffect, useRef, useState } from "react";
-import { Search, AlertTriangle, TrendingDown, Package, ScanBarcode, ArrowLeft, Edit, X, Plus } from "lucide-react";
+import { Search, AlertTriangle, TrendingDown, Package, ScanBarcode, ArrowLeft, Edit, X } from "lucide-react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { warehouseApi } from "@/lib/services";
@@ -191,11 +192,11 @@ export default function InventoryPage() {
             </div>
             <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2"><label className="text-xs uppercase tracking-widest text-on-surface-variant">Name</label><input value={editForm.name} onChange={e => { const filtered = e.target.value.replace(/[0-9]/g, ''); setEditForm(p => ({...p, name: filtered})); }} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
-                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Quantity</label><input type="number" value={editForm.qty} onChange={e => setEditForm(p => ({...p, qty: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
-                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Reorder At</label><input type="number" value={editForm.reorder_at} onChange={e => setEditForm(p => ({...p, reorder_at: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
-                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Zone</label><input value={editForm.zone} onChange={e => setEditForm(p => ({...p, zone: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
-                <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Category</label><input value={editForm.category} onChange={e => setEditForm(p => ({...p, category: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+                <div className="col-span-2"><label htmlFor="field-name-1" className="text-xs uppercase tracking-widest text-on-surface-variant">Name</label><input id="field-name-1" value={editForm.name} onChange={e => { const filtered = e.target.value.replace(/\d/g, ''); setEditForm(p => ({...p, name: filtered})); }} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+                <div><label htmlFor="field-quantity-2" className="text-xs uppercase tracking-widest text-on-surface-variant">Quantity</label><input id="field-quantity-2" type="number" value={editForm.qty} onChange={e => setEditForm(p => ({...p, qty: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+                <div><label htmlFor="field-reorder-at-3" className="text-xs uppercase tracking-widest text-on-surface-variant">Reorder At</label><input id="field-reorder-at-3" type="number" value={editForm.reorder_at} onChange={e => setEditForm(p => ({...p, reorder_at: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+                <div><label htmlFor="field-zone-4" className="text-xs uppercase tracking-widest text-on-surface-variant">Zone</label><input id="field-zone-4" value={editForm.zone} onChange={e => setEditForm(p => ({...p, zone: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+                <div><label htmlFor="field-category-5" className="text-xs uppercase tracking-widest text-on-surface-variant">Category</label><input id="field-category-5" value={editForm.category} onChange={e => setEditForm(p => ({...p, category: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
               </div>
               <div className="flex gap-3 pt-2">
                 <button type="submit" disabled={editSaving} className="flex-1 py-2.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] disabled:opacity-50">{editSaving ? "Saving…" : "Save Changes"}</button>

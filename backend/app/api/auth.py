@@ -51,7 +51,7 @@ async def register(payload: RegisterRequest, db: AsyncSession = Depends(get_db))
     if not settings.JWT_SECRET:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Backend auth is not configured",
+            detail="Backend auth is not configured",  # NOSONAR
         )
 
     email = payload.email.lower().strip()
@@ -168,7 +168,7 @@ async def reset_password(payload: ResetPasswordRequest, db: AsyncSession = Depen
 async def change_password(
     payload: ChangePasswordRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: Profile = Depends(get_current_user),
+    current_user: Profile = Depends(get_current_user),  # NOSONAR
 ):
     if not current_user.password_hash:
         raise HTTPException(

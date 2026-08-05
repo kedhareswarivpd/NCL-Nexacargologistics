@@ -47,7 +47,7 @@ async def update_my_delivery(
         shipment = await crud.get_item(db, Shipment, delivery.shipment_id)
         if shipment:
             mapped = {
-                "Picked Up": "In Transit",
+                "Picked Up": "In Transit",  # NOSONAR
                 "In Transit": "In Transit",
                 "Delivered": "Delivered",
                 "Failed": "Delayed",

@@ -1,11 +1,12 @@
 "use client";
+import React from "react";
 
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { FinanceSidebar } from "@/components/shared/FinanceSidebar";
 import { PortalHeader } from "@/components/shared/PortalHeader";
 import { MobileSidebarWrapper } from "@/components/shared/MobileSidebarWrapper";
 
-export default function FinanceLayout({ children }: { children: React.ReactNode }) {
+export default function FinanceLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <ProtectedRoute allow={["finance", "admin"]}>
       <div className="flex bg-background text-on-surface min-h-screen">

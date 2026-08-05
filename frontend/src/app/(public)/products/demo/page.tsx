@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -125,8 +126,8 @@ export default function RequestDemoPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
-                <label className="text-xs uppercase tracking-widest text-blue-200/60 mb-1 block">Company Size</label>
-                <select value={form.size} onChange={e => set("size", e.target.value)} className={inputCls("size")}>
+                <label htmlFor="field-company-size-1" className="text-xs uppercase tracking-widest text-blue-200/60 mb-1 block">Company Size</label>
+                <select id="field-company-size-1" value={form.size} onChange={e => set("size", e.target.value)} className={inputCls("size")}>
                   <option value="">Select size…</option>
                   {COMPANY_SIZES.map(s => <option key={s} value={s}>{s} employees</option>)}
                 </select>
@@ -148,8 +149,8 @@ export default function RequestDemoPage() {
                 {errors.date && <p className="text-xs text-red-400 mt-1">{errors.date}</p>}
               </div>
               <div>
-                <label className="text-xs uppercase tracking-widest text-blue-200/60 mb-1 block">Preferred Time *</label>
-                <select value={form.time} onChange={e => set("time", e.target.value)} className={inputCls("time")}>
+                <label htmlFor="field-preferred-time-2" className="text-xs uppercase tracking-widest text-blue-200/60 mb-1 block">Preferred Time *</label>
+                <select id="field-preferred-time-2" value={form.time} onChange={e => set("time", e.target.value)} className={inputCls("time")}>
                   <option value="">Select a time…</option>
                   {TIMES.map(t => <option key={t} value={t}>{t}</option>)}
                 </select>
@@ -158,8 +159,8 @@ export default function RequestDemoPage() {
             </div>
 
             <div>
-              <label className="text-xs uppercase tracking-widest text-blue-200/60 mb-1 block">What would you like to see in the demo?</label>
-              <textarea value={form.useCase} onChange={e => set("useCase", e.target.value)} rows={3}
+              <label htmlFor="field-what-would-you-like-to-see-in-the-demo-3" className="text-xs uppercase tracking-widest text-blue-200/60 mb-1 block">What would you like to see in the demo?</label>
+              <textarea id="field-what-would-you-like-to-see-in-the-demo-3" value={form.useCase} onChange={e => set("useCase", e.target.value)} rows={3}
                 placeholder="e.g. automated customs filing, warehouse inventory tracking, live shipment visibility…"
                 className="w-full px-3 py-2.5 rounded-lg bg-[#0d2545] border border-white/10 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#00C2FF]/50 resize-none" />
             </div>

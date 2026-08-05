@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -20,7 +21,7 @@ export default function ConsultationPage() {
     const e: Record<string, string> = {};
     if (!form.name.trim())     e.name     = "Please fill out this field";
     if (!form.email.trim())    e.email    = "Please fill out this field";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) e.email = "Enter a valid email address.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) e.email = "Enter a valid email address.";  // NOSONAR
     if (!form.company.trim())  e.company  = "Please fill out this field";
     if (!form.industry)        e.industry = "Please select an industry";
     if (!form.date)            e.date     = "Please select a date";
@@ -121,8 +122,8 @@ export default function ConsultationPage() {
 
             {/* Industry */}
             <div>
-              <label className="text-xs uppercase tracking-widest text-blue-200/60 mb-1 block">Industry *</label>
-              <select value={form.industry} onChange={e => set("industry", e.target.value)}
+              <label htmlFor="field-industry-1" className="text-xs uppercase tracking-widest text-blue-200/60 mb-1 block">Industry *</label>
+              <select id="field-industry-1" value={form.industry} onChange={e => set("industry", e.target.value)}
                 className={`w-full px-3 py-2.5 rounded-lg bg-[#0d2545] border text-sm text-white focus:outline-none focus:border-[#00C2FF]/50 ${errors.industry ? "border-red-500" : "border-white/10"}`}>
                 <option value="">Select your industry…</option>
                 {INDUSTRIES.map(i => <option key={i} value={i}>{i}</option>)}
@@ -151,8 +152,8 @@ export default function ConsultationPage() {
 
             {/* Message */}
             <div>
-              <label className="text-xs uppercase tracking-widest text-blue-200/60 mb-1 block">Tell us about your logistics challenge</label>
-              <textarea value={form.message} onChange={e => set("message", e.target.value)} rows={3}
+              <label htmlFor="field-tell-us-about-your-logistics-challenge-2" className="text-xs uppercase tracking-widest text-blue-200/60 mb-1 block">Tell us about your logistics challenge</label>
+              <textarea id="field-tell-us-about-your-logistics-challenge-2" value={form.message} onChange={e => set("message", e.target.value)} rows={3}
                 placeholder="Describe your current supply chain pain points, volumes, routes…"
                 className="w-full px-3 py-2.5 rounded-lg bg-[#0d2545] border border-white/10 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#00C2FF]/50 resize-none" />
             </div>

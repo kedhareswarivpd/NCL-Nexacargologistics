@@ -1,3 +1,4 @@
+import React from "react";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AuthHeader } from "@/components/shared/AuthHeader";
 
@@ -5,7 +6,7 @@ import { AuthHeader } from "@/components/shared/AuthHeader";
  * Layout for authenticated pages. Wraps children in ProtectedRoute so an
  * unauthenticated visit redirects to /login, and renders the shared header.
  */
-export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
+export default function ProtectedLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-background">

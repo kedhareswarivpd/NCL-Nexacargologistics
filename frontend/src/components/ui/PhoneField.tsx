@@ -86,7 +86,7 @@ export function PhoneField({ label = "Phone", name, value, onChange, onBlur, err
   // Sync if external value changes (e.g. on reset)
   React.useEffect(() => {
     const [d, n] = parsePhone(value);
-    if (COUNTRIES.find(([code]) => code === d)) setDial(d);
+    if (COUNTRIES.some(([code]) => code === d)) setDial(d);
     setNumber(n);
   }, [value]);
 

@@ -1,0 +1,4 @@
+
+QH"Generic reference generator, e.g. generate_ref('INV') -> 'INV-3F9A2B'."str
+"{prefix}-{_rand(n)}"strprefix (n (("
+ (!*IC:\Users\DELL\Desktop\NCL-Nexacargologistics\backend\app\utils\helpers.py

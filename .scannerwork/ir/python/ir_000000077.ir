@@ -1,0 +1,26 @@
+
+
+	0introle (	tupleapp.models.profile.UserRole"‰&
+$
+ (""#get-field# ADMIN:(
+&
+$ (4"#get-field# FINANCE:(
+&
+ (5"#unknown-value#Btuple&
+$
+ (5"
+#is-exact#:Bbool
+
+ (5"
+#assume#:8
+6
+ (5
+"#set-field# __collection_size:	Bint&
+$
+ (5"#array-add-last#:&
+$
+ (5"#array-add-last#:*
+(
+ (5"
+#binop in#2in:Bbool
+ (5*GC:\Users\DELL\Desktop\NCL-Nexacargologistics\backend\app\api\finance.py

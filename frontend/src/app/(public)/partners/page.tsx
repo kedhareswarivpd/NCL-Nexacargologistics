@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -52,7 +53,7 @@ export default function PartnersPage() {
   const [submitted, setSubmitted] = useState(false);
 
   const set = (key: string, val: string) => {
-    if (key === "company") val = val.replace(/[^a-zA-Z0-9\s&.\-]/g, "");
+    if (key === "company") val = val.replace(/[^a-zA-Z0-9\s&.-]/g, "");
     if (key === "message") val = val.replace(/[^a-zA-Z\s]/g, "");
     setForm(p => ({ ...p, [key]: val }));
     setErrors(p => ({ ...p, [key]: "" }));
@@ -81,8 +82,8 @@ export default function PartnersPage() {
       {/* Hero */}
       <section className="relative py-24 px-6 max-w-7xl mx-auto text-center overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_50%_at_50%_30%,rgba(30,136,229,0.08),transparent_70%)]" />
-        {[...Array(10)].map((_,i)=>(
-          <motion.span key={i} className="absolute rounded-full bg-tertiary/20 blur-sm pointer-events-none"
+        {[...new Array(10)].map((_,i)=>(
+          <motion.span key={`item-{i}`} className="absolute rounded-full bg-tertiary/20 blur-sm pointer-events-none"
             style={{ left:`${(i*11+3)%96}%`, top:`${(i*17+5)%88}%`, width:`${6+(i%3)*3}px`, height:`${6+(i%3)*3}px` }}
             animate={{ y:[0,-14,0], opacity:[0.15,0.6,0.15] }}
             transition={{ duration:3+(i%4), repeat:Infinity, delay:i*0.2 }} />
@@ -162,22 +163,22 @@ export default function PartnersPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Company Name */}
               <div>
-                <label className="text-xs uppercase tracking-widest text-on-surface-variant mb-1 block">Company Name *</label>
-                <input value={form.company} onChange={e => set("company", e.target.value)} placeholder="e.g. Acme Logistics"
+                <label htmlFor="field-company-name-1" className="text-xs uppercase tracking-widest text-on-surface-variant mb-1 block">Company Name *</label>
+                <input id="field-company-name-1" value={form.company} onChange={e => set("company", e.target.value)} placeholder="e.g. Acme Logistics"
                   className={`w-full px-4 py-2.5 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 ${errors.company ? "border-red-500" : "border-white/10"}`} />
                 {errors.company && <p className="text-xs text-red-400 mt-1">{errors.company}</p>}
               </div>
               {/* Contact Email */}
               <div>
-                <label className="text-xs uppercase tracking-widest text-on-surface-variant mb-1 block">Contact Email *</label>
-                <input type="email" value={form.email} onChange={e => set("email", e.target.value)} placeholder="you@company.com"
+                <label htmlFor="field-contact-email-2" className="text-xs uppercase tracking-widest text-on-surface-variant mb-1 block">Contact Email *</label>
+                <input id="field-contact-email-2" type="email" value={form.email} onChange={e => set("email", e.target.value)} placeholder="you@company.com"
                   className={`w-full px-4 py-2.5 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 ${errors.email ? "border-red-500" : "border-white/10"}`} />
                 {errors.email && <p className="text-xs text-red-400 mt-1">{errors.email}</p>}
               </div>
               {/* Partnership Type */}
               <div>
-                <label className="text-xs uppercase tracking-widest text-on-surface-variant mb-1 block">Partnership Type *</label>
-                <select value={form.type} onChange={e => set("type", e.target.value)}
+                <label htmlFor="field-partnership-type-3" className="text-xs uppercase tracking-widest text-on-surface-variant mb-1 block">Partnership Type *</label>
+                <select id="field-partnership-type-3" value={form.type} onChange={e => set("type", e.target.value)}
                   className={`w-full px-4 py-2.5 rounded-lg bg-surface-container border text-sm text-on-surface focus:outline-none focus:border-tertiary/50 ${errors.type ? "border-red-500" : "border-white/10"}`}>
                   <option value="">Select...</option>
                   {PARTNERSHIP_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
@@ -186,8 +187,8 @@ export default function PartnersPage() {
               </div>
               {/* Message */}
               <div>
-                <label className="text-xs uppercase tracking-widest text-on-surface-variant mb-1 block">Message</label>
-                <textarea rows={3} value={form.message} onChange={e => set("message", e.target.value)}
+                <label htmlFor="field-message-4" className="text-xs uppercase tracking-widest text-on-surface-variant mb-1 block">Message</label>
+                <textarea id="field-message-4" rows={3} value={form.message} onChange={e => set("message", e.target.value)}
                   placeholder="Tell us about your company and how you'd like to partner..."
                   className={`w-full px-4 py-2.5 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 resize-none ${errors.message ? "border-red-500" : "border-white/10"}`} />
                 {errors.message && <p className="text-xs text-red-400 mt-1">{errors.message}</p>}

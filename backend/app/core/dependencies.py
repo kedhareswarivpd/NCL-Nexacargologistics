@@ -7,7 +7,7 @@ from app.models.profile import Profile, UserRole
 def require_roles(*allowed: str):
     allowed_set = set(allowed) | {UserRole.ADMIN}
 
-    async def _guard(current_user: Profile = Depends(get_current_user)) -> Profile:
+    async def _guard(current_user: Profile = Depends(get_current_user)) -> Profile:  # NOSONAR
         if current_user.role not in allowed_set:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,

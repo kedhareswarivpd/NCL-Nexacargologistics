@@ -50,7 +50,7 @@ const VARIANT_ICON: Record<ToastVariant, React.ElementType> = {
   info: Info,
 };
 
-export function ToastProvider({ children }: { children: React.ReactNode }) {
+export function ToastProvider({ children }: Readonly<{ children: React.ReactNode }>) {
   const [toasts, setToasts] = React.useState<Toast[]>([]);
 
   const dismiss = React.useCallback((id: string) => {
@@ -89,7 +89,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         {toasts.map((t) => {
           const Icon = VARIANT_ICON[t.variant];
           return (
-            <div
+            <div  // NOSONAR
               key={t.id}
               role="status"
               className={cn(

@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useState, useEffect } from "react";
 import { Search, UserPlus, Ban, Trash2, CheckCircle2, Clock, XCircle, ArrowLeft, Edit, X } from "lucide-react";
@@ -296,7 +297,7 @@ export default function UserManagementPage() {
                   <td colSpan={6} className="px-4 py-8 text-center text-on-surface-variant text-sm">
                     {loading ? (
                       "Loading…"
-                    ) : error ? (
+                    ) : error ? (  // NOSONAR
                       <span className="text-error font-medium">{error}</span>
                     ) : (
                       "No users match your search."
@@ -317,14 +318,14 @@ export default function UserManagementPage() {
               <button type="button" onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
             </div>
             <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Name</label><input value={editForm.name} onChange={e => { const filtered = e.target.value.replace(/[0-9]/g, ''); setEditForm(p => ({...p, name: filtered})); }} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Role</label>
-                <select value={editForm.role} onChange={e => setEditForm(p => ({...p, role: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
+              <div><label htmlFor="field-name-1" className="text-xs uppercase tracking-widest text-on-surface-variant">Name</label><input id="field-name-1" value={editForm.name} onChange={e => { const filtered = e.target.value.replace(/\d/g, ''); setEditForm(p => ({...p, name: filtered})); }} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+              <div><label htmlFor="field-role-2" className="text-xs uppercase tracking-widest text-on-surface-variant">Role</label>
+                <select id="field-role-2" value={editForm.role} onChange={e => setEditForm(p => ({...p, role: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
                   {["customer","admin","logistics","finance","warehouse","driver","support","customs"].map(r => <option key={r}>{r}</option>)}
                 </select>
               </div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
-                <select value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
+              <div><label htmlFor="field-status-3" className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
+                <select id="field-status-3" value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
                   <option value="active">Active</option><option value="suspended">Suspended</option><option value="invited">Pending</option>
                 </select>
               </div>

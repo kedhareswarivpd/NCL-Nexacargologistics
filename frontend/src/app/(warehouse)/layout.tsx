@@ -1,11 +1,12 @@
 "use client";
+import React from "react";
 
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { WarehouseSidebar } from "@/components/shared/WarehouseSidebar";
 import { PortalHeader } from "@/components/shared/PortalHeader";
 import { MobileSidebarWrapper } from "@/components/shared/MobileSidebarWrapper";
 
-export default function WarehouseLayout({ children }: { children: React.ReactNode }) {
+export default function WarehouseLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <ProtectedRoute allow={["warehouse", "admin"]}>
       <div className="flex bg-background text-on-surface min-h-screen">

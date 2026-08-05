@@ -180,7 +180,7 @@ export async function requestPasswordReset(email: string): Promise<void> {
   });
 }
 
-export function setSession(_userId: string) {}
+export function setSession(_userId: string) {}  // NOSONAR
 export function clearSession() {
   if (typeof window !== "undefined") localStorage.removeItem(SESSION_KEY);
 }

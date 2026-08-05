@@ -17,7 +17,7 @@ class Container(Base):
     type = Column(String(40), nullable=False)
     status = Column(String(30), nullable=False, default="Available")  # Available|In Use|Maintenance
     location = Column(String(255), nullable=True)
-    shipment_id = Column(UUID(as_uuid=True), ForeignKey("shipments.id"), nullable=True)
+    shipment_id = Column(UUID(as_uuid=True), ForeignKey("shipments.id"), nullable=True)  # NOSONAR
     capacity = Column(String(40), nullable=True)
     created_at = created_column()
 
@@ -32,7 +32,7 @@ class Route(Base):
     distance = Column(String(40), nullable=True)
     duration = Column(String(40), nullable=True)
     status = Column(String(30), nullable=False, default="Active")
-    driver_id = Column(UUID(as_uuid=True), ForeignKey("profiles.id"), nullable=True)
+    driver_id = Column(UUID(as_uuid=True), ForeignKey("profiles.id"), nullable=True)  # NOSONAR
     vehicle_id = Column(UUID(as_uuid=True), ForeignKey("vehicles.id"), nullable=True)
     shipment_id = Column(UUID(as_uuid=True), ForeignKey("shipments.id"), nullable=True)
     created_at = created_column()

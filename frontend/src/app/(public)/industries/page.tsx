@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Shirt, Syringe, ShoppingCart, Package, Globe, ArrowRight, CheckCircle2, Download } from "lucide-react";
+import { Shirt, Syringe, ShoppingCart, Package, Globe, ArrowRight, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
@@ -19,7 +19,7 @@ const scaleReveal = {
   show:   { opacity: 1, scale: 1, transition: { duration: 0.65 } },
 };
 
-function Counter({ to, suffix = "", decimals = 0, duration = 2 }: { to: number; suffix?: string; decimals?: number; duration?: number }) {
+function Counter({ to, suffix = "", decimals = 0, duration = 2 }: Readonly<{ to: number; suffix?: string; decimals?: number; duration?: number }>) {
   const [val, setVal] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true });
@@ -66,9 +66,9 @@ export default function IndustrySolutionsPage() {
           className="relative overflow-hidden rounded-3xl glass border border-white/10 p-8 md:p-12 mb-16"
         >
           {/* Floating particles */}
-          {[...Array(20)].map((_, i) => (
+          {[...new Array(20)].map((_, i) => (
             <motion.span
-              key={i}
+              key={`item-{i}`}
               className="absolute rounded-full bg-tertiary/20 blur-sm pointer-events-none"
               style={{
                 left: `${(i * 7 + 4) % 100}%`,

@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useEffect, useState } from "react";
 import { Search, ScanBarcode, CheckCircle2, Clock, AlertTriangle, ArrowLeft, Edit, X } from "lucide-react";
@@ -145,13 +146,13 @@ export default function TasksPage() {
               <button type="button" onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
             </div>
             <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Description</label><input value={editForm.description} onChange={e => setEditForm(p => ({...p, description: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
-                <select value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
+              <div><label htmlFor="field-description-1" className="text-xs uppercase tracking-widest text-on-surface-variant">Description</label><input id="field-description-1" value={editForm.description} onChange={e => setEditForm(p => ({...p, description: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+              <div><label htmlFor="field-status-2" className="text-xs uppercase tracking-widest text-on-surface-variant">Status</label>
+                <select id="field-status-2" value={editForm.status} onChange={e => setEditForm(p => ({...p, status: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
                   <option>Pending</option><option>In Progress</option><option>Done</option>
                 </select>
               </div>
-              <div><label className="text-xs uppercase tracking-widest text-on-surface-variant">Assigned To</label><input value={editForm.assigned_to} onChange={e => setEditForm(p => ({...p, assigned_to: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+              <div><label htmlFor="field-assigned-to-3" className="text-xs uppercase tracking-widest text-on-surface-variant">Assigned To</label><input id="field-assigned-to-3" value={editForm.assigned_to} onChange={e => setEditForm(p => ({...p, assigned_to: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
               <div className="flex gap-3 pt-2">
                 <button type="submit" disabled={editSaving} className="flex-1 py-2.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] disabled:opacity-50">{editSaving ? "Saving…" : "Save Changes"}</button>
                 <button type="button" onClick={() => setEditTarget(null)} className="px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-on-surface-variant hover:bg-white/10">Cancel</button>

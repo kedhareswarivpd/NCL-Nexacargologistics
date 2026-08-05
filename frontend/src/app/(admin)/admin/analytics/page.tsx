@@ -63,7 +63,7 @@ export default function AnalyticsPage() {
     adminApi.dashboard().then(setStats).catch(() => setStats(null));
   }, []);
 
-  const totalUsers = stats?.users ?? MONTHLY[MONTHLY.length - 1].users;
+  const totalUsers = stats?.users ?? MONTHLY.at(-1)!.users;
   const totalShipments = stats?.shipments ?? MONTHLY.reduce((s, m) => s + m.shipments, 0);
   const totalRevenue = stats?.revenue ?? MONTHLY.reduce((s, m) => s + m.revenue, 0);
   const totalBranches = stats?.branches ?? 6;

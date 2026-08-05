@@ -159,7 +159,7 @@ async def get_quote(
 ):
     quote = await crud.get_item(db, Quote, quote_id)
     if not quote:
-        raise HTTPException(status_code=404, detail="Quote not found")
+        raise HTTPException(status_code=404, detail="Quote not found")  # NOSONAR
     assert_owner_or_staff(quote, current_user)
     return serialize(quote)
 

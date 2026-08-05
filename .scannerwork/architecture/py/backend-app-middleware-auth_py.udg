@@ -1,0 +1,154 @@
+
+1.0PythonFrontend"1785971913505*py2.BË
+
+imports1
+
+extends2
+
+returns3
+
+	has param4
+
+module5
+
+
+class6
+
+function7
+#
+backend/app/middleware/auth.py9
+
+app.middleware.auth11
+
+
+uuid12
+
+starlette.status14
+
+fastapi16
+
+fastapi.security18
+
+sqlalchemy.ext.asyncio20
+
+sqlalchemy.future22
+
+app.core.database24
+
+app.core.security26
+
+app.models.profile28
+*
+$app.middleware.auth.get_current_user30
+
+typing.Coroutine32
+ 
+starlette.requests.Request34
+1
++sqlalchemy.ext.asyncio.session.AsyncSession36
+3
+-app.middleware.auth.get_current_user_optional38
+(
+"app.middleware.auth._extract_token40J
+
+8
+89 j—
+ 
+10
+10115 *
+8 (
+
+13
+13125
+
+15
+15145
+
+17
+17165
+
+19
+19185
+
+21
+21205
+
+23
+23225
+
+25
+25245
+
+27
+27265
+
+29
+29285
+
+31
+31307 210
+
+33
+33326
+
+35
+35346
+
+37
+37366
+
+39
+39387 210
+
+41
+41407 210r†
+
+10131*
+8 (
+
+10151*
+8- (3
+
+10171*
+8 (<
+
+10191*
+8 (F
+
+10211*
+8 (0
+
+10231*
+8 (%
+
+10251*
+8 (%
+
+10271*
+8	 	(>
+
+10291*
+8
+ 
+(1
+
+31333*
+8 (
+
+31354*
+8 (
+
+31374*
+8 (
+
+39333*
+8B B($
+
+39354*
+8B B($
+
+39374*
+8B B($
+
+41354*
+8 (

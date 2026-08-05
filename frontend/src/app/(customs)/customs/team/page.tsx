@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
-import { FileText, MapPin, Phone, Mail, Award, Star, Globe, Shield } from "lucide-react";
+import { FileText, Phone, Mail, Award, Star, Globe, Shield } from "lucide-react";
 import { usersApi } from "@/lib/services";
 
 const initials = (name: string) => name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
@@ -36,7 +36,7 @@ export default function CustomsTeamPage() {
   const [members, setMembers] = useState(CUSTOMS_EXPERTS);
   useEffect(() => {
     usersApi.list({ role: "customs" })
-      .then((staff: any[]) => { if (staff && staff.length) setMembers(staff.map(mapStaff)); })
+      .then((staff: any[]) => { if (staff?.length) setMembers(staff.map(mapStaff)); })
       .catch(() => {});
   }, []);
   return (

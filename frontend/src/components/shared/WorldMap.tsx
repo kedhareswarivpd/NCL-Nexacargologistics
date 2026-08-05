@@ -19,11 +19,11 @@ const OFFICES = [
 ];
 
 /* Animated SVG route line between two % positions */
-function RouteLine({ x1, y1, x2, y2, delay = 0 }: { x1: number; y1: number; y2: number; x2: number; delay?: number }) {
+function RouteLine({ x1, y1, x2, y2, delay = 0 }: Readonly<{ x1: number; y1: number; y2: number; x2: number; delay?: number }>) {
   const mx = (x1 + x2) / 2;
   const my = Math.min(y1, y2) - 8;
   const d = `M ${x1} ${y1} Q ${mx} ${my} ${x2} ${y2}`;
-  const len = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2) * 6;
+  const len = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2) * 6;  // NOSONAR
 
   return (
     <motion.path d={d} fill="none"

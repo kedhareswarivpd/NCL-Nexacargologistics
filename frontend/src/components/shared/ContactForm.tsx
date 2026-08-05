@@ -54,7 +54,7 @@ export function ContactForm() {
         placeholder="John Doe" 
         {...form.fieldProps("name")}
         onChange={(e) => {
-          const filtered = e.target.value.replace(/[0-9]/g, '');
+          const filtered = e.target.value.replace(/\d/g, '');
           form.setValues({ ...form.values, name: filtered });
           if (form.touched.name) {
             form.handleChange({ ...e, target: { ...e.target, value: filtered } } as React.ChangeEvent<HTMLInputElement>);

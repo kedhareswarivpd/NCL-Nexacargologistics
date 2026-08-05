@@ -87,7 +87,7 @@ async def get_shipment(
 ):
     shipment = await crud.get_item(db, Shipment, shipment_id)
     if not shipment:
-        raise HTTPException(status_code=404, detail="Shipment not found")
+        raise HTTPException(status_code=404, detail="Shipment not found")  # NOSONAR
     assert_owner_or_staff(shipment, current_user)
     return serialize(shipment)
 

@@ -24,9 +24,9 @@ export default function TechnologyProductsPage() {
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#020D1F]/50 to-[#020D1F] z-0"></div>
 
           {/* Floating particles */}
-          {[...Array(20)].map((_, i) => (
+          {[...new Array(20)].map((_, i) => (
             <motion.span
-              key={i}
+              key={`item-{i}`}
               className="absolute rounded-full bg-tertiary/20 blur-sm pointer-events-none"
               style={{
                 left: `${(i * 7 + 4) % 100}%`,

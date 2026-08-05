@@ -30,8 +30,8 @@ export default function CustomsHubsPage() {
       {/* Hero */}
       <section className="relative py-24 px-6 max-w-7xl mx-auto text-center overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_50%_at_50%_30%,rgba(0,194,255,0.07),transparent_70%)]" />
-        {[...Array(10)].map((_,i)=>(
-          <motion.span key={i} className="absolute rounded-full bg-tertiary/20 blur-sm pointer-events-none"
+        {[...new Array(10)].map((_,i)=>(
+          <motion.span key={`item-{i}`} className="absolute rounded-full bg-tertiary/20 blur-sm pointer-events-none"
             style={{ left:`${(i*11+3)%96}%`, top:`${(i*17+5)%88}%`, width:`${6+(i%3)*3}px`, height:`${6+(i%3)*3}px` }}
             animate={{ y:[0,-14,0], opacity:[0.15,0.6,0.15] }}
             transition={{ duration:3+(i%4), repeat:Infinity, delay:i*0.2 }} />

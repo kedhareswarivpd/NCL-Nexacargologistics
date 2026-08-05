@@ -1,3 +1,4 @@
+import React from "react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -5,6 +6,6 @@ export const metadata: Metadata = {
   description: "Secure administrator access to the NexaCargo control centre.",
 };
 
-export default function AdminAuthLayout({ children }: { children: React.ReactNode }) {
+export default function AdminAuthLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return <>{children}</>;
 }

@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import * as React from "react";
 
-export default function RootTemplate({ children }: { children: React.ReactNode }) {
+export default function RootTemplate({ children }: Readonly<{ children: React.ReactNode }>) {
   const pathname = usePathname();
 
   return (
