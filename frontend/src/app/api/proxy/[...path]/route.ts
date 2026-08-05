@@ -36,7 +36,11 @@ async function handler(req: NextRequest, { params }: { params: Promise<{ path: s
   // Retry fetch up to 2 times for 502/503/504 errors (Render free tier cold-start spin-up)
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
-      const res = await fetch(url, { method: req.method, headers, body });
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 50000); // 50s timeout to beat Vercel's 60s hard limit
+      const res = await fetch(url, { method: req.method, headers, body, signal: controller.signal });
+      clearTimeout(timeoutId);
+      
       if ((res.status === 502 || res.status === 503 || res.status === 504) && attempt < 3) {
         await new Promise((resolve) => setTimeout(resolve, 3000));
         continue;
