@@ -18,6 +18,7 @@ async function proxyWithRetry(
   headers: Record<string, string>,
   body: string | undefined
 ): Promise<NextResponse> {
+  const idempotent = method === "GET" || method === "HEAD" || method === "OPTIONS";
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
       const controller = new AbortController();
@@ -26,7 +27,7 @@ async function proxyWithRetry(
       clearTimeout(timeoutId);
 
       const status = res.status;
-      if ((status === 502 || status === 503 || status === 504) && attempt < 3) {
+      if (idempotent && (status === 502 || status === 503 || status === 504) && attempt < 3) {
         await new Promise((resolve) => setTimeout(resolve, 3000));
         continue;
       }
@@ -42,7 +43,7 @@ async function proxyWithRetry(
       });
     } catch (err) {
       console.error(`[proxy] ${method} ${url} attempt ${attempt} threw:`, err);
-      if (attempt < 3) {
+      if (idempotent && attempt < 3) {
         await new Promise((resolve) => setTimeout(resolve, 3000));
         continue;
       }

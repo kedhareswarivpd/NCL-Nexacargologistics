@@ -1,4 +1,4 @@
-"""
+﻿"""
 Quotes API — customers request freight quotes; staff price and update them.
 """
 
@@ -18,6 +18,8 @@ from app.services import crud
 from app.utils.helpers import generate_ref, serialize, serialize_all, generate_tracking_id
 
 router = APIRouter(prefix="/quotes", tags=["quotes"])
+
+QUOTE_NOT_FOUND = "Quote not found"
 
 # Per-mode base rate (USD) + per-kg and per-cbm components — a simple, transparent
 # pricing engine. Staff can still override the amount via PATCH.
@@ -159,7 +161,7 @@ async def get_quote(
 ):
     quote = await crud.get_item(db, Quote, quote_id)
     if not quote:
-        raise HTTPException(status_code=404, detail="Quote not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=QUOTE_NOT_FOUND)  # NOSONAR
     assert_owner_or_staff(quote, current_user)
     return serialize(quote)
 
@@ -174,7 +176,7 @@ async def update_quote(
 ):
     quote = await crud.get_item(db, Quote, quote_id)
     if not quote:
-        raise HTTPException(status_code=404, detail="Quote not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=QUOTE_NOT_FOUND)  # NOSONAR
     data = payload.model_dump(exclude_unset=True)
     # Customers may only accept/reject their own quote; staff may price it.
     if current_user.role == UserRole.CUSTOMER:
@@ -197,7 +199,7 @@ async def approve_quote(
     """Accept a quote. Customers accept their own; staff may accept on their behalf."""
     quote = await crud.get_item(db, Quote, quote_id)
     if not quote:
-        raise HTTPException(status_code=404, detail="Quote not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=QUOTE_NOT_FOUND)  # NOSONAR
     assert_owner_or_staff(quote, current_user)
     quote.status = "accepted"
     await db.flush()
@@ -213,7 +215,7 @@ async def reject_quote(
 ):
     quote = await crud.get_item(db, Quote, quote_id)
     if not quote:
-        raise HTTPException(status_code=404, detail="Quote not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=QUOTE_NOT_FOUND)  # NOSONAR
     assert_owner_or_staff(quote, current_user)
     quote.status = "rejected"
     await db.flush()

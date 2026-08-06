@@ -20,8 +20,6 @@ def require_roles(*allowed: str):
 
 get_admin_user = require_roles(UserRole.ADMIN)
 get_finance_user = require_roles(UserRole.FINANCE)
-get_logistics_user = require_roles(UserRole.LOGISTICS)
-get_warehouse_user = require_roles(UserRole.WAREHOUSE)
 get_customs_user = require_roles(UserRole.CUSTOMS)
 get_driver_user = require_roles(UserRole.DRIVER)
 get_support_user = require_roles(UserRole.SUPPORT)

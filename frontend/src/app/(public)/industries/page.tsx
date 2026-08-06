@@ -68,7 +68,7 @@ export default function IndustrySolutionsPage() {
           {/* Floating particles */}
           {[...new Array(20)].map((_, i) => (
             <motion.span
-              key={`item-{i}`}
+              key={`item-${i}`}
               className="absolute rounded-full bg-tertiary/20 blur-sm pointer-events-none"
               style={{
                 left: `${(i * 7 + 4) % 100}%`,

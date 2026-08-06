@@ -19,6 +19,8 @@ from app.utils.helpers import generate_ref, serialize
 
 router = APIRouter(prefix="/support", tags=["support"])
 
+TICKET_NOT_FOUND = "Ticket not found"
+
 
 def _is_agent(role: str) -> bool:
     return role in (UserRole.ADMIN, UserRole.SUPPORT)
@@ -60,7 +62,7 @@ async def get_ticket(
 ):
     ticket = await crud.get_item(db, SupportTicket, ticket_id)
     if not ticket:
-        raise HTTPException(status_code=404, detail="Ticket not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=TICKET_NOT_FOUND)  # NOSONAR
     if not _is_agent(current_user.role) and ticket.customer_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not allowed")  # NOSONAR
     msgs = await db.execute(
@@ -80,7 +82,7 @@ async def add_message(
 ):
     ticket = await crud.get_item(db, SupportTicket, ticket_id)
     if not ticket:
-        raise HTTPException(status_code=404, detail="Ticket not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=TICKET_NOT_FOUND)  # NOSONAR
     if not _is_agent(current_user.role) and ticket.customer_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not allowed")  # NOSONAR
     msg = await crud.create_item(db, TicketMessage, {
@@ -101,7 +103,7 @@ async def update_ticket(
 ):
     ticket = await crud.get_item(db, SupportTicket, ticket_id)
     if not ticket:
-        raise HTTPException(status_code=404, detail="Ticket not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=TICKET_NOT_FOUND)  # NOSONAR
     data = payload.model_dump(exclude_unset=True)
     if data.get("assigned_to"):
         data["assigned_to"] = uuid.UUID(data["assigned_to"])

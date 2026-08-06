@@ -7,6 +7,7 @@ import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
@@ -16,6 +17,7 @@ from app.models.shipment import Shipment
 from app.models.finance import Invoice
 from app.schemas.payloads import CustomerCreate, CustomerUpdate
 from app.services import crud, supabase_admin
+from app.utils.constants import EMAIL_EXISTS
 from app.utils.helpers import serialize
 
 router = APIRouter(prefix="/customers", tags=["customers"])
@@ -57,27 +59,77 @@ async def create_customer(
     email = payload.email.lower().strip()
     existing = await db.execute(select(Profile).where(Profile.email == email))
     if existing.scalar_one_or_none() is not None:
-        raise HTTPException(status_code=409, detail="An account with this email already exists")  # NOSONAR
+        raise HTTPException(status_code=409, detail=EMAIL_EXISTS)  # NOSONAR
 
-    # Provision a Supabase auth user when configured; otherwise create a
-    # backend-only profile with a fresh id.
+    # Provision a Supabase auth user when configured. The on_auth_user_created
+    # DB trigger auto-inserts the matching profiles row (id, email, name, role,
+    # company, phone from the user metadata).
     try:
         auth_id = await supabase_admin.create_auth_user(
-            email, payload.password, metadata={"name": payload.name, "role": UserRole.CUSTOMER}
+            email,
+            payload.password,
+            metadata={
+                "name": payload.name,
+                "role": UserRole.CUSTOMER,
+                "company": payload.company,
+                "phone": payload.phone,
+            },
         )
     except RuntimeError as exc:
+        if "already been registered" in str(exc):
+            raise HTTPException(status_code=409, detail=EMAIL_EXISTS)  # NOSONAR
         raise HTTPException(status_code=502, detail=str(exc))  # NOSONAR
 
-    customer = Profile(
-        id=uuid.UUID(auth_id) if auth_id else uuid.uuid4(),
-        email=email,
-        name=payload.name.strip(),
-        role=UserRole.CUSTOMER,
-        company=payload.company,
-        phone=payload.phone,
-    )
-    db.add(customer)
-    await db.flush()
+    if not auth_id:
+        # Supabase not configured — backend-only profile with a fresh id.
+        customer = Profile(
+            id=uuid.uuid4(),
+            email=email,
+            name=payload.name.strip(),
+            role=UserRole.CUSTOMER,
+            company=payload.company,
+            phone=payload.phone,
+        )
+        db.add(customer)
+        try:
+            await db.flush()
+        except IntegrityError:
+            raise HTTPException(status_code=409, detail=EMAIL_EXISTS)  # NOSONAR
+        await db.refresh(customer)
+        return serialize(customer)
+
+    customer = (
+        await db.execute(select(Profile).where(Profile.id == uuid.UUID(auth_id)))
+    ).scalar_one_or_none()
+
+    if customer is None:
+        # No on_auth_user_created trigger in this environment — create the
+        # profile ourselves instead of relying on the trigger.
+        customer = Profile(
+            id=uuid.UUID(auth_id),
+            email=email,
+            name=payload.name.strip(),
+            role=UserRole.CUSTOMER,
+            company=payload.company,
+            phone=payload.phone,
+        )
+        db.add(customer)
+        try:
+            await db.flush()
+        except IntegrityError:
+            raise HTTPException(status_code=409, detail=EMAIL_EXISTS)  # NOSONAR
+    else:
+        # Trigger created the row; apply fields it left unset.
+        changed = False
+        if payload.company and customer.company != payload.company:
+            customer.company = payload.company
+            changed = True
+        if payload.phone and customer.phone != payload.phone:
+            customer.phone = payload.phone
+            changed = True
+        if changed:
+            await db.flush()
+
     await db.refresh(customer)
     return serialize(customer)
 

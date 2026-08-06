@@ -65,7 +65,7 @@ export default function ServicesPage() {
         <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "linear-gradient(rgba(0,194,255,0.6) 1px,transparent 1px),linear-gradient(90deg,rgba(0,194,255,0.6) 1px,transparent 1px)", backgroundSize: "60px 60px" }} />
         {/* Floating particles */}
         {[...new Array(18)].map((_, i) => (
-          <div key={`item-{i}`}
+          <div key={`item-${i}`}
             className="absolute rounded-full"
             style={{
               width:  `${2 + (i % 3)}px`,

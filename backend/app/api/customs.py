@@ -12,7 +12,7 @@ from app.core.database import get_db
 from app.core.dependencies import get_customs_user
 from app.models.profile import Profile
 from app.models.customs import CustomsEntry
-from app.models.shipment import Shipment, ShipmentStatusHistory
+from app.models.shipment import Shipment, ShipmentStatus, ShipmentStatusHistory
 from app.schemas.payloads import CustomsCreate, CustomsUpdate
 from app.services import crud
 from app.utils.helpers import generate_ref, serialize, serialize_all
@@ -67,7 +67,7 @@ async def update_entry(
     if data.get("status") in ("cleared", "held") and entry.shipment_id:
         shipment = await crud.get_item(db, Shipment, entry.shipment_id)
         if shipment:
-            shipment.status = "In Transit" if data["status"] == "cleared" else "Customs Hold"
+            shipment.status = ShipmentStatus.IN_TRANSIT if data["status"] == "cleared" else ShipmentStatus.CUSTOMS_HOLD
             await crud.record_status_history(
                 db,
                 shipment_id=shipment.id,

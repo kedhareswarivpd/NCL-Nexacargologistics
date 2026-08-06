@@ -20,6 +20,8 @@ from app.utils.helpers import generate_ref, serialize, now_iso
 
 router = APIRouter(prefix="/finance", tags=["finance"])
 
+INVOICE_NOT_FOUND = "Invoice not found"
+
 
 def _is_finance(role: str) -> bool:
     return role in (UserRole.ADMIN, UserRole.FINANCE)
@@ -49,7 +51,7 @@ async def get_invoice(
 ):
     invoice = await crud.get_item(db, Invoice, invoice_id)
     if not invoice:
-        raise HTTPException(status_code=404, detail="Invoice not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=INVOICE_NOT_FOUND)  # NOSONAR
     if not _is_finance(current_user.role) and invoice.customer_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not allowed")  # NOSONAR
     return serialize(invoice)
@@ -81,7 +83,7 @@ async def update_invoice(
 ):
     invoice = await crud.get_item(db, Invoice, invoice_id)
     if not invoice:
-        raise HTTPException(status_code=404, detail="Invoice not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=INVOICE_NOT_FOUND)  # NOSONAR
     data = payload.model_dump(exclude_unset=True)
     invoice = await crud.update_item(db, invoice, data)
     if "amount" in data or "tax" in data:
@@ -112,7 +114,7 @@ async def create_payment(
 ):
     invoice = await crud.get_item(db, Invoice, payload.invoice_id)
     if not invoice:
-        raise HTTPException(status_code=404, detail="Invoice not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=INVOICE_NOT_FOUND)  # NOSONAR
     if not _is_finance(current_user.role) and invoice.customer_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not allowed")  # NOSONAR
 

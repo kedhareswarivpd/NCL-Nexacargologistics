@@ -21,6 +21,8 @@ from app.utils.helpers import generate_tracking_id, serialize, serialize_all, is
 
 router = APIRouter(prefix="/shipments", tags=["shipments"])
 
+SHIPMENT_NOT_FOUND = "Shipment not found"
+
 ops_guard = require_roles(UserRole.LOGISTICS, UserRole.WAREHOUSE, UserRole.CUSTOMS, UserRole.DRIVER)
 
 
@@ -87,7 +89,7 @@ async def get_shipment(
 ):
     shipment = await crud.get_item(db, Shipment, shipment_id)
     if not shipment:
-        raise HTTPException(status_code=404, detail="Shipment not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=SHIPMENT_NOT_FOUND)  # NOSONAR
     assert_owner_or_staff(shipment, current_user)
     return serialize(shipment)
 
@@ -102,7 +104,7 @@ async def update_shipment(
 ):
     shipment = await crud.get_item(db, Shipment, shipment_id)
     if not shipment:
-        raise HTTPException(status_code=404, detail="Shipment not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=SHIPMENT_NOT_FOUND)  # NOSONAR
     updated = await crud.update_item(db, shipment, payload.model_dump(exclude_unset=True))
     return serialize(updated)
 
@@ -130,7 +132,7 @@ async def update_status(
 ):
     shipment = await crud.get_item(db, Shipment, shipment_id)
     if not shipment:
-        raise HTTPException(status_code=404, detail="Shipment not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=SHIPMENT_NOT_FOUND)  # NOSONAR
     shipment.status = payload.status
     if payload.lat is not None:
         shipment.lat = payload.lat
@@ -165,7 +167,7 @@ async def shipment_tracking(
 ):
     shipment = await crud.get_item(db, Shipment, shipment_id)
     if not shipment:
-        raise HTTPException(status_code=404, detail="Shipment not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=SHIPMENT_NOT_FOUND)  # NOSONAR
     assert_owner_or_staff(shipment, current_user)
     events = await db.execute(
         select(ShipmentStatusHistory)
@@ -189,7 +191,7 @@ async def cancel_shipment(
 ):
     shipment = await crud.get_item(db, Shipment, shipment_id)
     if not shipment:
-        raise HTTPException(status_code=404, detail="Shipment not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=SHIPMENT_NOT_FOUND)  # NOSONAR
     assert_owner_or_staff(shipment, current_user)
 
     if shipment.status in ("Delivered", "Cancelled"):
@@ -217,7 +219,7 @@ async def shipment_history(
 ):
     shipment = await crud.get_item(db, Shipment, shipment_id)
     if not shipment:
-        raise HTTPException(status_code=404, detail="Shipment not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=SHIPMENT_NOT_FOUND)  # NOSONAR
     assert_owner_or_staff(shipment, current_user)
     result = await db.execute(
         select(ShipmentStatusHistory)
@@ -235,7 +237,7 @@ async def list_documents(
 ):
     shipment = await crud.get_item(db, Shipment, shipment_id)
     if not shipment:
-        raise HTTPException(status_code=404, detail="Shipment not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=SHIPMENT_NOT_FOUND)  # NOSONAR
     assert_owner_or_staff(shipment, current_user)
     result = await db.execute(
         select(Document).where(Document.shipment_id == shipment.id).order_by(Document.created_at.desc())
@@ -256,7 +258,7 @@ async def add_document(
         
     shipment = await crud.get_item(db, Shipment, shipment_id)
     if not shipment:
-        raise HTTPException(status_code=404, detail="Shipment not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=SHIPMENT_NOT_FOUND)  # NOSONAR
     assert_owner_or_staff(shipment, current_user)
     doc = await crud.create_item(db, Document, {
         "shipment_id": shipment.id,

@@ -26,9 +26,13 @@ from app.schemas.payloads import (
 )
 from app.services.crud import update_item
 from app.services.notification_service import create_notification
+from app.utils.constants import EMAIL_EXISTS
 from app.utils.helpers import serialize
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+AUTH_NOT_CONFIGURED = "Backend auth is not configured"
+USER_NOT_FOUND = "User not found"
 
 
 def _token_response(profile: Profile) -> dict:
@@ -51,7 +55,7 @@ async def register(payload: RegisterRequest, db: AsyncSession = Depends(get_db))
     if not settings.JWT_SECRET:
         raise HTTPException(  # NOSONAR
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Backend auth is not configured",  # NOSONAR
+            detail=AUTH_NOT_CONFIGURED,
         )
 
     email = payload.email.lower().strip()
@@ -59,7 +63,7 @@ async def register(payload: RegisterRequest, db: AsyncSession = Depends(get_db))
     if existing.scalar_one_or_none() is not None:
         raise HTTPException(  # NOSONAR
             status_code=status.HTTP_409_CONFLICT,
-            detail="An account with this email already exists",
+            detail=EMAIL_EXISTS,
         )
 
     profile = Profile(
@@ -81,7 +85,7 @@ async def login(payload: LoginRequest, db: AsyncSession = Depends(get_db)):
     if not settings.JWT_SECRET:
         raise HTTPException(  # NOSONAR
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Backend auth is not configured",
+            detail=AUTH_NOT_CONFIGURED,
         )
 
     email = payload.email.lower().strip()
@@ -121,7 +125,7 @@ async def update_me(
 @router.post("/refresh-token")
 async def refresh_token(current_user: Profile = Depends(get_current_user)):
     if not settings.JWT_SECRET:
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Backend auth is not configured")  # NOSONAR
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=AUTH_NOT_CONFIGURED)  # NOSONAR
     return _token_response(current_user)
 
 
@@ -158,7 +162,7 @@ async def reset_password(payload: ResetPasswordRequest, db: AsyncSession = Depen
 
     profile = await db.get(Profile, uuid.UUID(user_id))
     if profile is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")  # NOSONAR
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=USER_NOT_FOUND)  # NOSONAR
     profile.password_hash = hash_password(payload.new_password)
     await db.flush()
     return {"message": "Password has been reset. You can now log in."}

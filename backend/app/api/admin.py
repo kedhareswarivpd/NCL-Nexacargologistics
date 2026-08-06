@@ -12,7 +12,7 @@ from app.core.database import get_db
 from app.core.dependencies import get_admin_user
 from app.models.profile import Profile, UserRole, Role
 from app.models.branch import Branch
-from app.models.shipment import Shipment
+from app.models.shipment import Shipment, ShipmentStatus
 from app.models.finance import Invoice, InvoiceStatus
 from app.models.support import SupportTicket
 from app.models.notification import AuditLog
@@ -74,7 +74,7 @@ async def system_analytics(
 ):
     total_users = await crud.count(db, Profile)
     total_shipments = await crud.count(db, Shipment)
-    active_shipments = await crud.count(db, Shipment, {"status": "In Transit"})
+    active_shipments = await crud.count(db, Shipment, {"status": ShipmentStatus.IN_TRANSIT})
     delivered_shipments = await crud.count(db, Shipment, {"status": "Delivered"})
     open_tickets = await crud.count(db, SupportTicket, {"status": "open"})
 
@@ -130,7 +130,7 @@ async def dashboard(db: AsyncSession = Depends(get_db), _: Profile = Depends(get
         "drivers": await crud.count(db, Profile, {"role": UserRole.DRIVER}),
         "branches": await crud.count(db, Branch),
         "shipments": await crud.count(db, Shipment),
-        "shipments_in_transit": await crud.count(db, Shipment, {"status": "In Transit"}),
+        "shipments_in_transit": await crud.count(db, Shipment, {"status": ShipmentStatus.IN_TRANSIT}),
         "shipments_delivered": await crud.count(db, Shipment, {"status": "Delivered"}),
         "invoices": await crud.count(db, Invoice),
         "revenue": revenue,

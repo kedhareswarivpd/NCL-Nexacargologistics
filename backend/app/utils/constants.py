@@ -9,3 +9,5 @@ UPLOAD_DIRS = {
 }
 
 MAX_UPLOAD_SIZE_MB = 10
+
+EMAIL_EXISTS = "An account with this email already exists"

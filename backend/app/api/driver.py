@@ -17,6 +17,8 @@ from app.utils.helpers import serialize, serialize_all, now_iso
 
 router = APIRouter(prefix="/driver", tags=["driver"])
 
+STATUS_IN_TRANSIT = "In Transit"
+
 
 @router.get("/deliveries")
 async def my_deliveries(
@@ -47,8 +49,8 @@ async def update_my_delivery(
         shipment = await crud.get_item(db, Shipment, delivery.shipment_id)
         if shipment:
             mapped = {
-                "Picked Up": "In Transit",  # NOSONAR
-                "In Transit": "In Transit",
+                "Picked Up": STATUS_IN_TRANSIT,
+                STATUS_IN_TRANSIT: STATUS_IN_TRANSIT,
                 "Delivered": "Delivered",
                 "Failed": "Delayed",
             }.get(data["status"], shipment.status)

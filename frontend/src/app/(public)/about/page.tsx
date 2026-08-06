@@ -60,7 +60,7 @@ export default function AboutPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/60 to-background" />
         {[...new Array(20)].map((_, i) => (
           <motion.span
-            key={`item-{i}`}
+            key={`item-${i}`}
             className="absolute rounded-full bg-tertiary/30 blur-sm"
             style={{
               left: `${(i * 7 + 4) % 100}%`,

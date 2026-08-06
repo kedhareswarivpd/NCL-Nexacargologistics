@@ -25,7 +25,7 @@ export default function ContactPage() {
       <section className="relative py-24 px-6 max-w-7xl mx-auto text-center overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_50%,rgba(21,101,192,0.12),transparent_70%)]" />
         {[...new Array(16)].map((_, i) => (
-          <motion.span key={`item-{i}`}
+          <motion.span key={`item-${i}`}
             className="absolute rounded-full bg-tertiary/20 blur-sm pointer-events-none"
             style={{ left: `${(i * 9 + 3) % 100}%`, top: `${(i * 13 + 6) % 100}%`, width: `${8 + (i % 3) * 4}px`, height: `${8 + (i % 3) * 4}px` }}
             animate={{ y: [0, -16, 0], opacity: [0.2, 0.7, 0.2] }}
@@ -107,7 +107,7 @@ export default function ContactPage() {
                   { region: "Europe",        city: "Rotterdam, NL" },
                   { region: "Asia Pacific",  city: "Singapore" },
                 ].map((hub, i) => (
-                  <motion.li key={`item-{i}`}
+                  <motion.li key={`item-${i}`}
                     initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }} transition={{ delay: i * 0.1 }}
                     whileHover={{ x: 6, backgroundColor: "rgba(255,255,255,0.1)" }}

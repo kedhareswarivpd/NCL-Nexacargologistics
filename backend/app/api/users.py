@@ -6,6 +6,7 @@ import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
@@ -15,9 +16,12 @@ from app.models.profile import Profile, UserRole
 from app.schemas.payloads import AdminProfileUpdate, ProfileUpdate, StaffCreate, StatusPatch
 from app.services import crud
 from app.services import supabase_admin
+from app.utils.constants import EMAIL_EXISTS
 from app.utils.helpers import serialize
 
 router = APIRouter(prefix="/users", tags=["users"])
+
+USER_NOT_FOUND = "User not found"
 
 
 @router.get("/me")
@@ -64,14 +68,23 @@ async def create_staff(
     if payload.role not in UserRole.ALL:
         raise HTTPException(status_code=400, detail=f"Invalid role '{payload.role}'")  # NOSONAR
 
-    # Provision the Supabase auth user (so the staff member can log in).
+    email = payload.email.lower().strip()
+    existing = await db.execute(select(Profile).where(Profile.email == email))
+    if existing.scalar_one_or_none() is not None:
+        raise HTTPException(status_code=409, detail=EMAIL_EXISTS)  # NOSONAR
+
+    # Provision the Supabase auth user (so the staff member can log in). The
+    # on_auth_user_created DB trigger auto-inserts the matching profiles row
+    # (id, email, name, role from the user metadata) at the same time.
     try:
         auth_id = await supabase_admin.create_auth_user(
-            payload.email,
+            email,
             payload.password,
             metadata={"name": payload.name, "role": payload.role},
         )
     except RuntimeError as exc:
+        if "already been registered" in str(exc):
+            raise HTTPException(status_code=409, detail=EMAIL_EXISTS)  # NOSONAR
         raise HTTPException(status_code=502, detail=str(exc))  # NOSONAR
 
     if not auth_id:
@@ -81,17 +94,42 @@ async def create_staff(
             "Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.",
         )
 
-    profile = Profile(
-        id=uuid.UUID(auth_id),
-        email=payload.email,
-        name=payload.name,
-        role=payload.role,
-        department=payload.department,
-        phone=payload.phone,
-        branch_id=uuid.UUID(payload.branch_id) if payload.branch_id else None,
-    )
-    db.add(profile)
-    await db.flush()
+    profile = (
+        await db.execute(select(Profile).where(Profile.id == uuid.UUID(auth_id)))
+    ).scalar_one_or_none()
+
+    if profile is None:
+        # No on_auth_user_created trigger in this environment — create the
+        # profile ourselves instead of relying on the trigger.
+        profile = Profile(
+            id=uuid.UUID(auth_id),
+            email=email,
+            name=payload.name,
+            role=payload.role,
+            department=payload.department,
+            phone=payload.phone,
+            branch_id=uuid.UUID(payload.branch_id) if payload.branch_id else None,
+        )
+        db.add(profile)
+        try:
+            await db.flush()
+        except IntegrityError:
+            raise HTTPException(status_code=409, detail=EMAIL_EXISTS)  # NOSONAR
+    else:
+        # Trigger created the row; apply the staff fields it leaves unset.
+        changed = False
+        if payload.department and profile.department != payload.department:
+            profile.department = payload.department
+            changed = True
+        if payload.phone and profile.phone != payload.phone:
+            profile.phone = payload.phone
+            changed = True
+        if payload.branch_id and str(profile.branch_id or "") != payload.branch_id:
+            profile.branch_id = uuid.UUID(payload.branch_id)
+            changed = True
+        if changed:
+            await db.flush()
+
     await db.refresh(profile)
     return serialize(profile)
 
@@ -104,7 +142,7 @@ async def get_user(
 ):
     user = await crud.get_item(db, Profile, user_id)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=USER_NOT_FOUND)  # NOSONAR
     return serialize(user)
 
 
@@ -118,7 +156,7 @@ async def update_user(
 ):
     user = await crud.get_item(db, Profile, user_id)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=USER_NOT_FOUND)  # NOSONAR
     data = payload.model_dump(exclude_unset=True)
     if "role" in data and data["role"] not in UserRole.ALL:
         raise HTTPException(status_code=400, detail="Invalid role")  # NOSONAR
@@ -138,7 +176,7 @@ async def set_user_status(
     """Activate / suspend a user account (admin only)."""
     user = await crud.get_item(db, Profile, user_id)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=USER_NOT_FOUND)  # NOSONAR
     if str(user.id) == str(current_user.id) and payload.status != "active":
         raise HTTPException(status_code=400, detail="You cannot suspend your own account")  # NOSONAR
     user.status = payload.status
@@ -155,6 +193,6 @@ async def delete_user(
 ):
     user = await crud.get_item(db, Profile, user_id)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=USER_NOT_FOUND)  # NOSONAR
     await crud.delete_item(db, user)
     return None

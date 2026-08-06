@@ -33,7 +33,7 @@ export default function PressKitPage() {
       <section className="relative py-24 px-6 max-w-7xl mx-auto text-center overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_50%_at_50%_30%,rgba(30,136,229,0.08),transparent_70%)]" />
         {[...new Array(10)].map((_, i) => (
-          <motion.span key={`item-{i}`} className="absolute rounded-full bg-tertiary/20 blur-sm pointer-events-none"
+          <motion.span key={`item-${i}`} className="absolute rounded-full bg-tertiary/20 blur-sm pointer-events-none"
             style={{ left: `${(i*13+4)%96}%`, top: `${(i*19+6)%88}%`, width: `${6+(i%3)*3}px`, height: `${6+(i%3)*3}px` }}
             animate={{ y:[0,-14,0], opacity:[0.15,0.6,0.15] }}
             transition={{ duration: 3+(i%4), repeat: Infinity, delay: i*0.2 }} />

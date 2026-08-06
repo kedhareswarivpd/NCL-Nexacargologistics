@@ -8,19 +8,21 @@ from sqlalchemy.dialects.postgresql import UUID
 from app.core.database import Base
 from app.models.base import pk_column, created_column, updated_column
 
+FK_PROFILES_ID = "profiles.id"
+
 
 class SupportTicket(Base):
     __tablename__ = "support_tickets"
 
     id = pk_column()
     ticket_ref = Column(String(40), unique=True, nullable=False, index=True)
-    customer_id = Column(UUID(as_uuid=True), ForeignKey("profiles.id"), nullable=True, index=True)  # NOSONAR
+    customer_id = Column(UUID(as_uuid=True), ForeignKey(FK_PROFILES_ID), nullable=True, index=True)  # NOSONAR
     subject = Column(String(255), nullable=False)
     category = Column(String(60), nullable=True)  # billing|tracking|customs|general
     priority = Column(String(20), nullable=False, default="medium")  # low|medium|high|urgent
     status = Column(String(20), nullable=False, default="open", index=True)  # open|in_progress|resolved|closed
     description = Column(Text, nullable=True)
-    assigned_to = Column(UUID(as_uuid=True), ForeignKey("profiles.id"), nullable=True)
+    assigned_to = Column(UUID(as_uuid=True), ForeignKey(FK_PROFILES_ID), nullable=True)
     created_at = created_column()
     updated_at = updated_column()
 
@@ -30,6 +32,6 @@ class TicketMessage(Base):
 
     id = pk_column()
     ticket_id = Column(UUID(as_uuid=True), ForeignKey("support_tickets.id", ondelete="CASCADE"), nullable=False, index=True)
-    sender_id = Column(UUID(as_uuid=True), ForeignKey("profiles.id"), nullable=True)
+    sender_id = Column(UUID(as_uuid=True), ForeignKey(FK_PROFILES_ID), nullable=True)
     body = Column(Text, nullable=False)
     created_at = created_column()

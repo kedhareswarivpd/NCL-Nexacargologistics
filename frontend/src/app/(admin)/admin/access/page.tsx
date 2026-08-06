@@ -225,7 +225,7 @@ export default function AccessControlPage() {
               const Icon = LOG_ICONS[log.type];
               return (
                 <motion.div 
-                  key={`item-{i}`} 
+                  key={`item-${i}`} 
                   initial={{ opacity: 0, x: 15 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.1 + i * 0.05, type: "spring", stiffness: 200 }}

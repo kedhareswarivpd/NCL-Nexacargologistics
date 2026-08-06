@@ -20,6 +20,8 @@ from app.utils.helpers import serialize, serialize_all
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
+TASK_NOT_FOUND = "Task not found"
+
 manage_guard = require_roles(UserRole.LOGISTICS, UserRole.WAREHOUSE)
 
 
@@ -65,7 +67,7 @@ async def get_task(
 ):
     task = await crud.get_item(db, WarehouseTask, task_id)
     if not task:
-        raise HTTPException(status_code=404, detail="Task not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=TASK_NOT_FOUND)  # NOSONAR
     if current_user.role == UserRole.WAREHOUSE and task.assigned_to != current_user.id:
         raise HTTPException(status_code=403, detail="Not allowed")  # NOSONAR
     return serialize(task)
@@ -81,7 +83,7 @@ async def update_task(
 ):
     task = await crud.get_item(db, WarehouseTask, task_id)
     if not task:
-        raise HTTPException(status_code=404, detail="Task not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=TASK_NOT_FOUND)  # NOSONAR
     data = payload.model_dump(exclude_unset=True)
     if data.get("assigned_to"):
         data["assigned_to"] = uuid.UUID(data["assigned_to"])
@@ -98,7 +100,7 @@ async def set_task_status(
     """Progress a task. Warehouse staff may update assigned tasks; managers update any."""
     task = await crud.get_item(db, WarehouseTask, task_id)
     if not task:
-        raise HTTPException(status_code=404, detail="Task not found")  # NOSONAR
+        raise HTTPException(status_code=404, detail=TASK_NOT_FOUND)  # NOSONAR
     is_staff = current_user.role in (UserRole.ADMIN, UserRole.LOGISTICS, UserRole.WAREHOUSE)
     if not is_staff and task.assigned_to != current_user.id:
         raise HTTPException(status_code=403, detail="Not allowed")  # NOSONAR

@@ -84,7 +84,7 @@ export default function TermsOfServicePage() {
       <section className="relative py-24 px-6 max-w-4xl mx-auto text-center overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_40%,rgba(30,136,229,0.08),transparent_70%)]" />
         {[...new Array(10)].map((_, i) => (
-          <motion.span key={`item-{i}`}
+          <motion.span key={`item-${i}`}
             className="absolute rounded-full bg-tertiary/20 blur-sm pointer-events-none"
             style={{ left: `${(i * 13 + 3) % 96}%`, top: `${(i * 19 + 4) % 88}%`, width: `${6 + (i % 3) * 3}px`, height: `${6 + (i % 3) * 3}px` }}
             animate={{ y: [0, -14, 0], opacity: [0.15, 0.6, 0.15] }}

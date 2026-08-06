@@ -248,7 +248,7 @@ export default function WarehouseDashboard() {
         <Card className="p-6">
           <div className="flex items-end justify-between gap-2 h-36 px-2">
             {throughput.map((entry, i) => (
-              <div key={`item-{i}`} className="relative flex w-full flex-col items-center gap-1">
+              <div key={`item-${i}`} className="relative flex w-full flex-col items-center gap-1">
                 <div
                   className="w-full rounded-t-sm bg-gradient-to-t from-tertiary/30 to-tertiary/10 border-t border-tertiary animate-bar-grow"
                   style={{ height: `${(entry.units / maxUnits) * 100}%`, animationDelay: `${i * 0.07}s` }}

@@ -131,7 +131,7 @@ export default function RoadTransportPage() {
           { top: "30%", delay: "-7s",  dur: "24s" },
           { top: "16%", delay: "-12s", dur: "30s" },
         ].map((g, i) => (
-          <div key={`item-{i}`} className="absolute" style={{ top: g.top, opacity: 0.45, animation: `cloud-drift-road ${g.dur} linear infinite`, animationDelay: g.delay }}>
+          <div key={`item-${i}`} className="absolute" style={{ top: g.top, opacity: 0.45, animation: `cloud-drift-road ${g.dur} linear infinite`, animationDelay: g.delay }}>
             <svg width="18" height="10" viewBox="0 0 18 10" fill="none" aria-hidden="true">
               <path d="M1 5 Q4.5 1 9 5 Q13.5 1 17 5" stroke="white" strokeWidth="1.2" fill="none" />
             </svg>
