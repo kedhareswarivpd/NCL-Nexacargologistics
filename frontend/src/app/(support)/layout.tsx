@@ -8,7 +8,7 @@ import { MobileSidebarWrapper } from "@/components/shared/MobileSidebarWrapper";
 
 export default function SupportLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <ProtectedRoute allow={["support", "admin"]}>
+    <ProtectedRoute allow={["support"]}>
       <div className="flex bg-background text-on-surface min-h-screen">
         <MobileSidebarWrapper>
           <SupportSidebar />

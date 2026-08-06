@@ -8,7 +8,7 @@ import { MobileSidebarWrapper } from "@/components/shared/MobileSidebarWrapper";
 
 export default function FinanceLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <ProtectedRoute allow={["finance", "admin"]}>
+    <ProtectedRoute allow={["finance"]}>
       <div className="flex bg-background text-on-surface min-h-screen">
         <MobileSidebarWrapper>
           <FinanceSidebar />

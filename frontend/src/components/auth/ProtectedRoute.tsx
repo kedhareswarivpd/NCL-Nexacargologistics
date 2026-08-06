@@ -30,17 +30,22 @@ export function ProtectedRoute({ children, allow }: ProtectedRouteProps) {
   const pathname = usePathname();
 
   const roleDenied = !!(allow && user && !allow.includes(user.role));
+  const guestLogin = allow?.includes("admin") ? "/admin-login" : "/login";
+  const signedOutTarget = React.useRef<string | null>(null);
 
   React.useEffect(() => {
     if (status === "unauthenticated") {
-      router.replace(`/login?next=${encodeURIComponent(pathname)}`);
+      const target = signedOutTarget.current ?? guestLogin;
+      signedOutTarget.current = null;
+      router.replace(`${target}?next=${encodeURIComponent(pathname)}`);
     } else if (status === "authenticated" && roleDenied && user) {
       // User is logged in but doesn't belong to this portal →
       // sign them out automatically so they can log in fresh.
+      signedOutTarget.current = user.role === "admin" ? "/admin-login" : "/login";
       logout();
-      router.replace(`/login?next=${encodeURIComponent(pathname)}`);
+      router.replace(`${signedOutTarget.current}?next=${encodeURIComponent(pathname)}`);
     }
-  }, [status, pathname, router, roleDenied, user, logout]);
+  }, [status, pathname, router, roleDenied, user, logout, guestLogin]);
 
   if (status === "loading" || (status === "authenticated" && roleDenied)) {
     return (

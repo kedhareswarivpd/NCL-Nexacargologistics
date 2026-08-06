@@ -69,7 +69,7 @@ function DriverSidebar() {
 
 export default function DriverLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <ProtectedRoute allow={["driver", "admin"]}>
+    <ProtectedRoute allow={["driver"]}>
       <div className="flex bg-background text-on-surface min-h-screen">
         <MobileSidebarWrapper>
           <DriverSidebar />

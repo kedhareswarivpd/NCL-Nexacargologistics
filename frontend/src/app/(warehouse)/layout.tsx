@@ -8,7 +8,7 @@ import { MobileSidebarWrapper } from "@/components/shared/MobileSidebarWrapper";
 
 export default function WarehouseLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <ProtectedRoute allow={["warehouse", "admin"]}>
+    <ProtectedRoute allow={["warehouse"]}>
       <div className="flex bg-background text-on-surface min-h-screen">
         <MobileSidebarWrapper>
           <WarehouseSidebar />

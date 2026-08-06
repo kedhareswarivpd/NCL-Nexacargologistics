@@ -8,7 +8,7 @@ import { MobileSidebarWrapper } from "@/components/shared/MobileSidebarWrapper";
 
 export default function CustomerLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <ProtectedRoute allow={["customer", "admin"]}>
+    <ProtectedRoute allow={["customer"]}>
       <div className="h-screen w-screen flex bg-background text-on-surface overflow-hidden">
         <MobileSidebarWrapper>
           <CustomerSidebar />
