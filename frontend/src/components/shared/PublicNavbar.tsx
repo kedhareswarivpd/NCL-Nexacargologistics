@@ -165,10 +165,7 @@ export function PublicNavbar() {
                   </Link>
                 </>
               )}
-              {/* Responsive cursor switcher inside mobile menu */}
-              <div className="flex justify-center border-t border-gray-100 pt-3">
-                <CursorToggleButton />
-              </div>
+
             </div>
           </div>
         </div>

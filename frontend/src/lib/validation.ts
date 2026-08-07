@@ -145,3 +145,66 @@ export function passwordScore(value: string): number {
   if (/\d/.test(value) && /[^A-Za-z0-9]/.test(value)) score++;
   return Math.min(score, 4);
 }
+
+// =============================================================================
+// Admin Portal Shared Validators
+// =============================================================================
+
+/** Valid country names and ISO codes for dropdown/validation. */
+export const VALID_COUNTRIES = [
+  "United States", "United Kingdom", "Canada", "Australia", "Germany",
+  "France", "Italy", "Spain", "Netherlands", "Belgium", "Switzerland",
+  "Austria", "Sweden", "Norway", "Denmark", "Finland", "Poland",
+  "Japan", "China", "South Korea", "Singapore", "India", "Pakistan",
+  "Bangladesh", "Sri Lanka", "Nepal", "Malaysia", "Indonesia",
+  "Thailand", "Vietnam", "Philippines", "Taiwan", "Hong Kong",
+  "UAE", "Saudi Arabia", "Qatar", "Kuwait", "Bahrain", "Oman",
+  "Jordan", "Lebanon", "Egypt", "South Africa", "Nigeria", "Kenya",
+  "Ghana", "Tanzania", "Morocco", "Brazil", "Mexico", "Argentina",
+  "Chile", "Colombia", "Peru", "New Zealand", "Ireland", "Portugal",
+  "Greece", "Czech Republic", "Hungary", "Romania", "Bulgaria",
+  "Croatia", "Serbia", "Slovakia", "Slovenia", "Estonia", "Latvia",
+  "Lithuania", "Ukraine", "Turkey", "Israel", "Russia",
+] as const;
+
+const VALID_COUNTRY_CODES = [
+  "US", "GB", "CA", "AU", "DE", "FR", "IT", "ES", "NL", "BE", "CH",
+  "AT", "SE", "NO", "DK", "FI", "PL", "JP", "CN", "KR", "SG", "IN",
+  "PK", "BD", "LK", "NP", "MY", "ID", "TH", "VN", "PH", "TW", "HK",
+  "AE", "SA", "QA", "KW", "BH", "OM", "JO", "LB", "EG", "ZA", "NG",
+  "KE", "GH", "TZ", "MA", "BR", "MX", "AR", "CL", "CO", "PE", "NZ",
+  "IE", "PT", "GR", "CZ", "HU", "RO", "BG", "HR", "RS", "SK", "SI",
+  "EE", "LV", "LT", "UA", "TR", "IL", "RU",
+] as const;
+
+/** Name: alphabets and spaces only, 2-50 chars. */
+export function isValidName(value: string): boolean {
+  return /^[A-Za-z][A-Za-z\s.'-]{1,49}$/.test(value.trim());
+}
+
+/** Phone: exactly 10 digits (strips +, spaces, dashes, parens). */
+export function isValidPhone(value: string): boolean {
+  const digits = value.replace(/\D/g, "");
+  return digits.length === 10;
+}
+
+/** City: alphabets, spaces, hyphens, 2-50 chars. */
+export function isValidCity(value: string): boolean {
+  return /^[A-Za-z][A-Za-z\s.\-']{1,49}$/.test(value.trim());
+}
+
+/** Country: must match a known country name or ISO code. */
+export function isValidCountry(value: string): boolean {
+  const v = value.trim();
+  if (v.length < 2) return false;
+  const lower = v.toLowerCase();
+  return VALID_COUNTRIES.some(c => c.toLowerCase() === lower) ||
+    VALID_COUNTRY_CODES.includes(v.toUpperCase() as typeof VALID_COUNTRY_CODES[number]);
+}
+
+/** Validate location string "City, Country" format. */
+export function isValidLocation(value: string): boolean {
+  const parts = value.split(",").map(s => s.trim());
+  if (parts.length < 1 || !parts[0]) return false;
+  return isValidCity(parts[0]) && (parts.length === 1 || !parts[1] || isValidCountry(parts[1]));
+}

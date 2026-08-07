@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.dependencies import require_roles
+from app.core.security import hash_password
 from app.models.profile import Profile, UserRole
 from app.models.logistics import Delivery
 from app.schemas.payloads import AvailabilityPatch, DriverCreate, DriverUpdate
@@ -46,9 +47,6 @@ async def list_drivers(
     query = query.order_by(Profile.created_at.desc()).offset(skip).limit(limit)
     result = await db.execute(query)
     return serialize_all(result.scalars().all())
-
-
-from app.core.security import hash_password
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)

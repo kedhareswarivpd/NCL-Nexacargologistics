@@ -5,7 +5,7 @@ Warehouse API — warehouses, inventory, inbound/outbound tasks (Warehouse Dashb
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
@@ -128,9 +128,6 @@ async def update_task(task_id: str, payload: WarehouseTaskUpdate, db: AsyncSessi
     if data.get("assigned_to"):
         data["assigned_to"] = uuid.UUID(data["assigned_to"])
     return serialize(await crud.update_item(db, obj, data))
-
-
-from sqlalchemy import func
 
 
 @router.get("/analytics")

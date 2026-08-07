@@ -23,7 +23,7 @@ def generate_ref(prefix: str, n: int = 6) -> str:
 
 
 def validate_email(email: str) -> bool:
-    return bool(re.match(r"^[^@]+@[^@]+\.[^@]+$", email))  // NOSONAR
+    return bool(re.match(r"^[^@]+@[^@]+\.[^@]+$", email))  # NOSONAR
 
 
 # Column names never exposed in API responses.

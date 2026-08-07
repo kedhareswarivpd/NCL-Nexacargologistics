@@ -23,10 +23,10 @@ from app.middleware.auth import get_current_user
 from app.models.profile import Profile, UserRole
 from app.models.shipment import Shipment, ShipmentStatusHistory
 from app.schemas.payloads import LocationUpdate
-
-ERROR_SHIPMENT_NOT_FOUND = "Shipment not found"
 from app.services import crud
 from app.utils.helpers import serialize
+
+ERROR_SHIPMENT_NOT_FOUND = "Shipment not found"
 
 router = APIRouter(prefix="/tracking", tags=["tracking"])
 

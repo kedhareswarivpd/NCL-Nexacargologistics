@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usersApi } from "@/lib/services";
 import { apiError } from "@/lib/api";
+import { isValidName, isValidPhone, isValidLocation } from "@/lib/validation";
 
 const secureRandom = () => {
   if (typeof window !== "undefined" && window.crypto) {
@@ -51,9 +52,11 @@ export default function AddUserPage() {
   function validate() {
     const e: Record<string, string> = {};
     if (!form.name.trim()) e.name = "Name is required.";
+    else if (!isValidName(form.name)) e.name = "Name must contain only letters, spaces, hyphens or apostrophes (2-50 chars).";
     if (!form.email.trim()) e.email = "Email is required.";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) e.email = "Enter a valid email address.";  // NOSONAR
-    if (form.phone && !/^\+?[\d\s\-()]{7,15}$/.test(form.phone.trim())) e.phone = "Enter a valid phone number.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) e.email = "Enter a valid email address.";
+    if (form.phone && !isValidPhone(form.phone)) e.phone = "Phone must contain exactly 10 digits.";
+    if (form.location && !isValidLocation(form.location)) e.location = "Enter a valid city (and optional country), e.g. 'London, UK'.";
     return e;
   }
 
@@ -112,7 +115,7 @@ export default function AddUserPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label htmlFor="field-full-name-1" className={labelCls}>Full Name *</label>
-              <input id="field-full-name-1" value={form.name} onChange={(e) => { const filtered = e.target.value.replace(/\d/g, ''); set("name", filtered); }}
+              <input id="field-full-name-1" value={form.name} onChange={(e) => { const filtered = e.target.value.replace(/[^A-Za-z\s.'-]/g, ''); set("name", filtered); }}
                 placeholder="e.g. Marcus Johnson"
                 className={`${inputCls} ${fieldErrors.name ? "border-red-500" : ""}`} />
               {fieldErrors.name && <p className="text-xs text-error mt-1">{fieldErrors.name}</p>}
@@ -130,8 +133,9 @@ export default function AddUserPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label htmlFor="field-phone-number-3" className={labelCls}>Phone Number</label>
-              <input id="field-phone-number-3" value={form.phone} onChange={(e) => set("phone", e.target.value)}
-                placeholder="e.g. +1 555 000 0000"
+              <input id="field-phone-number-3" value={form.phone} onChange={(e) => { const digits = e.target.value.replace(/\D/g, '').slice(0, 10); set("phone", digits); }}
+                placeholder="e.g. 15550000000"
+                inputMode="numeric"
                 className={`${inputCls} ${fieldErrors.phone ? "border-red-500" : ""}`} />
               {fieldErrors.phone && <p className="text-xs text-error mt-1">{fieldErrors.phone}</p>}
             </div>
@@ -158,12 +162,14 @@ export default function AddUserPage() {
             </div>
           </div>
 
-          {/* Location */}
-          <div>
-            <label htmlFor="field-location-7" className={labelCls}>Location</label>
-            <input id="field-location-7" value={form.location} onChange={(e) => set("location", e.target.value)}
-              placeholder="e.g. New York, USA" className={inputCls} />
-          </div>
+            {/* Location */}
+            <div>
+              <label htmlFor="field-location-7" className={labelCls}>Location (City, Country)</label>
+              <input id="field-location-7" value={form.location} onChange={(e) => set("location", e.target.value)}
+                placeholder="e.g. New York, United States"
+                className={`${inputCls} ${fieldErrors.location ? "border-red-500" : ""}`} />
+              {fieldErrors.location && <p className="text-xs text-error mt-1">{fieldErrors.location}</p>}
+            </div>
 
           {/* Notes */}
           <div>

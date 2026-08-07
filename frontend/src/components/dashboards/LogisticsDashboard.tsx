@@ -1,7 +1,5 @@
 "use client";
-import React from "react";
-
-import { useEffect, useState } from "react";
+import { useEffect, useState, FormEvent } from "react";
 import {
   Package, Truck, Route, CheckCircle2, AlertTriangle,
   ChevronRight, Plus, X, Copy, Check, Loader2, RefreshCw, ArrowLeft,
@@ -10,6 +8,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Card } from "@/components/ui/card";
 import { shipmentsApi } from "@/lib/services";
 import { apiError } from "@/lib/api";
+import { isValidCity } from "@/lib/validation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -100,8 +99,10 @@ export default function LogisticsDashboard() {
     setTimeout(() => setCopied(false), 1800);
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    if (!isValidCity(form.origin.trim())) { setError("Enter a valid origin city (letters, spaces, hyphens only)."); return; }
+    if (!isValidCity(form.destination.trim())) { setError("Enter a valid destination city (letters, spaces, hyphens only)."); return; }
     setSubmitting(true);
     setError(null);
 

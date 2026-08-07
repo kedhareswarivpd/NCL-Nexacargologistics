@@ -1,3 +1,7 @@
+"""
+Reviews API — public listing of customer testimonials.
+"""
+
 from fastapi import APIRouter
 
 router = APIRouter(prefix="/reviews", tags=["reviews"])

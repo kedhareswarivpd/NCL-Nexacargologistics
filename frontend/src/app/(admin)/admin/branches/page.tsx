@@ -8,6 +8,7 @@ import { motion, AnimatePresence, type Variants } from "framer-motion";
 import Link from "next/link";
 import { adminApi } from "@/lib/services";
 import { apiError } from "@/lib/api";
+import { isValidName, isValidCity, isValidCountry } from "@/lib/validation";
 
 const secureRandom = () => {
   if (typeof window !== "undefined" && window.crypto) {
@@ -85,6 +86,10 @@ export default function BranchManagementPage() {
   async function saveEdit(e: React.FormEvent) {
     e.preventDefault();
     if (!editTarget) return;
+    const parts = editForm.location.split(",").map(s => s.trim());
+    if (!isValidName(editForm.name)) { return; }
+    if (!isValidCity(parts[0])) { return; }
+    if (parts.length > 1 && parts[1] && !isValidCountry(parts[1])) { return; }
     setEditSaving(true);
     const [city, country] = editForm.location.split(",").map(s => s.trim());
     try {
@@ -98,7 +103,13 @@ export default function BranchManagementPage() {
   async function handleBranchSave() {
     const e: Record<string, string> = {};
     if (!branchForm.name.trim()) e.name = "Branch name is required.";
-    if (!branchForm.location.trim()) e.location = "Location is required.";
+    else if (!isValidName(branchForm.name)) e.name = "Branch name must contain only letters, spaces, hyphens or apostrophes.";
+    if (!branchForm.location.trim()) { e.location = "Location is required."; }
+    else {
+      const parts = branchForm.location.split(",").map(s => s.trim());
+      if (!isValidCity(parts[0])) e.location = "Enter a valid city name (letters only).";
+      else if (parts.length > 1 && parts[1] && !isValidCountry(parts[1])) e.location = `Country "${parts[1]}" is not recognized. Use a valid country name or code.`;
+    }
     if (Object.keys(e).length) { setBranchErrors(e); return; }
     setBranchErrors({});
     setSaving(true);
@@ -178,9 +189,9 @@ export default function BranchManagementPage() {
                   {branchErrors.name && <p className="text-xs text-error mt-1">{branchErrors.name}</p>}
                 </div>
                 <div>
-                  <label htmlFor="field-location-5" className="text-xs uppercase tracking-widest text-on-surface-variant">Location</label>
+                  <label htmlFor="field-location-5" className="text-xs uppercase tracking-widest text-on-surface-variant">Location (City, Country)</label>
                   <input id="field-location-5" value={branchForm.location} onChange={e => { setBranchForm(p => ({...p, location: e.target.value})); setBranchErrors(p => ({...p, location: ""})); }}
-                    placeholder="e.g. Tokyo, JP"
+                    placeholder="e.g. Tokyo, Japan"
                     className={`mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-tertiary/50 ${branchErrors.location ? "border-red-500" : "border-white/10"}`} />
                   {branchErrors.location && <p className="text-xs text-error mt-1">{branchErrors.location}</p>}
                 </div>

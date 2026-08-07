@@ -9,6 +9,7 @@ import Link from "next/link";
 import { usersApi, adminApi } from "@/lib/services";
 import { useToast } from "@/context/ToastContext";
 import { apiError } from "@/lib/api";
+import { isValidName } from "@/lib/validation";
 
 const cap = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 // Account status for display. Driver duty-states (on_trip/on_duty/off_duty) are
@@ -100,6 +101,7 @@ export default function UserManagementPage() {
   async function saveEdit(e: React.FormEvent) {
     e.preventDefault();
     if (!editTarget) return;
+    if (!isValidName(editForm.name)) { toast.error("Name must contain only letters, spaces, hyphens or apostrophes."); return; }
     setEditSaving(true);
     try {
       await usersApi.update(editTarget.id, { name: editForm.name, role: editForm.role, status: editForm.status });
@@ -318,7 +320,7 @@ export default function UserManagementPage() {
               <button type="button" onClick={() => setEditTarget(null)} className="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant"><X className="h-4 w-4" /></button>
             </div>
             <form noValidate onSubmit={saveEdit} className="p-6 space-y-4">
-              <div><label htmlFor="field-name-1" className="text-xs uppercase tracking-widest text-on-surface-variant">Name</label><input id="field-name-1" value={editForm.name} onChange={e => { const filtered = e.target.value.replace(/\d/g, ''); setEditForm(p => ({...p, name: filtered})); }} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
+              <div><label htmlFor="field-name-1" className="text-xs uppercase tracking-widest text-on-surface-variant">Name</label><input id="field-name-1" value={editForm.name} onChange={e => { const filtered = e.target.value.replace(/[^A-Za-z\s.'-]/g, ''); setEditForm(p => ({...p, name: filtered})); }} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50" /></div>
               <div><label htmlFor="field-role-2" className="text-xs uppercase tracking-widest text-on-surface-variant">Role</label>
                 <select id="field-role-2" value={editForm.role} onChange={e => setEditForm(p => ({...p, role: e.target.value}))} className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
                   {["customer","admin","logistics","finance","warehouse","driver","support","customs"].map(r => <option key={r}>{r}</option>)}

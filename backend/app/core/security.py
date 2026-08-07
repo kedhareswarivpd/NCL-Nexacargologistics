@@ -7,12 +7,11 @@ from jose import jwt, JWTError
 
 from app.core.config import settings
 
+import hashlib
+
 
 class TokenError(Exception):
     pass
-
-
-import hashlib
 
 
 def _pw_bytes(password: str) -> bytes:
