@@ -19,8 +19,8 @@ from app.utils.helpers import generate_ref, serialize
 
 router = APIRouter(prefix="/dispatch", tags=["dispatch"])
 
-# Only logistics and admin can access dispatch operations
-dispatch_guard = require_roles(UserRole.LOGISTICS, UserRole.ADMIN)
+# Only logistics, admin, and customer (for simulation) can access dispatch operations
+dispatch_guard = require_roles(UserRole.LOGISTICS, UserRole.ADMIN, UserRole.CUSTOMER)
 
 STATUS_IN_TRANSIT = "In Transit"
 
