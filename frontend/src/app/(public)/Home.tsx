@@ -3,6 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
+// Force dynamic rendering to prevent 304 cache issues on Vercel
+export const dynamic = "force-dynamic";
 import {
   Plane, Ship, Truck, Globe, ArrowRight, CheckCircle2,
   TrendingUp, Warehouse, FileText, ChevronRight, Star, Package,

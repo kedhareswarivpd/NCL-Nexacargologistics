@@ -6,6 +6,9 @@ import { cn } from "@/lib/utils";
 import { quotesApi } from "@/lib/services";
 import { apiError } from "@/lib/api";
 
+// Force dynamic rendering to prevent 304 cache issues on Vercel
+export const dynamic = "force-dynamic";
+
 export default function FreightQuoteCalculatorPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [service, setService] = useState("Standard");
