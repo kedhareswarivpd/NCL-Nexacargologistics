@@ -1,7 +1,5 @@
 "use client";
-import React from "react";
-
-import { useEffect, useState } from "react";
+import { useEffect, useState, FormEvent } from "react";
 import {
   Banknote, TrendingUp, TrendingDown, Receipt,
   Clock, CheckCircle2, AlertCircle, ArrowUpRight, FileText, ArrowLeft, Edit, X,
@@ -55,7 +53,7 @@ export default function FinanceDashboard() {
     setEditForm({ status: inv.status, due_date: inv.due_date ?? "" });
   }
 
-  async function saveEdit(e: React.FormEvent) {
+  async function saveEdit(e: FormEvent) {
     e.preventDefault();
     if (!editTarget) return;
     setEditSaving(true);

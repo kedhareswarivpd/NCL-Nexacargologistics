@@ -1,8 +1,0 @@
-organization=kedhareswarivpd
-projectKey=kedhareswarivpd_NCL-Nexacargologistics
-serverUrl=https://sonarcloud.io
-serverVersion=8.0.0.100526
-branch=main
-dashboardUrl=https://sonarcloud.io/dashboard?id=kedhareswarivpd_NCL-Nexacargologistics&branch=main
-ceTaskId=AZ_UPO0uENWaOHR7VfC2
-ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZ_UPO0uENWaOHR7VfC2

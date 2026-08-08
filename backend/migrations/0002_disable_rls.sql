@@ -13,9 +13,9 @@ do $$
 declare t text;
 begin
   foreach t in array array[
-    'profiles','branches','quotes','shipments','shipment_status_history','documents',
+    'profiles','roles','branches','quotes','shipments','shipment_status_history','documents',
     'vehicles','routes','containers','deliveries','warehouses','inventory_items',
-    'warehouse_tasks','invoices','payments','customs_entries','insurance_policies',
+    'warehouse_tasks','expenses','invoices','payments','customs_entries','insurance_policies',
     'support_tickets','ticket_messages','notifications','audit_logs'
   ] loop
     execute format('alter table public.%I disable row level security;', t);

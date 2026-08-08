@@ -285,3 +285,38 @@ tbody tr {
 ::-webkit-scrollbar-track { background: #0d2040; }
 ::-webkit-scrollbar-thumb { background: #1a3a6a; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: #00C2FF; }
+
+/* ── Focus visibility for accessibility ── */
+:focus-visible {
+  outline: 2px solid var(--color-tertiary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Reduced motion support ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Table horizontal scroll for mobile ── */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Modal accessibility defaults ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+}

@@ -4,21 +4,39 @@ via app.utils.helpers.serialize, so only inputs need explicit models.
 """
 
 from typing import Optional
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
 
 
 # ----------------------------- Auth -----------------------------
 class LoginRequest(BaseModel):
     email: EmailStr
-    password: str
+    password: str = Field(min_length=1, description="Password is required")
+
+    @field_validator("email")
+    @classmethod
+    def normalize_email(cls, v: str) -> str:
+        return v.lower().strip()
 
 
 class RegisterRequest(BaseModel):
-    name: str = Field(min_length=1)
+    name: str = Field(min_length=2, max_length=100)
     email: EmailStr
-    password: str = Field(min_length=6)
+    password: str = Field(min_length=8, max_length=128)
     phone: Optional[str] = None
-    company: Optional[str] = None
+    company: Optional[str] = Field(default=None, max_length=255)
+
+    @field_validator("name")
+    @classmethod
+    def validate_name(cls, v: str) -> str:
+        v = v.strip()
+        if not v.replace(" ", "").replace("-", "").replace("'", "").isalpha():
+            raise ValueError("Name must contain only letters, spaces, hyphens, or apostrophes")
+        return v
+
+    @field_validator("email")
+    @classmethod
+    def normalize_email(cls, v: str) -> str:
+        return v.lower().strip()
 
 
 # ----------------------------- Profile / users -----------------------------
@@ -37,13 +55,34 @@ class AdminProfileUpdate(ProfileUpdate):
 
 class StaffCreate(BaseModel):
     """Admin creates a staff member (also provisions a Supabase auth user)."""
-    name: str
+    name: str = Field(min_length=2, max_length=100)
     email: EmailStr
-    password: str = Field(min_length=6)
-    role: str = "logistics"
-    department: Optional[str] = None
-    phone: Optional[str] = None
+    password: str = Field(min_length=8, max_length=128)
+    role: str = Field(default="logistics")
+    department: Optional[str] = Field(default=None, max_length=100)
+    phone: Optional[str] = Field(default=None, max_length=50)
     branch_id: Optional[str] = None
+
+    @field_validator("role")
+    @classmethod
+    def validate_role(cls, v: str) -> str:
+        valid_roles = {"admin", "customer", "finance", "logistics", "warehouse", "driver", "support", "customs"}
+        if v.lower() not in valid_roles:
+            raise ValueError(f"Invalid role. Must be one of: {', '.join(sorted(valid_roles))}")
+        return v.lower()
+
+    @field_validator("name")
+    @classmethod
+    def validate_name(cls, v: str) -> str:
+        v = v.strip()
+        if not v.replace(" ", "").replace("-", "").replace("'", "").isalpha():
+            raise ValueError("Name must contain only letters, spaces, hyphens, or apostrophes")
+        return v
+
+    @field_validator("email")
+    @classmethod
+    def normalize_email(cls, v: str) -> str:
+        return v.lower().strip()
 
 
 class RoleCreate(BaseModel):
@@ -62,14 +101,20 @@ class QuoteCreate(BaseModel):
     origin: str = Field(min_length=2, max_length=255)
     destination: str = Field(min_length=2, max_length=255)
     mode: str = Field(default="sea", pattern="^(air|sea|road)$")
-    cargo_type: Optional[str] = None
-    weight: Optional[float] = Field(default=None, gt=0, le=10000)
-    volume: Optional[float] = Field(default=None, gt=0)
-    incoterm: Optional[str] = None
-    contact_name: Optional[str] = None
-    contact_email: Optional[str] = None
-    contact_phone: Optional[str] = None
-    notes: Optional[str] = None
+    cargo_type: Optional[str] = Field(default=None, max_length=120)
+    weight: Optional[float] = Field(default=None, gt=0, le=100000)
+    volume: Optional[float] = Field(default=None, gt=0, le=10000)
+    incoterm: Optional[str] = Field(default=None, max_length=20, pattern="^(EXW|FOB|CIF|DDP|FCA|CPT|CIP|DAT|DAP|FAS|CFR)$")
+    contact_name: Optional[str] = Field(default=None, max_length=100)
+    contact_email: Optional[EmailStr] = None
+    contact_phone: Optional[str] = Field(default=None, max_length=50)
+    notes: Optional[str] = Field(default=None, max_length=2000)
+
+    @model_validator(mode="after")
+    def check_origin_destination(self):
+        if self.origin.strip().lower() == self.destination.strip().lower():
+            raise ValueError("Origin and destination must be different")
+        return self
 
 
 class QuoteUpdate(BaseModel):
@@ -82,22 +127,28 @@ class QuoteUpdate(BaseModel):
 
 # ----------------------------- Shipments -----------------------------
 class ShipmentCreate(BaseModel):
-    origin: str
-    destination: str
-    mode: str = "sea"
-    cargo_type: Optional[str] = None
-    weight: Optional[str] = None
-    volume: Optional[str] = None
-    incoterm: Optional[str] = None
-    eta: Optional[str] = None
-    value_amount: Optional[float] = None
-    currency: Optional[str] = "USD"
+    origin: str = Field(min_length=2, max_length=255)
+    destination: str = Field(min_length=2, max_length=255)
+    mode: str = Field(default="sea", pattern="^(air|sea|road)$")
+    cargo_type: Optional[str] = Field(default=None, max_length=120)
+    weight: Optional[str] = Field(default=None, max_length=50)
+    volume: Optional[str] = Field(default=None, max_length=50)
+    incoterm: Optional[str] = Field(default=None, max_length=20)
+    eta: Optional[str] = Field(default=None, max_length=60)
+    value_amount: Optional[float] = Field(default=None, ge=0)
+    currency: Optional[str] = Field(default="USD", max_length=3, pattern="^[A-Z]{3}$")
     customer_id: Optional[str] = None
-    customer_name: Optional[str] = None
-    customer_email: Optional[str] = None
-    customer_phone: Optional[str] = None
+    customer_name: Optional[str] = Field(default=None, max_length=100)
+    customer_email: Optional[EmailStr] = None
+    customer_phone: Optional[str] = Field(default=None, max_length=50)
     quote_id: Optional[str] = None
-    description: Optional[str] = None
+    description: Optional[str] = Field(default=None, max_length=2000)
+
+    @model_validator(mode="after")
+    def check_origin_destination(self):
+        if self.origin.strip().lower() == self.destination.strip().lower():
+            raise ValueError("Origin and destination must be different")
+        return self
 
 
 class ShipmentUpdate(BaseModel):
@@ -130,11 +181,11 @@ class DocumentCreate(BaseModel):
 
 # ----------------------------- Logistics -----------------------------
 class ContainerCreate(BaseModel):
-    container_no: str
-    type: str
-    status: str = "Available"
-    location: Optional[str] = None
-    capacity: Optional[str] = None
+    container_no: str = Field(min_length=5, max_length=40, description="ISO 6346 container number")
+    type: str = Field(pattern="^(dry|reefer|open_top|flat_rack|tank)$")
+    status: str = Field(default="Available", pattern="^(Available|In Use|Maintenance)$")
+    location: Optional[str] = Field(default=None, max_length=255)
+    capacity: Optional[str] = Field(default=None, max_length=40)
     shipment_id: Optional[str] = None
 
 
@@ -170,12 +221,12 @@ class RouteUpdate(BaseModel):
 
 
 class VehicleCreate(BaseModel):
-    vehicle_no: str
-    type: str
-    status: str = "Available"
+    vehicle_no: str = Field(min_length=3, max_length=40)
+    type: str = Field(pattern="^(truck|van|trailer|container_truck)$")
+    status: str = Field(default="Available", pattern="^(Available|In Use|Maintenance)$")
     driver_id: Optional[str] = None
-    location: Optional[str] = None
-    capacity: Optional[str] = None
+    location: Optional[str] = Field(default=None, max_length=255)
+    capacity: Optional[str] = Field(default=None, max_length=40)
     shipment_id: Optional[str] = None
 
 
@@ -210,11 +261,11 @@ class DeliveryUpdate(BaseModel):
 
 # ----------------------------- Warehouse -----------------------------
 class WarehouseCreate(BaseModel):
-    name: str
-    code: Optional[str] = None
-    location: Optional[str] = None
+    name: str = Field(min_length=2, max_length=255)
+    code: Optional[str] = Field(default=None, max_length=40)
+    location: Optional[str] = Field(default=None, max_length=500)
     manager_id: Optional[str] = None
-    capacity: Optional[int] = None
+    capacity: Optional[int] = Field(default=None, gt=0)
 
 
 class WarehouseUpdate(BaseModel):
@@ -228,12 +279,12 @@ class WarehouseUpdate(BaseModel):
 
 class InventoryCreate(BaseModel):
     warehouse_id: str
-    sku: str
-    name: str
-    category: Optional[str] = None
-    zone: Optional[str] = None
-    qty: int = 0
-    reorder_at: Optional[int] = None
+    sku: str = Field(min_length=1, max_length=100)
+    name: str = Field(min_length=1, max_length=255)
+    category: Optional[str] = Field(default=None, max_length=100)
+    zone: Optional[str] = Field(default=None, max_length=50)
+    qty: int = Field(default=0, ge=0)
+    reorder_at: Optional[int] = Field(default=None, ge=0)
     shipment_id: Optional[str] = None
 
 
@@ -265,11 +316,11 @@ class WarehouseTaskUpdate(BaseModel):
 class InvoiceCreate(BaseModel):
     customer_id: Optional[str] = None
     shipment_id: Optional[str] = None
-    amount: float
-    tax: float = 0
-    currency: str = "USD"
+    amount: float = Field(ge=0, description="Amount must be non-negative")
+    tax: float = Field(default=0, ge=0, description="Tax must be non-negative")
+    currency: str = Field(default="USD", max_length=3, pattern="^[A-Z]{3}$")
     due_date: Optional[str] = None
-    description: Optional[str] = None
+    description: Optional[str] = Field(default=None, max_length=1000)
 
 
 class InvoiceUpdate(BaseModel):
@@ -282,9 +333,9 @@ class InvoiceUpdate(BaseModel):
 
 class PaymentCreate(BaseModel):
     invoice_id: str
-    amount: float
-    currency: str = "USD"
-    method: Optional[str] = None
+    amount: float = Field(gt=0, description="Payment amount must be positive")
+    currency: str = Field(default="USD", max_length=3, pattern="^[A-Z]{3}$")
+    method: Optional[str] = Field(default=None, pattern="^(card|bank_transfer|wallet|cash)$")
 
 
 class ExpenseCreate(BaseModel):
@@ -298,12 +349,12 @@ class ExpenseCreate(BaseModel):
 # ----------------------------- Customs -----------------------------
 class CustomsCreate(BaseModel):
     shipment_id: Optional[str] = None
-    direction: str = "import"
-    hs_code: Optional[str] = None
-    declared_value: Optional[float] = None
-    duty_amount: Optional[float] = None
-    currency: str = "USD"
-    notes: Optional[str] = None
+    direction: str = Field(default="import", pattern="^(import|export)$")
+    hs_code: Optional[str] = Field(default=None, max_length=20)
+    declared_value: Optional[float] = Field(default=None, ge=0)
+    duty_amount: Optional[float] = Field(default=None, ge=0)
+    currency: str = Field(default="USD", max_length=3, pattern="^[A-Z]{3}$")
+    notes: Optional[str] = Field(default=None, max_length=2000)
 
 
 class CustomsUpdate(BaseModel):
@@ -317,9 +368,9 @@ class CustomsUpdate(BaseModel):
 # ----------------------------- Insurance -----------------------------
 class InsuranceCreate(BaseModel):
     shipment_id: Optional[str] = None
-    coverage_amount: Optional[float] = None
-    currency: str = "USD"
-    notes: Optional[str] = None
+    coverage_amount: Optional[float] = Field(default=None, gt=0)
+    currency: str = Field(default="USD", max_length=3, pattern="^[A-Z]{3}$")
+    notes: Optional[str] = Field(default=None, max_length=2000)
 
 
 class InsuranceUpdate(BaseModel):
@@ -333,10 +384,10 @@ class InsuranceUpdate(BaseModel):
 
 # ----------------------------- Support -----------------------------
 class TicketCreate(BaseModel):
-    subject: str
-    category: Optional[str] = None
-    priority: str = "medium"
-    description: Optional[str] = None
+    subject: str = Field(min_length=3, max_length=255)
+    category: Optional[str] = Field(default=None, pattern="^(delivery|billing|damage|documentation|general)$")
+    priority: str = Field(default="medium", pattern="^(low|medium|high|urgent)$")
+    description: Optional[str] = Field(default=None, max_length=5000)
 
 
 class TicketUpdate(BaseModel):
@@ -351,11 +402,11 @@ class TicketMessageCreate(BaseModel):
 
 # ----------------------------- Admin -----------------------------
 class BranchCreate(BaseModel):
-    name: str
-    code: str
-    city: Optional[str] = None
-    country: Optional[str] = None
-    address: Optional[str] = None
+    name: str = Field(min_length=2, max_length=255)
+    code: str = Field(min_length=2, max_length=50)
+    city: Optional[str] = Field(default=None, max_length=120)
+    country: Optional[str] = Field(default=None, max_length=120)
+    address: Optional[str] = Field(default=None, max_length=500)
     manager_id: Optional[str] = None
 
 
@@ -399,7 +450,7 @@ class ChangePasswordRequest(BaseModel):
 
 # ----------------------------- Users (extended) -----------------------------
 class StatusPatch(BaseModel):
-    status: str  # active|suspended|invited
+    status: str = Field(pattern="^(active|suspended|invited)$")
 
 
 # ----------------------------- Customers -----------------------------
@@ -430,11 +481,24 @@ class QuoteCalculate(BaseModel):
 
 # ----------------------------- Drivers -----------------------------
 class DriverCreate(BaseModel):
-    name: str = Field(min_length=1)
+    name: str = Field(min_length=2, max_length=100)
     email: EmailStr
-    password: str = Field(min_length=6)
-    phone: Optional[str] = None
+    password: str = Field(min_length=8, max_length=128)
+    phone: Optional[str] = Field(default=None, max_length=50)
     branch_id: Optional[str] = None
+
+    @field_validator("name")
+    @classmethod
+    def validate_name(cls, v: str) -> str:
+        v = v.strip()
+        if not v.replace(" ", "").replace("-", "").replace("'", "").isalpha():
+            raise ValueError("Name must contain only letters, spaces, hyphens, or apostrophes")
+        return v
+
+    @field_validator("email")
+    @classmethod
+    def normalize_email(cls, v: str) -> str:
+        return v.lower().strip()
 
 
 class DriverUpdate(BaseModel):
@@ -445,7 +509,7 @@ class DriverUpdate(BaseModel):
 
 
 class AvailabilityPatch(BaseModel):
-    status: str  # on_duty|off_duty|on_trip|active|suspended
+    status: str = Field(pattern="^(on_duty|off_duty|on_trip|active|suspended)$")
 
 
 # ----------------------------- Driver tasks -----------------------------
@@ -486,11 +550,11 @@ class ReassignDriverRequest(BaseModel):
 # ----------------------------- Tracking (extended) -----------------------------
 class LocationUpdate(BaseModel):
     shipment_id: str
-    lat: float
-    lng: float
-    status: Optional[str] = None
-    note: Optional[str] = None
-    location: Optional[str] = None
+    lat: float = Field(ge=-90, le=90, description="Latitude must be between -90 and 90")
+    lng: float = Field(ge=-180, le=180, description="Longitude must be between -180 and 180")
+    status: Optional[str] = Field(default=None, max_length=50)
+    note: Optional[str] = Field(default=None, max_length=500)
+    location: Optional[str] = Field(default=None, max_length=255)
 
 
 # ----------------------------- Payments (extended) -----------------------------
@@ -498,25 +562,3 @@ class PaymentVerify(BaseModel):
     payment_ref: Optional[str] = None
     payment_id: Optional[str] = None
     gateway_txn_id: Optional[str] = None
-
-
-# ----------------------------- Expenses / Finance -----------------------------
-class ExpenseCreate(BaseModel):
-    category: str
-    amount: float
-    currency: str = "USD"
-    branch_id: Optional[str] = None
-    note: Optional[str] = None
-    incurred_at: Optional[str] = None
-
-
-# ----------------------------- Admin roles -----------------------------
-class RoleCreate(BaseModel):
-    key: str = Field(min_length=2)
-    label: str
-    description: Optional[str] = None
-
-
-class RoleUpdate(BaseModel):
-    label: Optional[str] = None
-    description: Optional[str] = None

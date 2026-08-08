@@ -1,7 +1,5 @@
 "use client";
-import React from "react";
-
-import { useEffect, useState } from "react";
+import { useEffect, useState, FormEvent } from "react";
 import {
   PackageOpen, Truck, AlertTriangle, ClipboardList,
   ScanBarcode, TrendingUp, Thermometer, Boxes, ArrowLeft, Edit, X,
@@ -42,7 +40,7 @@ export default function WarehouseDashboard() {
     setEditForm({ description: t.description, status: t.status, assigned_to: t.assigned_to ?? "" });
   }
 
-  async function saveEdit(e: React.FormEvent) {
+  async function saveEdit(e: FormEvent) {
     e.preventDefault();
     if (!editTarget) return;
     setEditSaving(true);

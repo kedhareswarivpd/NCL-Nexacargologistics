@@ -2,6 +2,7 @@
 import React from "react";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
 interface Props {
@@ -10,8 +11,14 @@ interface Props {
 
 export function MobileSidebarWrapper({ children }: Props) {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
-  // Close on route change
+  // Close on route change (handles Next.js client navigation)
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  // Close on browser back/forward
   useEffect(() => {
     const close = () => setOpen(false);
     window.addEventListener("popstate", close);

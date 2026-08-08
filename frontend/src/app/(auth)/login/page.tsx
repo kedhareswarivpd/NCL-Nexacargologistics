@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "@/hooks/useForm";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
-import { isEmail, required } from "@/lib/validation";
+import { isEmail, required, minLength } from "@/lib/validation";
 import { ROLE_HOME } from "@/lib/types";
 
 function LoginForm() {
@@ -35,7 +35,7 @@ function LoginForm() {
     initialValues: { email: "", password: "" },
     validators: {
       email: [required("Email"), isEmail],
-      password: [required("Password")],
+      password: [required("Password"), minLength(1, "Password")],
     },
     onSubmit: async (values) => {
       setFormError(null);

@@ -16,13 +16,13 @@ create table if not exists public.roles (
 
 create table if not exists public.expenses (
   id           uuid primary key default gen_random_uuid(),
-  category     text not null,
-  amount       double precision not null default 0,
+  category     text not null default 'Operational',
+  amount       double precision not null default 0 check (amount >= 0),
   currency     text not null default 'USD',
-  branch_id    uuid references public.branches(id),
-  note         text,
-  incurred_at  text,
-  created_at   timestamptz default now()
+  branch_id    uuid references public.branches(id) on delete set null,
+  description  text,
+  created_at   timestamptz default now(),
+  updated_at   timestamptz default now()
 );
 
 create table if not exists public.driver_tasks (
@@ -55,3 +55,6 @@ insert into public.roles (key, label, description, is_system) values
   ('finance','Finance Manager','Billing and payments', true),
   ('support','Support Executive','Ticket management', true)
 on conflict (key) do nothing;
+
+-- Remove unused driver_tasks table (superseded by warehouse_tasks)
+drop table if exists public.driver_tasks cascade;

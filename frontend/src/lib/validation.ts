@@ -19,11 +19,20 @@ export const minLength =
   (value) =>
     value.length < n ? `${label} must be at least ${n} characters.` : undefined;
 
+/** Maximum length. */
+export const maxLength =
+  (n: number, label = "This field"): Validator =>
+  (value) =>
+    value.length > n ? `${label} must be at most ${n} characters.` : undefined;
+
 /** Basic but practical email check. */
-export const isEmail: Validator = (value) =>
-  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())  // NOSONAR
+export const isEmail: Validator = (value) => {
+  const trimmed = value.trim();
+  if (!trimmed) return undefined; // Let `required` handle empty
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)  // NOSONAR
     ? undefined
     : "Enter a valid email address.";
+};
 
 /** Gmail email with alphabets and numbers required. */
 export const isGmailEmail: Validator = (value) => {

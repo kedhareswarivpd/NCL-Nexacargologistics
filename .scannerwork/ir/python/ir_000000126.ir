@@ -1,25 +1,0 @@
-allowed (app.models.profile.UserRole"Š!
-
- ("#unknown-value#*
-(
- ("
-builtinsset*:Bset#
-!
-! (1"#new-object#Bset&
-$
-" (0"#get-field# ADMIN:&
-$
-! (1"#array-add-last#:.
-,
- (1allowed_set"#unknown-value#(
-&
-
- (%closure"#new-object#-
-+
-
- (	"#set-field# allowed_set:+
-)
-
- (
-"?python-partial-apply?:
- (*MC:\Users\DELL\Desktop\NCL-Nexacargologistics\backend\app\core\dependencies.py

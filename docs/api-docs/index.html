@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexaCargo API Documentation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a1628; color: #e0e0e0; line-height: 1.6; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        header { text-align: center; padding: 40px 0; background: linear-gradient(135deg, #1a4a8a 0%, #0a1628 100%); border-radius: 12px; margin-bottom: 30px; }
+        header h1 { font-size: 2.5rem; color: #00c2ff; margin-bottom: 10px; }
+        header p { color: #8899aa; font-size: 1.1rem; }
+        .module-section { margin-bottom: 40px; background: #111d33; border-radius: 12px; padding: 25px; border: 1px solid #1e3a5f; }
+        .module-title { font-size: 1.8rem; color: #00c2ff; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #1e3a5f; display: flex; align-items: center; gap: 10px; }
+        .module-icon { font-size: 2rem; }
+        .endpoint { background: #0d1f3c; border-radius: 10px; padding: 20px; margin-bottom: 15px; border-left: 4px solid #00c2ff; }
+        .endpoint-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
+        .method { padding: 5px 12px; border-radius: 5px; font-weight: bold; font-size: 0.85rem; min-width: 70px; text-align: center; }
+        .method-get { background: #1e88e5; color: white; }
+        .method-post { background: #43a047; color: white; }
+        .method-patch { background: #fb8c00; color: white; }
+        .method-put { background: #8e24aa; color: white; }
+        .method-delete { background: #e53935; color: white; }
+        .method-ws { background: #00897b; color: white; }
+        .path { font-family: 'Consolas', monospace; font-size: 1.1rem; color: #81d4fa; }
+        .badge { padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; margin-left: 5px; }
+        .badge-auth { background: #c62828; color: white; }
+        .badge-public { background: #2e7d32; color: white; }
+        .badge-role { background: #1565c0; color: white; }
+        .diagram-container { background: #0a1628; border-radius: 8px; padding: 20px; margin: 15px 0; overflow-x: auto; }
+        .flow-diagram { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; min-height: 120px; }
+        .flow-box { padding: 12px 20px; border-radius: 8px; text-align: center; font-weight: 500; font-size: 0.9rem; min-width: 100px; }
+        .flow-client { background: #1565c0; color: white; }
+        .flow-api { background: #00897b; color: white; }
+        .flow-db { background: #4527a0; color: white; }
+        .flow-arrow { font-size: 1.5rem; color: #00c2ff; }
+        .flow-label { font-size: 0.75rem; color: #8899aa; text-align: center; margin-top: 5px; }
+        .request-response { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+        .request-box, .response-box { background: #0a1628; border-radius: 8px; padding: 15px; }
+        .request-box h4 { color: #43a047; margin-bottom: 10px; }
+        .response-box h4 { color: #1e88e5; margin-bottom: 10px; }
+        pre { background: #050d1a; padding: 12px; border-radius: 6px; overflow-x: auto; font-size: 0.85rem; color: #a5d6a7; max-height: 300px; overflow-y: auto; }
+        .params-table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        .params-table th, .params-table td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #1e3a5f; }
+        .params-table th { color: #00c2ff; font-weight: 600; }
+        .params-table td { color: #b0bec5; }
+        .param-type { color: #81d4fa; font-family: monospace; font-size: 0.85rem; }
+        .param-required { color: #ef5350; font-weight: bold; }
+        .param-optional { color: #66bb6a; }
+        .description { color: #b0bec5; margin: 10px 0; font-size: 0.95rem; }
+        .toc { position: sticky; top: 20px; background: #111d33; border-radius: 12px; padding: 20px; margin-bottom: 30px; border: 1px solid #1e3a5f; }
+        .toc h3 { color: #00c2ff; margin-bottom: 15px; }
+        .toc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+        .toc a { color: #81d4fa; text-decoration: none; padding: 5px 10px; border-radius: 5px; display: block; transition: all 0.2s; font-size: 0.9rem; }
+        .toc a:hover { background: #1e3a5f; color: #00c2ff; }
+        .sequence-diagram { display: flex; flex-direction: column; gap: 5px; padding: 15px; }
+        .sequence-line { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 6px; background: #050d1a; }
+        .sequence-actor { width: 80px; font-weight: bold; text-align: center; padding: 5px; border-radius: 4px; font-size: 0.8rem; }
+        .actor-client { background: #1565c0; }
+        .actor-api { background: #00897b; }
+        .actor-db { background: #4527a0; }
+        .sequence-arrow { color: #00c2ff; font-size: 1rem; }
+        .sequence-action { color: #b0bec5; font-size: 0.9rem; }
+        .sequence-result { color: #81c784; font-size: 0.85rem; margin-left: auto; }
+        @media (max-width: 768px) {
+            .request-response { grid-template-columns: 1fr; }
+            .flow-diagram { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚢 NexaCargo API Documentation</h1>
+            <p>Complete API Reference with Visual Diagrams | Base URL: <code>/api/v1</code></p>
+            <p style="margin-top: 10px; color: #66bb6a;">All endpoints (except auth/public) require: <code>Authorization: Bearer &lt;token&gt;</code></p>
+        </header>
+
+        <nav class="toc">
+            <h3>📋 Table of Contents</h3>
+            <div class="toc-grid">
+                <a href="#auth">🔐 Auth</a>
+                <a href="#users">👥 Users</a>
+                <a href="#admin">👑 Admin</a>
+                <a href="#customers">👤 Customers</a>
+                <a href="#quotes">📦 Quotes</a>
+                <a href="#shipments">🚚 Shipments</a>
+                <a href="#tracking">📍 Tracking</a>
+                <a href="#logistics">🚛 Logistics</a>
+                <a href="#drivers">🚗 Drivers</a>
+                <a href="#warehouse">🏭 Warehouse</a>
+                <a href="#finance">💰 Finance</a>
+                <a href="#customs">🛃 Customs</a>
+                <a href="#insurance">🛡️ Insurance</a>
+                <a href="#support">🎫 Support</a>
+                <a href="#notifications">🔔 Notifications</a>
+                <a href="#analytics">📊 Analytics</a>
+                <a href="#reports">📄 Reports</a>
+                <a href="#tasks">✅ Tasks</a>
+                <a href="#dispatch">🚀 Dispatch</a>
+            </div>
+        </nav>
+
+        <!-- AUTH MODULE -->
+        <section class="module-section" id="auth">
+            <h2 class="module-title"><span class="module-icon">🔐</span> Authentication</h2>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-post">POST</span>
+                    <span class="path">/auth/login</span>
+                    <span class="badge badge-public">PUBLIC</span>
+                </div>
+                <p class="description">Authenticate a user and receive a JWT access token for subsequent API calls.</p>
+                
+                <div class="diagram-container">
+                    <div class="flow-diagram">
+                        <div>
+                            <div class="flow-box flow-client">Client</div>
+                            <div class="flow-label">POST /auth/login</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-api">FastAPI</div>
+                            <div class="flow-label">verify_password()</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-db">Profiles</div>
+                            <div class="flow-label">SELECT user</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-api">JWT Token</div>
+                            <div class="flow-label">create_access_token()</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-client">Response</div>
+                            <div class="flow-label">200 OK + token</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="request-response">
+                    <div class="request-box">
+                        <h4>📤 Request Body</h4>
+                        <pre>{
+  "email": "user@example.com",
+  "password": "securepassword123"
+}</pre>
+                    </div>
+                    <div class="response-box">
+                        <h4>📥 Response (200 OK)</h4>
+                        <pre>{
+  "access_token": "eyJhbGciOiJIUzI1NiIs...",
+  "token_type": "bearer",
+  "expires_in": 86400,
+  "user": {
+    "id": "uuid",
+    "email": "user@example.com",
+    "name": "John Doe",
+    "role": "customer"
+  }
+}</pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-post">POST</span>
+                    <span class="path">/auth/register</span>
+                    <span class="badge badge-public">PUBLIC</span>
+                </div>
+                <p class="description">Register a new customer account with email verification.</p>
+                
+                <div class="diagram-container">
+                    <div class="sequence-diagram">
+                        <div class="sequence-line">
+                            <span class="sequence-actor actor-client">Client</span>
+                            <span class="sequence-arrow">→</span>
+                            <span class="sequence-action">POST /auth/register {name, email, password}</span>
+                            <span class="sequence-result">FastAPI receives</span>
+                        </div>
+                        <div class="sequence-line">
+                            <span class="sequence-actor actor-api">API</span>
+                            <span class="sequence-arrow">→</span>
+                            <span class="sequence-action">Check email uniqueness</span>
+                            <span class="sequence-result">No duplicate?</span>
+                        </div>
+                        <div class="sequence-line">
+                            <span class="sequence-actor actor-api">API</span>
+                            <span class="sequence-arrow">→</span>
+                            <span class="sequence-action">hash_password(bcrypt)</span>
+                            <span class="sequence-result">Hashed</span>
+                        </div>
+                        <div class="sequence-line">
+                            <span class="sequence-actor actor-db">DB</span>
+                            <span class="sequence-arrow">→</span>
+                            <span class="sequence-action">INSERT INTO profiles</span>
+                            <span class="sequence-result">User created</span>
+                        </div>
+                        <div class="sequence-line">
+                            <span class="sequence-actor actor-api">API</span>
+                            <span class="sequence-arrow">→</span>
+                            <span class="sequence-action">create_access_token()</span>
+                            <span class="sequence-result">JWT issued</span>
+                        </div>
+                        <div class="sequence-line">
+                            <span class="sequence-actor actor-client">Client</span>
+                            <span class="sequence-arrow">←</span>
+                            <span class="sequence-action">201 Created + token + user</span>
+                            <span class="sequence-result">✅ Authenticated</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-get">GET</span>
+                    <span class="path">/auth/me</span>
+                    <span class="badge badge-auth">AUTH</span>
+                </div>
+                <p class="description">Get the current authenticated user's profile information.</p>
+                
+                <div class="diagram-container">
+                    <div class="flow-diagram">
+                        <div>
+                            <div class="flow-box flow-client">Client</div>
+                            <div class="flow-label">GET /auth/me + Bearer token</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-api">Auth Guard</div>
+                            <div class="flow-label">verify_access_token()</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-db">Profiles</div>
+                            <div class="flow-label">SELECT * WHERE id=uuid</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-client">Response</div>
+                            <div class="flow-label">200 + user profile</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-post">POST</span>
+                    <span class="path">/auth/refresh-token</span>
+                    <span class="badge badge-auth">AUTH</span>
+                </div>
+                <p class="description">Refresh an expiring access token to maintain session.</p>
+                
+                <div class="diagram-container">
+                    <div class="flow-diagram">
+                        <div>
+                            <div class="flow-box flow-client">Client</div>
+                            <div class="flow-label">POST /auth/refresh-token</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-api">API</div>
+                            <div class="flow-label">Validates existing token</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-api">New JWT</div>
+                            <div class="flow-label">create_access_token()</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-client">Response</div>
+                            <div class="flow-label">200 + new token</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-post">POST</span>
+                    <span class="path">/auth/forgot-password</span>
+                    <span class="badge badge-public">PUBLIC</span>
+                </div>
+                <p class="description">Request a password reset link to be sent via email.</p>
+                
+                <div class="diagram-container">
+                    <div class="flow-diagram">
+                        <div>
+                            <div class="flow-box flow-client">Client</div>
+                            <div class="flow-label">POST {email}</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-api">API</div>
+                            <div class="flow-label">Generate reset token</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-api">Notification</div>
+                            <div class="flow-label">Queue reset email</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-client">Response</div>
+                            <div class="flow-label">200 Always OK</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-post">POST</span>
+                    <span class="path">/auth/reset-password</span>
+                    <span class="badge badge-public">PUBLIC</span>
+                </div>
+                <p class="description">Reset password using token received via email.</p>
+                
+                <div class="diagram-container">
+                    <div class="flow-diagram">
+                        <div>
+                            <div class="flow-box flow-client">Client</div>
+                            <div class="flow-label">POST {token, new_password}</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-api">API</div>
+                            <div class="flow-label">verify_password_reset_token()</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-db">Profiles</div>
+                            <div class="flow-label">UPDATE password_hash</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-client">Response</div>
+                            <div class="flow-label">200 Password updated</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-post">POST</span>
+                    <span class="path">/auth/change-password</span>
+                    <span class="badge badge-auth">AUTH</span>
+                </div>
+                <p class="description">Change password while authenticated (requires current password).</p>
+                
+                <div class="diagram-container">
+                    <div class="flow-diagram">
+                        <div>
+                            <div class="flow-box flow-client">Client</div>
+                            <div class="flow-label">POST {current, new}</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-api">API</div>
+                            <div class="flow-label">verify current password</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-db">Profiles</div>
+                            <div class="flow-label">UPDATE password_hash</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-client">Response</div>
+                            <div class="flow-label">200 Updated</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-post">POST</span>
+                    <span class="path">/auth/logout</span>
+                    <span class="badge badge-auth">AUTH</span>
+                </div>
+                <p class="description">Logout the current user and invalidate the session.</p>
+                
+                <div class="diagram-container">
+                    <div class="flow-diagram">
+                        <div>
+                            <div class="flow-box flow-client">Client</div>
+                            <div class="flow-label">POST /auth/logout</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-api">API</div>
+                            <div class="flow-label">Return success</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-client">Client</div>
+                            <div class="flow-label">Clear token & redirect</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- QUOTES MODULE -->
+        <section class="module-section" id="quotes">
+            <h2 class="module-title"><span class="module-icon">📦</span> Quotes</h2>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-post">POST</span>
+                    <span class="path">/quotes/calculate</span>
+                    <span class="badge badge-auth">AUTH</span>
+                </div>
+                <p class="description">Calculate a price estimate without persisting a quote. Returns instant pricing breakdown.</p>
+                
+                <div class="diagram-container">
+                    <div class="flow-diagram">
+                        <div>
+                            <div class="flow-box flow-client">Client</div>
+                            <div class="flow-label">POST {origin, dest, mode, weight}</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-api">Pricing Engine</div>
+                            <div class="flow-label">estimate_price()</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-api">Calculation</div>
+                            <div class="flow-label">base + (kg × rate) + (cbm × rate)</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-client">Response</div>
+                            <div class="flow-label">200 {amount, breakdown}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="request-response">
+                    <div class="request-box">
+                        <h4>📤 Request</h4>
+                        <pre>{
+  "origin": "Shanghai",
+  "destination": "Los Angeles",
+  "mode": "sea",
+  "weight": 5000,
+  "volume": 20.5,
+  "cargo_type": "general"
+}</pre>
+                    </div>
+                    <div class="response-box">
+                        <h4>📥 Response (200)</h4>
+                        <pre>{
+  "amount": 2500.00,
+  "currency": "USD",
+  "breakdown": {
+    "base": 80.0,
+    "per_kg": 0.4,
+    "per_cbm": 35.0
+  }
+}</pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-post">POST</span>
+                    <span class="path">/quotes</span>
+                    <span class="badge badge-auth">AUTH</span>
+                </div>
+                <p class="description">Create a new freight quote request with auto-pricing.</p>
+                
+                <div class="diagram-container">
+                    <div class="sequence-diagram">
+                        <div class="sequence-line">
+                            <span class="sequence-actor actor-client">Client</span>
+                            <span class="sequence-arrow">→</span>
+                            <span class="sequence-action">POST /quotes {origin, dest, mode, weight}</span>
+                            <span class="sequence-result">FastAPI receives</span>
+                        </div>
+                        <div class="sequence-line">
+                            <span class="sequence-actor actor-api">API</span>
+                            <span class="sequence-arrow">→</span>
+                            <span class="sequence-action">estimate_price(mode, weight, volume)</span>
+                            <span class="sequence-result">Auto-calculated amount</span>
+                        </div>
+                        <div class="sequence-line">
+                            <span class="sequence-actor actor-api">API</span>
+                            <span class="sequence-arrow">→</span>
+                            <span class="sequence-action">generate_ref("QT")</span>
+                            <span class="sequence-result">QT-ABC123</span>
+                        </div>
+                        <div class="sequence-line">
+                            <span class="sequence-actor actor-db">DB</span>
+                            <span class="sequence-arrow">→</span>
+                            <span class="sequence-action">INSERT INTO quotes</span>
+                            <span class="sequence-result">Quote created</span>
+                        </div>
+                        <div class="sequence-line">
+                            <span class="sequence-actor actor-db">DB</span>
+                            <span class="sequence-arrow">→</span>
+                            <span class="sequence-action">INSERT INTO shipments</span>
+                            <span class="sequence-result">Shipment auto-created</span>
+                        </div>
+                        <div class="sequence-line">
+                            <span class="sequence-actor actor-db">DB</span>
+                            <span class="sequence-arrow">→</span>
+                            <span class="sequence-action">INSERT INTO invoices</span>
+                            <span class="sequence-result">Invoice auto-created</span>
+                        </div>
+                        <div class="sequence-line">
+                            <span class="sequence-actor actor-client">Client</span>
+                            <span class="sequence-arrow">←</span>
+                            <span class="sequence-action">201 + quote + linked shipment + invoice</span>
+                            <span class="sequence-result">✅ Complete</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-post">POST</span>
+                    <span class="path">/quotes/{id}/approve</span>
+                    <span class="badge badge-auth">AUTH</span>
+                </div>
+                <p class="description">Accept a quote (customer accepts own, staff can accept any).</p>
+                
+                <div class="diagram-container">
+                    <div class="flow-diagram">
+                        <div>
+                            <div class="flow-box flow-client">Client</div>
+                            <div class="flow-label">POST /quotes/{id}/approve</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-api">RBAC Guard</div>
+                            <div class="flow-label">assert_owner_or_staff()</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-db">Quotes</div>
+                            <div class="flow-label">UPDATE status='accepted'</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-client">Response</div>
+                            <div class="flow-label">200 + updated quote</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRACKING MODULE -->
+        <section class="module-section" id="tracking">
+            <h2 class="module-title"><span class="module-icon">📍</span> Tracking</h2>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-get">GET</span>
+                    <span class="path">/tracking/{tracking_id}</span>
+                    <span class="badge badge-public">PUBLIC</span>
+                </div>
+                <p class="description">Public tracking lookup by tracking number. No authentication required.</p>
+                
+                <div class="diagram-container">
+                    <div class="flow-diagram">
+                        <div>
+                            <div class="flow-box flow-client">Anyone</div>
+                            <div class="flow-label">GET /tracking/SHP-ABC123</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-api">API</div>
+                            <div class="flow-label">No auth check</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-db">Shipments</div>
+                            <div class="flow-label">SELECT WHERE tracking_id=?</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-db">Status History</div>
+                            <div class="flow-label">SELECT events</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-client">Response</div>
+                            <div class="flow-label">200 + public view (no PII)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-ws">WS</span>
+                    <span class="path">/tracking/live/{shipment_id}</span>
+                    <span class="badge badge-auth">AUTH</span>
+                </div>
+                <p class="description">WebSocket for real-time tracking updates. Sends position every 5 seconds.</p>
+                
+                <div class="diagram-container">
+                    <div class="flow-diagram">
+                        <div>
+                            <div class="flow-box flow-client">Client</div>
+                            <div class="flow-label">WS connect + token</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-api">WebSocket</div>
+                            <div class="flow-label">verify token + auth check</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-db">Shipments</div>
+                            <div class="flow-label">Poll lat/lng/status every 5s</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-client">Stream</div>
+                            <div class="flow-label">JSON position updates</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FINANCE MODULE -->
+        <section class="module-section" id="finance">
+            <h2 class="module-title"><span class="module-icon">💰</span> Finance</h2>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-post">POST</span>
+                    <span class="path">/finance/payments</span>
+                    <span class="badge badge-auth">AUTH</span>
+                </div>
+                <p class="description">Create a payment against an invoice. Automatically marks invoice as paid.</p>
+                
+                <div class="diagram-container">
+                    <div class="sequence-diagram">
+                        <div class="sequence-line">
+                            <span class="sequence-actor actor-client">Client</span>
+                            <span class="sequence-arrow">→</span>
+                            <span class="sequence-action">POST /finance/payments {invoice_id, amount}</span>
+                            <span class="sequence-result">FastAPI receives</span>
+                        </div>
+                        <div class="sequence-line">
+                            <span class="sequence-actor actor-api">API</span>
+                            <span class="sequence-arrow">→</span>
+                            <span class="sequence-action">Verify invoice exists + ownership</span>
+                            <span class="sequence-result">Authorized?</span>
+                        </div>
+                        <div class="sequence-line">
+                            <span class="sequence-actor actor-api">API</span>
+                            <span class="sequence-arrow">→</span>
+                            <span class="sequence-action">generate_ref("PAY")</span>
+                            <span class="sequence-result">PAY-XYZ789</span>
+                        </div>
+                        <div class="sequence-line">
+                            <span class="sequence-actor actor-db">DB</span>
+                            <span class="sequence-arrow">→</span>
+                            <span class="sequence-action">INSERT INTO payments</span>
+                            <span class="sequence-result">Payment recorded</span>
+                        </div>
+                        <div class="sequence-line">
+                            <span class="sequence-actor actor-db">DB</span>
+                            <span class="sequence-arrow">→</span>
+                            <span class="sequence-action">UPDATE invoices SET status='Paid'</span>
+                            <span class="sequence-result">Invoice marked paid</span>
+                        </div>
+                        <div class="sequence-line">
+                            <span class="sequence-actor actor-client">Client</span>
+                            <span class="sequence-arrow">←</span>
+                            <span class="sequence-action">201 + payment record</span>
+                            <span class="sequence-result">✅ Complete</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-get">GET</span>
+                    <span class="path">/finance/profit-loss</span>
+                    <span class="badge badge-role">FINANCE</span>
+                </div>
+                <p class="description">Get profit/loss summary with revenue, expenses, and margin percentage.</p>
+                
+                <div class="diagram-container">
+                    <div class="flow-diagram">
+                        <div>
+                            <div class="flow-box flow-client">Finance</div>
+                            <div class="flow-label">GET /finance/profit-loss</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-api">RBAC Guard</div>
+                            <div class="flow-label">require_roles(FINANCE)</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-db">Invoices</div>
+                            <div class="flow-label">SUM total WHERE status='Paid'</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-db">Expenses</div>
+                            <div class="flow-label">SUM amount</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-api">Calculate</div>
+                            <div class="flow-label">profit = revenue - expenses</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-client">Response</div>
+                            <div class="flow-label">200 {revenue, expenses, profit, margin}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NOTIFICATIONS MODULE -->
+        <section class="module-section" id="notifications">
+            <h2 class="module-title"><span class="module-icon">🔔</span> Notifications</h2>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-ws">WS</span>
+                    <span class="path">/notifications/ws</span>
+                    <span class="badge badge-auth">AUTH</span>
+                </div>
+                <p class="description">WebSocket for real-time notification stream. Sends unread count + latest every 10s.</p>
+                
+                <div class="diagram-container">
+                    <div class="flow-diagram">
+                        <div>
+                            <div class="flow-box flow-client">Client</div>
+                            <div class="flow-label">WS connect + token</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-api">WebSocket</div>
+                            <div class="flow-label">verify token, get user_id</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-db">Notifications</div>
+                            <div class="flow-label">SELECT WHERE user_id=? AND read=false</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div>
+                            <div class="flow-box flow-client">Stream</div>
+                            <div class="flow-label">{unread: N, latest: [...]} every 10s</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div style="text-align: center; padding: 40px; color: #8899aa;">
+            <h3>📖 Complete API Documentation</h3>
+            <p>For full endpoint details including all request/response examples, parameters, and error codes,</p>
+            <p>see <code>docs/API_DOCUMENTATION.md</code> or visit <code>/docs</code> when the backend is running.</p>
+            <br>
+            <p><strong>Total Endpoints:</strong> ~150 | <strong>Modules:</strong> 18 | <strong>Auth Required:</strong> All except auth/public</p>
+        </div>
+    </div>
+</body>
+</html>

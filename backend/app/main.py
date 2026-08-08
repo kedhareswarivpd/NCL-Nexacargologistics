@@ -3,13 +3,10 @@ from typing import Annotated
 
 from contextlib import asynccontextmanager
 from fastapi import Depends, FastAPI, Request
-from fastapi.responses import Response
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings, is_origin_allowed
-from app.core.database import engine, get_db, Base
+from app.core.database import engine, Base
 from app.api import api_router
 from app.middleware.logging import LoggingMiddleware
 import app.models  # noqa: F401
@@ -30,7 +27,7 @@ async def lifespan(app: FastAPI):
 
 
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse, Response
+from fastapi.responses import JSONResponse
 
 app = FastAPI(title=settings.APP_NAME, version=settings.VERSION, lifespan=lifespan)
 
@@ -40,13 +37,17 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     """Format Pydantic validation errors into a clean, user-friendly message."""
     messages = []
     for error in exc.errors():
-        field = " -> ".join(str(loc) for loc in error.get("loc", []) if loc != "body")
+        # Extract field name from location, skipping 'body' prefix
+        loc = [str(l) for l in error.get("loc", []) if l != "body"]
+        field = loc[-1] if loc else "input"
         msg = error.get("msg", "Invalid value")
-        messages.append(f"Field '{field}': {msg}" if field else msg)
+        # Clean up common Pydantic error messages
+        msg = msg.replace("Value error, ", "")
+        messages.append(f"{field}: {msg}")
     clean_msg = "; ".join(messages) if messages else "Invalid request input."
     return JSONResponse(
         status_code=422,
-        content={"detail": clean_msg, "errors": exc.errors()},
+        content={"detail": clean_msg},
     )
 
 
@@ -54,10 +55,9 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 async def global_exception_handler(request: Request, exc: Exception):
     """Catch uncaught exceptions gracefully without exposing tracebacks to users."""
     logger.error("Uncaught exception processing %s %s: %s", request.method, request.url.path, exc, exc_info=True)
-    msg = f"Server Error ({type(exc).__name__}): {str(exc)}"
     return JSONResponse(
         status_code=500,
-        content={"detail": msg},
+        content={"detail": "An unexpected error occurred. Please try again later."},
     )
 
 
@@ -73,12 +73,6 @@ app.add_middleware(
 )
 
 app.include_router(api_router)
-
-
-@app.get("/health")
-async def health(db: Annotated[AsyncSession, Depends(get_db)]):
-    await db.execute(text("SELECT 1"))
-    return {"status": "ok", "service": settings.APP_NAME, "version": settings.VERSION}
 
 
 @app.get("/")

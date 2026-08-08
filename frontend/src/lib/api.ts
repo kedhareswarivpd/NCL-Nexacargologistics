@@ -76,20 +76,69 @@ api.interceptors.response.use(
 );
 
 /** Narrow an axios error into a readable message for toasts. */
-export function apiError(err: unknown, fallback = "Something went wrong."): string {
+export function apiError(err: unknown, fallback = "Something went wrong. Please try again."): string {
   if (axios.isAxiosError(err)) {
-    if (err.response?.status === 503) {
-      const detail = err.response?.data?.detail;
+    const status = err.response?.status;
+    const data = err.response?.data;
+
+    // Handle specific HTTP status codes with user-friendly messages
+    if (status === 503) {
+      const detail = data?.detail;
       if (typeof detail === "string" && detail.length > 0) return detail;
-      return "The backend service is currently spinning up or unavailable. Please try again in a few seconds.";
+      return "The service is currently unavailable. Please try again in a few moments.";
     }
-    const detail = err.response?.data?.detail;
-    if (typeof detail === "string") return detail;
+    if (status === 502) {
+      return "The service is temporarily unavailable. Please try again shortly.";
+    }
+    if (status === 504) {
+      return "The request timed out. Please try again.";
+    }
+    if (status === 401) {
+      return "Your session has expired. Please sign in again.";
+    }
+    if (status === 403) {
+      return "You don't have permission to perform this action.";
+    }
+    if (status === 404) {
+      return "The requested resource was not found.";
+    }
+    if (status === 409) {
+      const detail = data?.detail;
+      if (typeof detail === "string") return detail;
+      return "This action conflicts with the current state. Please refresh and try again.";
+    }
+    if (status === 422) {
+      // Validation errors - format them nicely
+      const detail = data?.detail;
+      if (typeof detail === "string") return detail;
+      if (Array.isArray(detail)) {
+        const msgs = detail.map((d) => {
+          if (typeof d === "string") return d;
+          if (d?.msg) {
+            const loc = d.loc?.filter((l: any) => l !== "body").join(" → ");
+            return loc ? `${loc}: ${d.msg}` : d.msg;
+          }
+          return String(d);
+        }).filter(Boolean);
+        if (msgs.length > 0) return msgs.join("; ");
+      }
+      return "Please check your input and try again.";
+    }
+    if (status === 429) {
+      return "Too many requests. Please wait a moment before trying again.";
+    }
+    if (status && status >= 500) {
+      return "An unexpected error occurred. Please try again later.";
+    }
+
+    // Fall back to server-provided message
+    const detail = data?.detail;
+    if (typeof detail === "string" && detail.length > 0) return detail;
     if (Array.isArray(detail)) {
       const msgs = detail.map((d) => (typeof d === "string" ? d : d?.msg || String(d))).filter(Boolean);
       if (msgs.length > 0) return msgs.join("; ");
     }
-    return err.response?.data?.message || err.message || fallback;
+    return data?.message || fallback;
   }
   return err instanceof Error ? err.message : fallback;
 }

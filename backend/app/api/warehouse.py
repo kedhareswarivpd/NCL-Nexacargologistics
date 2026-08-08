@@ -35,7 +35,7 @@ def _inventory_status(qty: int, reorder_at: int | None) -> str:
 
 # ----------------------------- Warehouses -----------------------------
 @router.get("/warehouses")
-async def list_warehouses(db: AsyncSession = Depends(get_db), _: Profile = Depends(get_current_user)):
+async def list_warehouses(db: AsyncSession = Depends(get_db), _: Profile = Depends(wh_guard)):
     return [serialize(w) for w in await crud.list_items(db, Warehouse, limit=200)]
 
 
@@ -52,7 +52,7 @@ async def create_warehouse(payload: WarehouseCreate, db: AsyncSession = Depends(
 async def list_inventory(
     warehouse_id: str | None = None,
     db: AsyncSession = Depends(get_db),
-    _: Profile = Depends(get_current_user),
+    _: Profile = Depends(wh_guard),
 ):
     query = select(InventoryItem)
     if warehouse_id:

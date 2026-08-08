@@ -1,79 +1,0 @@
-
-1.0PythonFrontend"1785971912877*py2.B™
-
-imports1
-
-extends2
-
-returns3
-
-	has param4
-
-module5
-
-
-class6
-
-function7
-&
-!backend/app/middleware/logging.py9
-
-app.middleware.logging11
-
-
-time12
-
-logging14
-
-starlette.middleware.base16
-.
-(app.middleware.logging.LoggingMiddleware18
-2
-,starlette.middleware.base.BaseHTTPMiddleware20
-7
-1app.middleware.logging.LoggingMiddleware.dispatch22
-
-typing.Coroutine24J
-
-8
-89 j³
- 
-10
-10115 *
-8 (
-
-13
-13125
-
-15
-15145
-
-17
-17165
-
-19
-19186 210
-
-21
-21206
-
-23
-23227 219
-
-25
-25246r‚
-
-10131*
-8 (
-
-10151*
-8 (
-
-10171*
-8 (9
-
-19212*
-8 (
-
-23253*
-8	 	(

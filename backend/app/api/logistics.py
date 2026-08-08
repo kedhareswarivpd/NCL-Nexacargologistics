@@ -37,7 +37,7 @@ def _coerce_uuids(data: dict) -> dict:
 
 # ----------------------------- Containers -----------------------------
 @router.get("/containers")
-async def list_containers(db: AsyncSession = Depends(get_db), _: Profile = Depends(get_current_user)):
+async def list_containers(db: AsyncSession = Depends(get_db), _: Profile = Depends(logistics_guard)):
     return [serialize(c) for c in await crud.list_items(db, Container, limit=500)]
 
 
@@ -65,7 +65,7 @@ async def delete_container(item_id: str, db: AsyncSession = Depends(get_db), _: 
 
 # ----------------------------- Routes -----------------------------
 @router.get("/routes")
-async def list_routes(db: AsyncSession = Depends(get_db), _: Profile = Depends(get_current_user)):
+async def list_routes(db: AsyncSession = Depends(get_db), _: Profile = Depends(logistics_guard)):
     return [serialize(r) for r in await crud.list_items(db, Route, limit=500)]
 
 
@@ -93,7 +93,7 @@ async def delete_route(item_id: str, db: AsyncSession = Depends(get_db), _: Prof
 
 # ----------------------------- Vehicles -----------------------------
 @router.get("/vehicles")
-async def list_vehicles(db: AsyncSession = Depends(get_db), _: Profile = Depends(get_current_user)):
+async def list_vehicles(db: AsyncSession = Depends(get_db), _: Profile = Depends(logistics_guard)):
     return [serialize(v) for v in await crud.list_items(db, Vehicle, limit=500)]
 
 
@@ -121,7 +121,7 @@ async def delete_vehicle(item_id: str, db: AsyncSession = Depends(get_db), _: Pr
 
 # ----------------------------- Deliveries -----------------------------
 @router.get("/deliveries")
-async def list_deliveries(db: AsyncSession = Depends(get_db), _: Profile = Depends(get_current_user)):
+async def list_deliveries(db: AsyncSession = Depends(get_db), _: Profile = Depends(logistics_guard)):
     return [serialize(d) for d in await crud.list_items(db, Delivery, limit=500)]
 
 

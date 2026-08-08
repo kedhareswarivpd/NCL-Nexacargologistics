@@ -18,7 +18,7 @@ export default function PublicLayout({
       </div>
 
       <PublicNavbar />
-      <main className="relative z-10 flex-1">
+      <main className="relative z-10 flex-1 pt-16 md:pt-20">
         {children}
       </main>
       <Footer />

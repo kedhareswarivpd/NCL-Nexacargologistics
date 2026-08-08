@@ -1,105 +1,0 @@
-
-1.0PythonFrontend"1785971912564*py2.B¬
-
-imports1
-
-extends2
-
-returns3
-
-	has param4
-
-module5
-
-
-class6
-
-function7
-
-backend/app/core/config.py9
-
-app.core.config11
-
-re12
-$
-pydantic_settings.BaseSettings14
-*
-$pydantic_settings.SettingsConfigDict16
-
-pydantic_settings18
-'
-!app.core.config.is_origin_allowed20
-
-
-bool22
-	
-str24
-
-
-list26
-
-app.core.config.Settings28
-/
-)app.core.config.Settings.cors_origin_list30J
-
-8
-89 jò
- 
-10
-10115 *
-8 (
-
-13
-13125
-
-15
-15145
-
-17
-17165
-
-19
-19185
-
-21
-21207 210
-
-23
-23226
-
-25
-25246
-
-27
-27266
-
-29
-29286 210
-
-31
-31307 229rÐ
-
-10131*
-8 (
-
-
-10151*
-8 (+
-
-10171*
-8- (?
-
-10191*
-8 (?
-
-21233*
-84 4(
-
-21254*
-84 4(
-
-21274*
-84 4(
-
-31273*
-8%	 %(

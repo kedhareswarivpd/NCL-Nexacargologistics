@@ -1,49 +1,0 @@
-
-1.0PythonFrontend"1785971909313*py2.Bå
-
-imports1
-
-extends2
-
-returns3
-
-	has param4
-
-module5
-
-
-class6
-
-function7
-
-backend/app/api/reviews.py9
-
-app.api.reviews11
-
-fastapi12
-"
-app.api.reviews.list_reviews14
-
-typing.Coroutine16J
-
-8
-89 ja
- 
-10
-10115 *
-8 (
-
-13
-13125
-
-15
-15147 210
-
-17
-17166r4
-
-10131*
-8 (
-
-15173*
-8 (

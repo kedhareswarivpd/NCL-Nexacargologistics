@@ -35,3 +35,24 @@ nexacargo/
 __pycache__/
 **/__pycache__/
 *.pyc
+*.pyo
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+*.err
+*.out
+
+# SonarQube
+.scannerwork/
+.sonar/
+
+# Test/Scratch files
+scratch/
+
+# Local development
+*.local

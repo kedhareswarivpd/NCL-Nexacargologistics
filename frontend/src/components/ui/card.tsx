@@ -1,3 +1,5 @@
+// Adapted from shadcn/ui (MIT License) — https://ui.shadcn.com
+// Custom styling applied for NexaCargo theme
 import * as React from "react"
 import { cn } from "@/lib/utils"
 

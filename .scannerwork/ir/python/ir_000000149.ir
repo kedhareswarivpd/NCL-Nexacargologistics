@@ -1,44 +1,0 @@
-
-"bearer"str
-"expires_in"str
-60int
-
-"access_token"str
-"token_type"str
-"user"strprofile" "($"¯#
-!
-$ $("#get-field# id:.
-,
-$ $("#dependent-value#*:Bstr&
-$
-% %("#get-field# email:%
-#
-& &("#get-field# role:%
-#
-' '("#get-field# name:!
-
-# (("#unknown-value#F
-D
-# ((token"(
-app.core.securitycreate_access_token:$
-"
-) .(	"#new-object#Bdict 
-
-* *("	#map-set#:	
- 
-
-+ +("	#map-set#:	!
-
-, ,("#unknown-value#<
-:
-, ,(:")'#get-field# ACCESS_TOKEN_EXPIRE_MINUTES:%
-#
-, ,(?"	#binop *#*2*: 
-
-, ,(?"	#map-set#:	1
-/
-- -(""
-app.utils.helpers	serialize: 
-
-- -(""	#map-set#:	
-) .(	*DC:\Users\DELL\Desktop\NCL-Nexacargologistics\backend\app\api\auth.py

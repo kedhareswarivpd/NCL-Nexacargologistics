@@ -11,6 +11,7 @@ from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
+from app.core.database import async_session_factory
 from app.models.notification import Notification
 from app.models.profile import Profile, UserRole
 from app.services.email_service import send_email
@@ -221,8 +222,6 @@ async def notify_shipment_update(
     if notifications:
         db.add_all(notifications)
 
-
-from app.core.database import async_session_factory
 
 async def run_notify_shipment_created(
     customer_id: str | None,

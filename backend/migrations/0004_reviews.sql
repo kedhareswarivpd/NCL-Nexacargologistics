@@ -1,7 +1,10 @@
--- Migration: create reviews table
-CREATE TABLE IF NOT EXISTS reviews (
+-- Migration 0004 — create reviews table
+-- DEPRECATED: This table is no longer used. Kept for backward compatibility.
+-- Remove in next migration if no longer needed.
+
+CREATE TABLE IF NOT EXISTS public.reviews (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    customer_id UUID NOT NULL REFERENCES profiles(id),
+    customer_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     customer_name VARCHAR(255) NOT NULL,
     customer_company VARCHAR(255),
     customer_role VARCHAR(100),
@@ -11,3 +14,9 @@ CREATE TABLE IF NOT EXISTS reviews (
     approved BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+CREATE INDEX IF NOT EXISTS idx_reviews_customer ON public.reviews(customer_id);
+CREATE INDEX IF NOT EXISTS idx_reviews_approved ON public.reviews(approved) WHERE approved = true;
+
+-- RLS is disabled for this table (consistent with other backend-only tables)
+ALTER TABLE public.reviews DISABLE ROW LEVEL SECURITY;
