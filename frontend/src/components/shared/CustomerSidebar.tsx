@@ -2,12 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, MapPin, FileSignature, Receipt, HeadphonesIcon, Shield, CreditCard, Package, Play, Star } from "lucide-react";
+import { LayoutDashboard, MapPin, FileSignature, Receipt, HeadphonesIcon, Shield, CreditCard, Package, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard",      href: "/customer",           enabled: true },
-  { icon: Play,            label: "Workflow Demo",   href: "/customer/simulation", enabled: true },
   { icon: MapPin,          label: "Track Shipments", href: "/customer/track",     enabled: true },
   { icon: FileSignature,   label: "Request Quotes",  href: "/customer/quotes",    enabled: true },
   { icon: Package,         label: "Book Shipment",   href: "/customer/shipments/new", enabled: true },

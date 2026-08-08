@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import {
-  Truck, User, Package, MapPin, CheckCircle2, XCircle,
+  Truck, User, Package, MapPin, CheckCircle2,
   Loader2, RefreshCw, ArrowRight, AlertTriangle, Search,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { shipmentsApi, dispatchApi, driversApi } from "@/lib/services";
+import { shipmentsApi, dispatchApi } from "@/lib/services";
 import { apiError } from "@/lib/api";
 
 interface Shipment {
@@ -157,7 +157,6 @@ export default function DispatchPage() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
           <Link
@@ -183,7 +182,6 @@ export default function DispatchPage() {
         </button>
       </div>
 
-      {/* Alerts */}
       <AnimatePresence>
         {error && (
           <motion.div
@@ -209,33 +207,12 @@ export default function DispatchPage() {
         )}
       </AnimatePresence>
 
-      {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          {
-            label: "Unassigned",
-            value: unassignedShipments.length,
-            icon: Package,
-            color: "text-amber-400 bg-amber-400/10",
-          },
-          {
-            label: "Available Drivers",
-            value: availableDrivers.length,
-            icon: User,
-            color: "text-green-400 bg-green-400/10",
-          },
-          {
-            label: "Total Shipments",
-            value: shipments.length,
-            icon: Truck,
-            color: "text-tertiary bg-tertiary/10",
-          },
-          {
-            label: "Active Drivers",
-            value: drivers.filter((d) => d.status === "on_trip").length,
-            icon: MapPin,
-            color: "text-secondary bg-secondary/10",
-          },
+          { label: "Unassigned", value: unassignedShipments.length, icon: Package, color: "text-amber-400 bg-amber-400/10" },
+          { label: "Available Drivers", value: availableDrivers.length, icon: User, color: "text-green-400 bg-green-400/10" },
+          { label: "Total Shipments", value: shipments.length, icon: Truck, color: "text-tertiary bg-tertiary/10" },
+          { label: "Active Drivers", value: drivers.filter((d) => d.status === "on_trip").length, icon: MapPin, color: "text-secondary bg-secondary/10" },
         ].map(({ label, value, icon: Icon, color }) => (
           <Card key={label} className="p-5 flex items-center gap-4">
             <span className={`flex h-10 w-10 items-center justify-center rounded-lg ${color}`}>
@@ -249,16 +226,11 @@ export default function DispatchPage() {
         ))}
       </div>
 
-      {/* Assignment Panel */}
       <Card className="p-6 space-y-4">
         <h2 className="text-lg font-semibold text-on-surface">Assign Driver to Shipment</h2>
-
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Shipment Selection */}
           <div>
-            <label className="text-xs uppercase tracking-widest text-on-surface-variant">
-              Select Shipment
-            </label>
+            <label className="text-xs uppercase tracking-widest text-on-surface-variant">Select Shipment</label>
             <div className="mt-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-on-surface-variant" />
               <input
@@ -282,12 +254,8 @@ export default function DispatchPage() {
               ))}
             </select>
           </div>
-
-          {/* Driver Selection */}
           <div>
-            <label className="text-xs uppercase tracking-widest text-on-surface-variant">
-              Select Driver
-            </label>
+            <label className="text-xs uppercase tracking-widest text-on-surface-variant">Select Driver</label>
             <select
               value={selectedDriver}
               onChange={(e) => setSelectedDriver(e.target.value)}
@@ -301,28 +269,18 @@ export default function DispatchPage() {
               ))}
             </select>
           </div>
-
-          {/* Assign Button */}
           <div className="flex items-end">
             <button
               onClick={handleAssign}
               disabled={assigning !== null || !selectedShipment || !selectedDriver}
               className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-tertiary/20 text-tertiary text-sm font-semibold hover:bg-tertiary/30 transition-colors disabled:opacity-50"
             >
-              {assigning ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <>
-                  <Truck className="h-4 w-4" />
-                  Assign Driver
-                </>
-              )}
+              {assigning ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Truck className="h-4 w-4" /> Assign Driver</>}
             </button>
           </div>
         </div>
       </Card>
 
-      {/* Unassigned Shipments */}
       <Card className="overflow-hidden">
         <div className="px-6 py-4 border-b border-white/5">
           <h2 className="text-lg font-semibold text-on-surface">Unassigned Shipments</h2>
@@ -332,9 +290,7 @@ export default function DispatchPage() {
             <Loader2 className="h-6 w-6 animate-spin text-tertiary" />
           </div>
         ) : filteredShipments.length === 0 ? (
-          <p className="p-6 text-sm text-on-surface-variant text-center">
-            No unassigned shipments found
-          </p>
+          <p className="p-6 text-sm text-on-surface-variant text-center">No unassigned shipments found</p>
         ) : (
           <table className="w-full text-sm">
             <thead>
@@ -342,7 +298,6 @@ export default function DispatchPage() {
                 <th className="px-4 py-3">Tracking ID</th>
                 <th className="px-4 py-3">Route</th>
                 <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Mode</th>
                 <th className="px-4 py-3">Quick Assign</th>
               </tr>
             </thead>
@@ -350,19 +305,12 @@ export default function DispatchPage() {
               {filteredShipments.map((shipment) => (
                 <tr key={shipment.id} className="hover:bg-white/[0.03] transition-colors">
                   <td className="px-4 py-3 font-mono text-tertiary">{shipment.tracking_id}</td>
+                  <td className="px-4 py-3">{shipment.origin} → {shipment.destination}</td>
                   <td className="px-4 py-3">
-                    {shipment.origin} → {shipment.destination}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
-                        STATUS_STYLES[shipment.status] || "text-on-surface-variant bg-white/5"
-                      }`}
-                    >
+                    <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${STATUS_STYLES[shipment.status] || "text-on-surface-variant bg-white/5"}`}>
                       {shipment.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-on-surface-variant">{shipment.mode}</td>
                   <td className="px-4 py-3">
                     {availableDrivers.length > 0 && (
                       <button
@@ -370,11 +318,7 @@ export default function DispatchPage() {
                         disabled={assigning === shipment.id}
                         className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-tertiary/10 text-tertiary text-xs font-semibold hover:bg-tertiary/20 transition-colors disabled:opacity-50"
                       >
-                        {assigning === shipment.id ? (
-                          <Loader2 className="h-3 w-3 animate-spin" />
-                        ) : (
-                          <CheckCircle2 className="h-3 w-3" />
-                        )}
+                        {assigning === shipment.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <CheckCircle2 className="h-3 w-3" />}
                         Assign to {availableDrivers[0]?.name?.split(" ")[0] || "Driver"}
                       </button>
                     )}
@@ -386,7 +330,6 @@ export default function DispatchPage() {
         )}
       </Card>
 
-      {/* Available Drivers */}
       <Card className="overflow-hidden">
         <div className="px-6 py-4 border-b border-white/5">
           <h2 className="text-lg font-semibold text-on-surface">Available Drivers</h2>
@@ -396,9 +339,7 @@ export default function DispatchPage() {
             <Loader2 className="h-6 w-6 animate-spin text-tertiary" />
           </div>
         ) : availableDrivers.length === 0 ? (
-          <p className="p-6 text-sm text-on-surface-variant text-center">
-            No available drivers found
-          </p>
+          <p className="p-6 text-sm text-on-surface-variant text-center">No available drivers found</p>
         ) : (
           <table className="w-full text-sm">
             <thead>
@@ -414,11 +355,7 @@ export default function DispatchPage() {
                   <td className="px-4 py-3 text-on-surface font-medium">{driver.name}</td>
                   <td className="px-4 py-3 text-on-surface-variant">{driver.email}</td>
                   <td className="px-4 py-3">
-                    <span
-                      className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
-                        DRIVER_STATUS_STYLES[driver.status] || "text-on-surface-variant bg-white/5"
-                      }`}
-                    >
+                    <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${DRIVER_STATUS_STYLES[driver.status] || "text-on-surface-variant bg-white/5"}`}>
                       {driver.status}
                     </span>
                   </td>
