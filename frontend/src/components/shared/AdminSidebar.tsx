@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard",        href: "/admin" },
+  { icon: Truck,           label: "Dispatch",          href: "/admin/dispatch" },
   { icon: Users,           label: "User Management",   href: "/admin/users" },
   { icon: GitBranch,       label: "Branch Management", href: "/admin/branches" },
   { icon: ShieldCheck,     label: "Access Control",    href: "/admin/access" },

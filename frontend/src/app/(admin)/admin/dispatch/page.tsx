@@ -115,7 +115,7 @@ export default function DispatchPage() {
       await dispatchApi.assignDriver({
         shipment_id: selectedShipment,
         driver_id: selectedDriver,
-        eta: shipment.eta || "5 days",
+        eta: "5 days",
       });
 
       setSuccess(`Driver ${driver.name} assigned to shipment ${shipment.tracking_id}`);
@@ -143,7 +143,7 @@ export default function DispatchPage() {
       await dispatchApi.assignDriver({
         shipment_id: shipmentId,
         driver_id: driverId,
-        eta: shipment.eta || "5 days",
+        eta: "5 days",
       });
 
       setSuccess(`Driver ${driver.name} assigned to shipment ${shipment.tracking_id}`);
