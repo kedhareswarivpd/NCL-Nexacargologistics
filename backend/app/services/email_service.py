@@ -1,5 +1,6 @@
 """
-Email service stub — replace with real SMTP / SendGrid / AWS SES in production.
+Email service — sends real emails via SMTP or logs when not configured.
+Configure via environment variables: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM
 """
 
 import logging
@@ -40,27 +41,51 @@ def _html_template(subject: str, body: str) -> str:
     """
 
 
-async def send_email(to: str, subject: str, body: str) -> None:  # NOSONAR
-    is_placeholder = SMTP_USER == "your@gmail.com" or SMTP_PASS == "your_app_password"
-    if SMTP_HOST and SMTP_USER and SMTP_PASS and not is_placeholder:
-        try:
-            msg = MIMEMultipart("alternative")
-            msg["Subject"] = subject
-            msg["From"] = SMTP_FROM
-            msg["To"] = to
-            msg.attach(MIMEText(body, "plain"))
-            msg.attach(MIMEText(_html_template(subject, body), "html"))
-            if SMTP_PORT == 465:
-                server = smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, timeout=30)
-                server.login(SMTP_USER, SMTP_PASS)
-            else:
-                server = smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=30)
-                server.starttls()
-                server.login(SMTP_USER, SMTP_PASS)
-            with server:
-                server.sendmail(SMTP_FROM, to, msg.as_string())
-            logger.info("[EMAIL SENT] to=%s subject=%s", to, subject)
-        except Exception as e:
-            logger.error("[EMAIL FAILED] to=%s error=%s", to, e)  # NOSONAR
-    else:
-        logger.info("[EMAIL STUB] to=%s subject=%s body=%s", to, subject, body)
+def is_email_configured() -> bool:
+    """Check if email service is properly configured."""
+    placeholder_user = SMTP_USER in ("", "your@gmail.com")
+    placeholder_pass = SMTP_PASS in ("", "your_app_password")
+    return bool(SMTP_HOST and SMTP_USER and SMTP_PASS and not placeholder_user and not placeholder_pass)
+
+
+async def send_email(to: str, subject: str, body: str) -> bool:
+    """
+    Send an email to the specified recipient.
+
+    Args:
+        to: Recipient email address
+        subject: Email subject line
+        body: Email body text
+
+    Returns:
+        True if email was sent successfully, False otherwise
+    """
+    if not is_email_configured():
+        logger.warning("[EMAIL STUB - NOT CONFIGURED] to=%s subject=%s", to, subject)
+        logger.info("To enable email, set SMTP_HOST, SMTP_USER, SMTP_PASS environment variables")
+        return False
+
+    try:
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = subject
+        msg["From"] = SMTP_FROM
+        msg["To"] = to
+        msg.attach(MIMEText(body, "plain"))
+        msg.attach(MIMEText(_html_template(subject, body), "html"))
+
+        if SMTP_PORT == 465:
+            server = smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, timeout=30)
+        else:
+            server = smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=30)
+            server.starttls()
+
+        server.login(SMTP_USER, SMTP_PASS)
+        server.sendmail(SMTP_FROM, to, msg.as_string())
+        server.quit()
+
+        logger.info("[EMAIL SENT] to=%s subject=%s", to, subject)
+        return True
+
+    except Exception as e:
+        logger.error("[EMAIL FAILED] to=%s error=%s", to, e)
+        return False

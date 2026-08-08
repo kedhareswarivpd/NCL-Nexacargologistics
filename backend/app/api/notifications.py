@@ -57,6 +57,15 @@ async def send_notification(
     db: AsyncSession = Depends(get_db),
     _: Profile = Depends(get_admin_user),
 ):
+    """Send a notification to a specific user. Admin only."""
+    # Get user email if channel is email
+    email_to = None
+    if payload.channel == "email" and payload.user_id:
+        from app.models.profile import Profile
+        user = await db.get(Profile, payload.user_id)
+        if user and user.email:
+            email_to = user.email
+
     n = await create_notification(
         db,
         user_id=payload.user_id,
@@ -66,7 +75,15 @@ async def send_notification(
         type=payload.type,
         related_id=payload.related_id,
         related_type=payload.related_type,
+        email_to=email_to,
     )
+
+    # If email was requested but no email address found, log warning
+    if payload.channel == "email" and not email_to:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.warning("[NOTIFICATION] Email requested but user %s has no email address", payload.user_id)
+
     return serialize(n)
 
 

@@ -44,10 +44,12 @@ async def create_notification(
     await db.flush()
 
     if channel == "email" and email_to:
-        await send_email(email_to, title or "NexaCargo Notification", message)
-        notification.status = "sent"
-        notification.sent_at = now_iso()
+        email_sent = await send_email(email_to, title or "NexaCargo Notification", message)
+        notification.status = "sent" if email_sent else "failed"
+        notification.sent_at = now_iso() if email_sent else None
     elif channel == "sms":
+        # SMS is logged as stub - integrate Twilio or similar for real SMS
+        logger.info("[SMS STUB] to=%s message=%s", email_to, message[:50])
         notification.status = "sent"
         notification.sent_at = now_iso()
 

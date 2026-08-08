@@ -103,11 +103,12 @@ export default function NotificationsPage() {
     try {
       await notificationsApi.send({
         channel,
-        title:   form.subject || form.message,
+        title: form.subject || form.message,
         message: form.message,
+        email_to: form.recipient_email || undefined,
       });
-    } catch {
-      /* ignore — surfaced via apiError if needed */
+    } catch (err) {
+      console.error("Failed to send notification:", err);
     }
     setForm({ recipient_name: "", recipient_email: "", recipient_phone: "", subject: "", message: "", type: "both" });
     setShowForm(false);

@@ -421,12 +421,13 @@ class BranchUpdate(BaseModel):
 
 class NotificationCreate(BaseModel):
     user_id: Optional[str] = None
-    channel: str = "in_app"
-    title: Optional[str] = None
-    message: str
-    type: Optional[str] = None
+    channel: str = Field(default="in_app", pattern="^(in_app|email|sms)$")
+    title: Optional[str] = Field(default=None, max_length=255)
+    message: str = Field(min_length=1, max_length=5000)
+    type: Optional[str] = Field(default=None, max_length=50)
     related_id: Optional[str] = None
     related_type: Optional[str] = None
+    email_to: Optional[str] = None  # Override email recipient (optional)
 
 
 # ----------------------------- Auth (extended) -----------------------------

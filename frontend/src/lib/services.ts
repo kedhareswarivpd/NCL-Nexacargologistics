@@ -126,7 +126,7 @@ export const supportApi = {
 export const notificationsApi = {
   list: () => data(api.get("/notifications")),
   markRead: (id: string) => data(api.post(`/notifications/${id}/read`)),
-  send: (body: Dict) => data(api.post("/notifications", body)),
+  send: (body: Dict & { email_to?: string }) => data(api.post("/notifications", body)),
 };
 
 // ----------------------------- Users / Admin -----------------------------
