@@ -6,6 +6,9 @@ import { LogisticsSidebar } from "@/components/shared/LogisticsSidebar";
 import { PortalHeader } from "@/components/shared/PortalHeader";
 import { MobileSidebarWrapper } from "@/components/shared/MobileSidebarWrapper";
 
+// Force dynamic rendering to prevent 304 cache issues on Vercel
+export const dynamic = "force-dynamic";
+
 export default function LogisticsLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <ProtectedRoute allow={["logistics"]}>

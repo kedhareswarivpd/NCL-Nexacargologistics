@@ -6,6 +6,9 @@ import { CustomerSidebar } from "@/components/shared/CustomerSidebar";
 import { PortalHeader } from "@/components/shared/PortalHeader";
 import { MobileSidebarWrapper } from "@/components/shared/MobileSidebarWrapper";
 
+// Force dynamic rendering to prevent 304 cache issues on Vercel
+export const dynamic = "force-dynamic";
+
 export default function CustomerLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <ProtectedRoute allow={["customer"]}>

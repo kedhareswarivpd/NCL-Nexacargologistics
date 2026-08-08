@@ -2,8 +2,11 @@ import React from "react";
 import Link from "next/link";
 import { TrendingUp, Globe, Zap } from "lucide-react";
 
+// Force dynamic rendering to prevent 304 cache issues on Vercel
+export const dynamic = "force-dynamic";
+
 /**
- * Auth shell shared by /login, /register and /forgot-password.
+ * Auth shell shared by /login, /register and/forgot-password.
  * Left: brand + live-stats visual narrative (hidden on small screens).
  * Right: the active auth form (the route's page).
  */
