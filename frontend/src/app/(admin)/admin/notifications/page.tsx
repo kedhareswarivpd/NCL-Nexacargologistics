@@ -52,13 +52,22 @@ const itemVariants = {
   show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 260, damping: 22 } }
 } as const;
 
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+}
+
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading]             = useState(true);
   const [filter, setFilter]               = useState("all");
   const [showForm, setShowForm]           = useState(false);
   const [sending, setSending]             = useState(false);
   const [form, setForm] = useState({
+    user_id: "",
     recipient_name: "", recipient_email: "", recipient_phone: "",
     subject: "", message: "", type: "both" as "sms" | "email" | "both",
   });
@@ -72,6 +81,15 @@ export default function NotificationsPage() {
       setNotifications([]);
     }
     setLoading(false);
+  }
+
+  async function loadUsers() {
+    try {
+      const data = await usersApi.list();
+      setUsers((data ?? []) as User[]);
+    } catch {
+      setUsers([]);
+    }
   }
 
   useEffect(() => {
@@ -89,31 +107,47 @@ export default function NotificationsPage() {
       }
     };
     fetchData();
+    loadUsers();
     return () => {
       isMounted = false;
     };
   }, []);
 
+  function selectUser(userId: string) {
+    const user = users.find(u => u.id === userId);
+    if (user) {
+      setForm(f => ({
+        ...f,
+        user_id: user.id,
+        recipient_name: user.name,
+        recipient_email: user.email || "",
+      }));
+    }
+  }
+
   async function handleSend(e: React.FormEvent) {
     e.preventDefault();
-    if (!isValidName(form.recipient_name)) { return; }
-    if (form.recipient_phone && !isValidPhone(form.recipient_phone)) { return; }
+    if (!form.user_id) { alert("Please select a recipient"); return; }
+    if (!form.message.trim()) { alert("Please enter a message"); return; }
     setSending(true);
     const channel = form.type === "both" ? "email" : form.type;
     try {
       await notificationsApi.send({
+        user_id: form.user_id,
         channel,
-        title: form.subject || form.message,
+        title: form.subject || "NexaCargo Notification",
         message: form.message,
+        type: "system",
         email_to: form.recipient_email || undefined,
       });
-    } catch (err) {
+      setForm({ user_id: "", recipient_name: "", recipient_email: "", recipient_phone: "", subject: "", message: "", type: "both" });
+      setShowForm(false);
+      load();
+    } catch (err: any) {
       console.error("Failed to send notification:", err);
+      alert(`Failed to send: ${err?.response?.data?.detail || err.message}`);
     }
-    setForm({ recipient_name: "", recipient_email: "", recipient_phone: "", subject: "", message: "", type: "both" });
-    setShowForm(false);
     setSending(false);
-    load();
   }
 
   const filtered = notifications.filter((n) => filter === "all" || n.channel === filter || n.status === filter);
@@ -202,22 +236,30 @@ export default function NotificationsPage() {
               <h2 className="text-sm font-semibold uppercase tracking-widest text-on-surface-variant">New Notification</h2>
               <form noValidate onSubmit={handleSend} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div><label htmlFor="field-recipient-name-1" className="text-xs uppercase tracking-widest text-on-surface-variant">Recipient Name</label><input id="field-recipient-name-1" required value={form.recipient_name} onChange={(e) => { const filtered = e.target.value.replace(/[^A-Za-z\s.'-]/g, ''); setForm({ ...form, recipient_name: filtered }); }} placeholder="e.g. John Smith" className={inputCls} /></div>
-                  <div><label htmlFor="field-email-2" className="text-xs uppercase tracking-widest text-on-surface-variant">Email</label><input id="field-email-2" type="email" value={form.recipient_email} onChange={(e) => setForm({ ...form, recipient_email: e.target.value })} placeholder="john@example.com" className={inputCls} /></div>
-                  <div><label htmlFor="field-phone-3" className="text-xs uppercase tracking-widest text-on-surface-variant">Phone (10 digits)</label><input id="field-phone-3" value={form.recipient_phone} onChange={(e) => { const digits = e.target.value.replace(/\D/g, '').slice(0, 10); setForm({ ...form, recipient_phone: digits }); }} placeholder="5550000000" inputMode="numeric" className={inputCls} /></div>
+                  <div className="sm:col-span-3">
+                    <label htmlFor="field-user-id" className="text-xs uppercase tracking-widest text-on-surface-variant">Select Recipient *</label>
+                    <select id="field-user-id" value={form.user_id} onChange={(e) => selectUser(e.target.value)} className={inputCls}>
+                      <option value="">-- Select a user --</option>
+                      {users.map(user => (
+                        <option key={user.id} value={user.id}>
+                          {user.name} ({user.email || "no email"}) - {user.role}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div><label htmlFor="field-email-2" className="text-xs uppercase tracking-widest text-on-surface-variant">Email (override)</label><input id="field-email-2" type="email" value={form.recipient_email} onChange={(e) => setForm({ ...form, recipient_email: e.target.value })} placeholder="john@example.com" className={inputCls} /></div>
                   <div><label htmlFor="field-subject-4" className="text-xs uppercase tracking-widest text-on-surface-variant">Subject</label><input id="field-subject-4" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} placeholder="Shipment Update" className={inputCls} /></div>
                   <div><label htmlFor="field-channel-5" className="text-xs uppercase tracking-widest text-on-surface-variant">Channel</label>
                     <select id="field-channel-5" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value as "sms" | "email" | "both" })} className={inputCls}>
-                      <option value="both">SMS + Email</option>
                       <option value="email">Email only</option>
-                      <option value="sms">SMS only</option>
+                      <option value="in_app">In-App only</option>
                     </select>
                   </div>
                 </div>
-                <div><label htmlFor="field-message-6" className="text-xs uppercase tracking-widest text-on-surface-variant">Message</label><textarea id="field-message-6" required rows={3} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="Your shipment SHP-XXXXX is now In Transit..." className={`${inputCls} resize-none`} /></div>
+                <div><label htmlFor="field-message-6" className="text-xs uppercase tracking-widest text-on-surface-variant">Message *</label><textarea id="field-message-6" required rows={3} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="Your shipment SHP-XXXXX is now In Transit..." className={`${inputCls} resize-none`} /></div>
                 <div className="flex gap-3">
-                  <button type="submit" disabled={sending} className="px-4 py-2 rounded-lg bg-tertiary/20 text-tertiary text-sm font-semibold hover:bg-tertiary/30 transition-colors disabled:opacity-50">
-                    {sending ? "Sending…" : "Send"}
+                  <button type="submit" disabled={sending || !form.user_id} className="px-4 py-2 rounded-lg bg-tertiary/20 text-tertiary text-sm font-semibold hover:bg-tertiary/30 transition-colors disabled:opacity-50">
+                    {sending ? "Sending…" : "Send Notification"}
                   </button>
                   <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-lg bg-white/5 text-on-surface-variant text-sm font-semibold hover:bg-white/10 transition-colors">Cancel</button>
                 </div>
