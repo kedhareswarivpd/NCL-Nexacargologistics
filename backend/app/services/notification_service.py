@@ -5,6 +5,7 @@ The advanced features (SMS + Email) from the SRS are modelled here as a single
 notification queue; email/SMS providers are stubbed and logged.
 """
 
+import logging
 import uuid
 from typing import Optional
 
@@ -16,6 +17,8 @@ from app.models.notification import Notification
 from app.models.profile import Profile, UserRole
 from app.services.email_service import send_email
 from app.utils.helpers import now_iso
+
+logger = logging.getLogger(__name__)
 
 
 async def create_notification(
