@@ -123,9 +123,16 @@ export async function loginUser(input: LoginInput): Promise<User> {
 }
 
 export async function logoutUser(): Promise<void> {
-  await supabase.auth.signOut();
-  if (typeof window !== "undefined") {
-    localStorage.removeItem(SESSION_KEY);
+  try {
+    // scope=global ensures all sessions for this user are terminated server-side
+    await supabase.auth.signOut({ scope: "global" });
+  } catch (err) {
+    // Session may already be expired/invalid on the server - clear local state anyway
+    console.warn("[logout] Supabase signOut failed, clearing local session:", err);
+  } finally {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(SESSION_KEY);
+    }
   }
 }
 

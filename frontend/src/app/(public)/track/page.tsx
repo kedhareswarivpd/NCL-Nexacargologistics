@@ -7,8 +7,7 @@ import { Card } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
 import { trackingApi } from "@/lib/services";
 
-// Revalidate this page every 60 seconds to prevent stale cache
-export const revalidate = 60;
+// Force dynamic rendering to prevent 304 cache issues on Vercel
 export const dynamic = "force-dynamic";
 
 const fadeUp = {

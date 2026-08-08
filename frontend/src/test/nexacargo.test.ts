@@ -465,7 +465,7 @@ describe("Type definitions", () => {
 
 describe("UI Components", () => {
   it("Button renders with text", async () => {
-    const { Button } = await import("@/components/ui/Button");
+    const { Button } = await import("@/components/ui/button");
     render(React.createElement(Button, null, "Click Me"));
     expect(screen.getByText("Click Me")).toBeInTheDocument();
   }, 10000);

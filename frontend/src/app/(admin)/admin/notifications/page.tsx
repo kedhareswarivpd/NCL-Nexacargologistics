@@ -4,7 +4,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { Bell, Mail, MessageSquare, CheckCircle2, Clock, XCircle, RefreshCw, Send, ArrowLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { notificationsApi } from "@/lib/services";
+import { notificationsApi, usersApi } from "@/lib/services";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { isValidName, isValidPhone } from "@/lib/validation";
