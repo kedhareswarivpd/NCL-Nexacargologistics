@@ -471,7 +471,7 @@ describe("UI Components", () => {
   }, 10000);
 
   it("Card renders children", async () => {
-    const { Card } = await import("@/components/ui/Card");
+    const { Card } = await import("@/components/ui/card");
     render(React.createElement(Card, null, React.createElement("p", null, "Card content")));
     expect(screen.getByText("Card content")).toBeInTheDocument();
   }, 10000);

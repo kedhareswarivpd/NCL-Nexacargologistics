@@ -29,7 +29,8 @@ export const maxLength =
 export const isEmail: Validator = (value) => {
   const trimmed = value.trim();
   if (!trimmed) return undefined; // Let `required` handle empty
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)  // NOSONAR
+  // Require at least one dot in domain part and valid TLD (2+ chars)
+  return /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(trimmed)  // NOSONAR
     ? undefined
     : "Enter a valid email address.";
 };
@@ -37,8 +38,8 @@ export const isEmail: Validator = (value) => {
 /** Gmail email with alphabets and numbers required. */
 export const isGmailEmail: Validator = (value) => {
   const trimmed = value.trim();
-  // Check valid email format
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {  // NOSONAR
+  // Check valid email format with proper TLD
+  if (!/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(trimmed)) {  // NOSONAR
     return "Enter a valid email address.";
   }
   // Check if it contains gmail

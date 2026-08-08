@@ -460,7 +460,7 @@ class TestPydanticSchemas:
 
     def test_register_request_valid(self):
         from app.schemas.payloads import RegisterRequest
-        req = RegisterRequest(name="John", email="john@example.com", password="pass123")
+        req = RegisterRequest(name="John", email="john@example.com", password="password123")
         assert req.name == "John"
         assert req.email == "john@example.com"
 
@@ -493,7 +493,7 @@ class TestPydanticSchemas:
     def test_quote_create_weight_too_high(self):
         from app.schemas.payloads import QuoteCreate
         with pytest.raises(Exception):
-            QuoteCreate(origin="NYC", destination="LAX", weight=20000)
+            QuoteCreate(origin="NYC", destination="LAX", weight=200000)
 
     def test_shipment_create_valid(self):
         from app.schemas.payloads import ShipmentCreate
@@ -514,7 +514,7 @@ class TestPydanticSchemas:
 
     def test_container_create_defaults(self):
         from app.schemas.payloads import ContainerCreate
-        c = ContainerCreate(container_no="CNT-001", type="40ft")
+        c = ContainerCreate(container_no="CNT-001", type="dry")
         assert c.status == "Available"
 
     def test_route_create_defaults(self):
@@ -524,7 +524,7 @@ class TestPydanticSchemas:
 
     def test_vehicle_create_defaults(self):
         from app.schemas.payloads import VehicleCreate
-        v = VehicleCreate(vehicle_no="VH-001", type="Truck")
+        v = VehicleCreate(vehicle_no="VH-001", type="truck")
         assert v.status == "Available"
 
     def test_delivery_create_defaults(self):

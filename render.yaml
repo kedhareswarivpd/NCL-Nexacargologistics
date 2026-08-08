@@ -12,7 +12,7 @@ services:
         sync: false
       # Set manually in Render dashboard (Project Settings → API → anon key)
       - key: SUPABASE_URL
-        value: https://sgwywgrabomkbegnsref.supabase.co
+        sync: false
       - key: SUPABASE_ANON_KEY
         sync: false
       - key: SUPABASE_JWT_SECRET
@@ -20,7 +20,7 @@ services:
       - key: SUPABASE_SERVICE_ROLE_KEY
         sync: false
       - key: JWT_SECRET
-        value: nexacargo_jwt_secret_key_production_default_12345
+        generateValue: true
       - key: ACCESS_TOKEN_EXPIRE_MINUTES
         value: "1440"
       - key: CORS_ORIGINS
@@ -31,5 +31,7 @@ services:
         value: "1.0.0"
       - key: DEBUG
         value: "False"
+      - key: DB_SSL_VERIFY
+        value: "True"
       - key: UPLOAD_DIR
         value: uploads

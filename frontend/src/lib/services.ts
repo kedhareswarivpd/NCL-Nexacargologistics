@@ -189,10 +189,10 @@ export const tasksApi = {
 
 // ----------------------------- Dispatch -----------------------------
 export const dispatchApi = {
-  assignDriver: (body: Dict) => data(api.post("/dispatch/assign-driver", body)),
-  reassignDriver: (body: Dict) => data(api.post("/dispatch/reassign-driver", body)),
-  availableDrivers: () => data(api.get("/dispatch/available-drivers")),
-  activeShipments: () => data(api.get("/dispatch/active-shipments")),
+  assignDriver: (body: Dict) => data(api.post("/dispatch/assign", body)),
+  reassignDriver: (body: Dict) => data(api.post("/dispatch/reassign", body)),
+  availableDrivers: () => data(api.get("/dispatch/drivers")),
+  activeShipments: () => data(api.get("/dispatch/shipments")),
 };
 
 // ----------------------------- Analytics & Reports -----------------------------
