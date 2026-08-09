@@ -14,7 +14,7 @@ def _build_connect_args(url: str) -> dict:
     ssl_ctx = _ssl.create_default_context(_ssl.Purpose.SERVER_AUTH)
     ssl_ctx.minimum_version = _ssl.TLSVersion.TLSv1_2
 
-    db_ssl_verify = os.getenv("DB_SSL_VERIFY", "False").lower() in ("true", "1", "yes")
+    db_ssl_verify = os.getenv("DB_SSL_VERIFY", "True").lower() in ("true", "1", "yes")
     if db_ssl_verify:
         ssl_ctx.check_hostname = True
         ssl_ctx.verify_mode = _ssl.CERT_REQUIRED

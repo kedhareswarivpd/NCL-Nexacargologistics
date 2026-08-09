@@ -37,7 +37,7 @@ class Settings(BaseSettings):
 
     @field_validator("JWT_SECRET")
     @classmethod
-    def validate_jwt_secret(cls v: str) -> str:
+    def validate_jwt_secret(cls, v: str) -> str:
         if not v:
             return secrets.token_hex(32)
         return v

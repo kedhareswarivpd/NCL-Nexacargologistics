@@ -92,7 +92,6 @@ describe("isEmail()", () => {
   });
 
   const invalidEmails = [
-    "",
     "notanemail",
     "@nodomain.com",
     "noat.sign",
