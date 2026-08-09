@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.dependencies import get_admin_user, require_roles
+from app.core.validators import validate_pagination
 from app.middleware.auth import get_current_user
 from app.models.profile import Profile, UserRole
 from app.schemas.payloads import AdminProfileUpdate, ProfileUpdate, StaffCreate, StatusPatch
@@ -44,11 +45,11 @@ async def update_my_profile(
 async def list_users(
     role: str | None = None,
     staff_only: bool = False,
-    skip: int = 0,
-    limit: int = 200,
+    pagination: tuple[int, int] = Depends(validate_pagination),
     db: AsyncSession = Depends(get_db),
     _: Profile = Depends(require_roles(*UserRole.STAFF)),
 ):
+    skip, limit = pagination
     query = select(Profile)
     if role:
         query = query.where(Profile.role == role)

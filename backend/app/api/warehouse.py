@@ -12,6 +12,8 @@ from app.core.database import get_db
 from app.core.dependencies import require_roles
 from app.middleware.auth import get_current_user
 from app.models.profile import Profile, UserRole
+
+warehouse_analytics_guard = require_roles(UserRole.WAREHOUSE, UserRole.ADMIN, UserRole.LOGISTICS)
 from app.models.warehouse import Warehouse, InventoryItem, WarehouseTask
 from app.schemas.payloads import (
     WarehouseCreate, InventoryCreate, InventoryUpdate,
@@ -23,6 +25,7 @@ from app.utils.helpers import serialize
 router = APIRouter(prefix="/warehouse", tags=["warehouse"])
 
 wh_guard = require_roles(UserRole.WAREHOUSE)
+wh_analytics_guard = require_roles(UserRole.WAREHOUSE, UserRole.ADMIN, UserRole.LOGISTICS)
 
 
 def _inventory_status(qty: int, reorder_at: int | None) -> str:
@@ -131,7 +134,7 @@ async def update_task(task_id: str, payload: WarehouseTaskUpdate, db: AsyncSessi
 
 
 @router.get("/analytics")
-async def warehouse_analytics(db: AsyncSession = Depends(get_db), _: Profile = Depends(get_current_user)):
+async def warehouse_analytics(db: AsyncSession = Depends(get_db), _: Profile = Depends(wh_analytics_guard)):
     total_items = await crud.count(db, InventoryItem)
     qty_res = await db.execute(select(func.coalesce(func.sum(InventoryItem.qty), 0)))
     total_qty = int(qty_res.scalar() or 0)

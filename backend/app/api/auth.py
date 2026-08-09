@@ -1,4 +1,5 @@
 import uuid
+import os
 import time
 from collections import defaultdict
 
@@ -36,6 +37,24 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 AUTH_NOT_CONFIGURED = "Backend auth is not configured"
 USER_NOT_FOUND = "User not found"
 
+# Rate limiter storage
+_rate_limit_buckets: dict[str, list[float]] = defaultdict(list)
+
+def check_rate_limit(request: Request, max_requests: int = 10, window: int = 60):
+    if os.environ.get("TESTING") == "true":
+        return
+    client_ip = request.client.host if request.client else "unknown"
+    now = time.time()
+    key = f"{client_ip}:{request.url.path}"
+    _rate_limit_buckets[key] = [t for t in _rate_limit_buckets[key] if now - t < window]
+    if len(_rate_limit_buckets[key]) >= max_requests:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=f"Rate limit exceeded. Try again in {window} seconds.",
+            headers={"Retry-After": str(window)},
+        )
+    _rate_limit_buckets[key].append(now)
+
 
 def _token_response(profile: Profile) -> dict:
     token = create_access_token(
@@ -53,7 +72,8 @@ def _token_response(profile: Profile) -> dict:
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
-async def register(payload: RegisterRequest, db: AsyncSession = Depends(get_db)):
+async def register(request: Request, payload: RegisterRequest, db: AsyncSession = Depends(get_db)):
+    check_rate_limit(request, max_requests=5, window=60)
     if not settings.JWT_SECRET:
         raise HTTPException(  # NOSONAR
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -83,7 +103,8 @@ async def register(payload: RegisterRequest, db: AsyncSession = Depends(get_db))
 
 
 @router.post("/login")
-async def login(payload: LoginRequest, db: AsyncSession = Depends(get_db)):
+async def login(request: Request, payload: LoginRequest, db: AsyncSession = Depends(get_db)):
+    check_rate_limit(request, max_requests=10, window=60)
     if not settings.JWT_SECRET:
         raise HTTPException(  # NOSONAR
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -137,7 +158,8 @@ async def logout(current_user: Profile = Depends(get_current_user)):
 
 
 @router.post("/forgot-password")
-async def forgot_password(payload: ForgotPasswordRequest, db: AsyncSession = Depends(get_db)):
+async def forgot_password(request: Request, payload: ForgotPasswordRequest, db: AsyncSession = Depends(get_db)):
+    check_rate_limit(request, max_requests=3, window=60)
     email = payload.email.lower().strip()
     result = await db.execute(select(Profile).where(Profile.email == email))
     profile = result.scalar_one_or_none()

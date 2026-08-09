@@ -503,9 +503,10 @@ class TestPydanticSchemas:
 
     def test_invoice_create_valid(self):
         from app.schemas.payloads import InvoiceCreate
-        inv = InvoiceCreate(amount=1500.0, tax=150.0)
+        inv = InvoiceCreate(customer_id="00000000-0000-0000-0000-000000000000", amount=1500.0, tax=150.0)
         assert inv.amount == 1500.0
         assert inv.currency == "USD"
+        assert inv.customer_id == "00000000-0000-0000-0000-000000000000"
 
     def test_expense_create_must_be_positive(self):
         from app.schemas.payloads import ExpenseCreate

@@ -10,7 +10,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
-from app.core.dependencies import get_finance_user
+from app.core.dependencies import get_finance_user, require_roles
 from app.middleware.auth import get_current_user
 from app.models.profile import Profile, UserRole
 from app.models.insurance import InsurancePolicy
@@ -25,15 +25,14 @@ def _is_staff(role: str) -> bool:
     return role in (UserRole.ADMIN, UserRole.FINANCE)
 
 
+insurance_guard = require_roles(UserRole.FINANCE, UserRole.ADMIN)
+
 @router.get("/policies")
 async def list_policies(
     db: AsyncSession = Depends(get_db),
-    current_user: Profile = Depends(get_current_user),
+    _: Profile = Depends(insurance_guard),
 ):
-    query = select(InsurancePolicy)
-    if not _is_staff(current_user.role):
-        query = query.where(InsurancePolicy.customer_id == current_user.id)
-    query = query.order_by(InsurancePolicy.created_at.desc())
+    query = select(InsurancePolicy).order_by(InsurancePolicy.created_at.desc())
     result = await db.execute(query)
     return [serialize(p) for p in result.scalars().all()]
 

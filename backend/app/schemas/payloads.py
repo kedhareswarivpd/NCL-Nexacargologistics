@@ -120,7 +120,7 @@ class QuoteCreate(BaseModel):
 class QuoteUpdate(BaseModel):
     amount: Optional[float] = None
     currency: Optional[str] = None
-    status: Optional[str] = None
+    status: Optional[str] = Field(default=None, pattern="^(requested|quoted|accepted|rejected|expired)$")
     valid_until: Optional[str] = None
     notes: Optional[str] = None
 
@@ -131,8 +131,8 @@ class ShipmentCreate(BaseModel):
     destination: str = Field(min_length=2, max_length=255)
     mode: str = Field(default="sea", pattern="^(air|sea|road)$")
     cargo_type: Optional[str] = Field(default=None, max_length=120)
-    weight: Optional[str] = Field(default=None, max_length=50)
-    volume: Optional[str] = Field(default=None, max_length=50)
+    weight: Optional[float] = Field(default=None, ge=0, description="Weight in kg")
+    volume: Optional[float] = Field(default=None, ge=0, description="Volume in m³")
     incoterm: Optional[str] = Field(default=None, max_length=20)
     eta: Optional[str] = Field(default=None, max_length=60)
     value_amount: Optional[float] = Field(default=None, ge=0)
@@ -314,7 +314,7 @@ class WarehouseTaskUpdate(BaseModel):
 
 # ----------------------------- Finance -----------------------------
 class InvoiceCreate(BaseModel):
-    customer_id: Optional[str] = None
+    customer_id: str = Field(..., description="Customer ID is required")
     shipment_id: Optional[str] = None
     amount: float = Field(ge=0, description="Amount must be non-negative")
     tax: float = Field(default=0, ge=0, description="Tax must be non-negative")

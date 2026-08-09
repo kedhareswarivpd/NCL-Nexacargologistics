@@ -10,7 +10,7 @@ from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
-from app.core.dependencies import get_finance_user
+from app.core.dependencies import get_finance_user, require_roles
 from app.middleware.auth import get_current_user
 from app.models.profile import Profile, UserRole
 from app.models.finance import Invoice, Payment, InvoiceStatus, Expense
@@ -28,17 +28,16 @@ def _is_finance(role: str) -> bool:
 
 
 # ----------------------------- Invoices -----------------------------
+finance_guard = require_roles(UserRole.FINANCE, UserRole.ADMIN)
+
 @router.get("/invoices")
 async def list_invoices(
     skip: int = 0,
     limit: int = 200,
     db: AsyncSession = Depends(get_db),
-    current_user: Profile = Depends(get_current_user),
+    _: Profile = Depends(finance_guard),
 ):
-    query = select(Invoice)
-    if not _is_finance(current_user.role):
-        query = query.where(Invoice.customer_id == current_user.id)
-    query = query.order_by(Invoice.created_at.desc()).offset(skip).limit(limit)
+    query = select(Invoice).order_by(Invoice.created_at.desc()).offset(skip).limit(limit)
     result = await db.execute(query)
     return [serialize(i) for i in result.scalars().all()]
 

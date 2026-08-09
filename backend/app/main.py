@@ -71,6 +71,16 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 
+@app.exception_handler(ValueError)
+async def value_error_handler(request: Request, exc: ValueError):
+    """Handle ValueError (e.g., invalid UUID format) with 400 status."""
+    logger.warning("Validation error processing %s %s: %s", request.method, request.url.path, exc)
+    return JSONResponse(
+        status_code=400,
+        content={"detail": f"Invalid input: {str(exc)}"},
+    )
+
+
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     """Catch uncaught exceptions gracefully without exposing tracebacks to users."""
