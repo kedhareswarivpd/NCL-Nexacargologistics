@@ -1,4 +1,6 @@
 import re
+import secrets
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -32,6 +34,13 @@ class Settings(BaseSettings):
         case_sensitive=True,
         extra="ignore",
     )
+
+    @field_validator("JWT_SECRET")
+    @classmethod
+    def validate_jwt_secret(cls v: str) -> str:
+        if not v:
+            return secrets.token_hex(32)
+        return v
 
     @property
     def cors_origin_list(self) -> list[str]:
