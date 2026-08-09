@@ -67,6 +67,8 @@ async function handler(req: NextRequest, { params }: { params: Promise<{ path: s
 
   const backendBase = getBackendBase();
   const url = `${backendBase}/${path.join("/")}${req.nextUrl.search}`;
+  console.log(`[proxy] ${req.method} ${req.url} -> ${url}`);
+  console.log(`[proxy] BACKEND_API_URL=${process.env.BACKEND_API_URL}`);
 
   const headers: Record<string, string> = {};
   const auth = req.headers.get("authorization");
