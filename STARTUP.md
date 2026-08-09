@@ -118,14 +118,7 @@ nexacargo/
 | Rate limiting docs | `docs/API_DOCUMENTATION.md` | Updated to clearly state rate limiting is planned but not yet implemented |
 | DriverDashboard Supabase bypass | `frontend/src/components/dashboards/DriverDashboard.tsx` | Replaced direct Supabase read with `shipmentsApi.list()` backend call |
 
-### 3.6 Repo Hygiene Fixes
-| Fix | File(s) | Description |
-|-----|---------|-------------|
-| Package name | `frontend/package.json` | Renamed from `client-project` to `nexacargo-frontend` |
-| Backend `__init__.py` | `backend/app/__init__.py` | Added package docstring |
-| Reviews migration comment | `backend/migrations/0004_reviews.sql` | Updated DEPRECATED comment to reflect actual usage |
-
-### 3.7 Documentation Fixes
+### 3.6 Documentation Fixes
 | Fix | File(s) | Description |
 |-----|---------|-------------|
 | README cleanup | `README.md` | Removed leftover `# Nexpython` branding |
@@ -143,12 +136,46 @@ nexacargo/
 | CORS origin mismatch | `core/config.py`, `frontend/src/app/api/proxy/[...path]/route.ts` | Multiple divergent deployment URLs |
 | Stale auth API | `backend/app/api/auth.py` | Frontend uses Supabase directly; backend auth is dead code |
 
+Added these files
+All 3 high-priority items fixed and pushed. ✅
+
+
+No CI/CD	Added GitHub Actions workflow with 4 jobs: backend-test, frontend-lint, frontend-test, frontend-build	.github/workflows/ci.yml
+Rate limiting docs	Updated to clearly state "Planned (Not Yet Implemented)" with roadmap	docs/API_DOCUMENTATION.md
+DriverDashboard bypass	Replaced supabase.from("shipments") with shipmentsApi.list() backend call	frontend/src/components/dashboards/DriverDashboard.tsx
+Remaining pending (medium/low):
+- RLS disabled by migrations
+- Hardcoded deploy secrets in render.yaml
+- CORS origin mismatch
+- Package name client-project
+- Empty __init__.py
+
+
 ### 4.2 Low Priority
-| Item | File(s) | Status |
+| Item | File(s) | Reason |
 |------|---------|--------|
-| Package name | `frontend/package.json` | ✅ Renamed to `nexacargo-frontend` |
-| `__init__.py` empty | `backend/app/__init__.py` | ✅ Added package docstring |
-| Reviews table DEPRECATED comment | `backend/migrations/0004_reviews.sql` | ✅ Updated to reflect actual usage |
+| Package name | `frontend/package.json` | Named `client-project` (template boilerplate) |
+| `__init__.py` empty | `backend/app/__init__.py` | 0 bytes (cosmetic) |
+| Reviews table DEPRECATED comment | `backend/migrations/0004_reviews.sql` | Now used; comment should be updated |
+
+All low-priority items fixed and pushed. ✅
+Item	Fix	File(s)
+Package name	Renamed client-project → nexacargo-frontend	frontend/package.json
+Empty __init__.py	Added package docstring	backend/app/__init__.py
+Reviews DEPRECATED comment	Updated to reflect actual usage	backend/migrations/0004_reviews.sql
+Complete Audit Fix Summary
+Category	Total	Fixed	Pending
+Build/Tests/Lint	4	✅ 4	0
+Security	5	✅ 3	2 (RLS, hardcoded secrets)
+Features	4	✅ 4	0
+CI/CD	1	✅ 1	0
+Docs	4	✅ 3	1 (CORS mismatch)
+Repo Hygiene	3	✅ 3	0
+Total	21	18	3
+Remaining medium-priority items:
+- RLS disabled by migrations
+- Hardcoded deploy secrets in render.yaml
+- CORS origin mismatch
 
 ---
 
@@ -238,6 +265,7 @@ NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
 | `0003_roles_expenses_driver_tasks.sql` | Adds roles, expenses, driver, task tables |
 | `0004_reviews.sql` | Creates reviews table (now used) |
 | `0005_schema_consistency.sql` | Adds missing columns/constraints |
+Created database migrations in script file in backend migrations
 
 ---
 
@@ -267,10 +295,46 @@ python -m pytest -q
 - Config: `render.yaml`
 - Runtime: Docker
 - Health check: `/health`
+| Specification        | Typical requirement                    |
+| -------------------- | -------------------------------------- |
+| **RAM**              | 512 MB – 2 GB                          |
+| **CPU**              | 0.5 – 1+ vCPU                          |
+| **Storage (ROM)**    | 1–10 GB+ SSD, depending on application |
+| **Operating System** | Linux                                  |
+| **Architecture**     | 64-bit                                 |
+| **Network**          | Internet connection required           |
+| **Database**         | PostgreSQL, if needed                  |
+| **Runtime**          | Node.js, Python, Java, Go, Ruby, etc.  |
+| **SSL/HTTPS**        | Supported                              |
+| **Deployment**       | Git-based or Docker                    |
+
+
 
 ### Vercel (Frontend)
 - Framework: Next.js 16
 - Proxy: `/api/proxy/*` → backend
+| Specification             | Details                                                                          |
+| ------------------------- | -------------------------------------------------------------------------------- |
+| **Platform**              | Vercel                                                                           |
+| **Framework**             | Next.js 16                                                                       |
+| **Frontend**              | React / Next.js                                                                  |
+| **Runtime**               | Node.js                                                                          |
+| **CPU**                   | Managed by Vercel                                                                |
+| **RAM**                   | Managed dynamically by Vercel; depends on deployment/function plan               |
+| **Storage (ROM)**         | No traditional fixed ROM; deployment files are stored in Vercel's infrastructure |
+| **Build Environment**     | Vercel-managed Linux environment                                                 |
+| **Deployment**            | Git-based / Vercel CLI                                                           |
+| **Domain**                | Custom domain supported                                                          |
+| **HTTPS / SSL**           | Automatic                                                                        |
+| **CDN**                   | Global Vercel CDN                                                                |
+| **API Proxy**             | `/api/proxy/*` → Backend                                                         |
+| **Environment Variables** | Supported                                                                        |
+| **Server-Side Rendering** | Supported                                                                        |
+| **Static Generation**     | Supported                                                                        |
+| **Image Optimization**    | Next.js/Vercel Image Optimization                                                |
+| **Backend Connection**    | Communicates with backend through proxy/API routes                               |
+
+
 
 ---
 
