@@ -377,10 +377,13 @@ POPULAR_LOCATIONS.forEach(l => VALID_CITIES.add(l.value.toLowerCase()));
 
 export default function RequestQuotesPage() {
   const { user } = useAuth();
+  const [mounted, setMounted] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({ origin: "", destination: "", type: "FCL 20FT", mode: "", weight: "", date: "", insurance: "No Insurance", notes: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  useEffect(() => { setMounted(true); }, []);
 
   // Clear submit error whenever user edits the form
   const updateForm = (patch: Partial<typeof form>) => {
@@ -827,7 +830,7 @@ export default function RequestQuotesPage() {
             </div>
           )}
 
-          <button type="submit" disabled={saving} className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] transition-colors shadow-[0_0_20px_rgba(30,136,229,0.3)] disabled:opacity-50">
+          <button type="submit" disabled={saving || !mounted} className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#1E88E5] text-white font-bold text-sm hover:bg-[#1565C0] transition-colors shadow-[0_0_20px_rgba(30,136,229,0.3)] disabled:opacity-50">
             <Send className="h-4 w-4" /> {saving ? "Submitting…" : "Submit Quote Request"}
           </button>
         </form>
