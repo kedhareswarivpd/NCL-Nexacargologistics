@@ -1,0 +1,90 @@
+### `setup-db.sh`
+
+```bash
+#!/bin/bash
+
+set -e
+
+echo "======================================"
+echo " Database Setup"
+echo "======================================"
+
+# Check Supabase CLI
+if ! command -v supabase &> /dev/null
+then
+    echo "Supabase CLI is not installed."
+    echo "Please install it first:"
+    echo "https://supabase.com/docs/guides/cli"
+    exit 1
+fi
+
+echo ""
+echo "Starting Supabase..."
+supabase start
+
+echo ""
+echo "Applying database migrations..."
+supabase db reset
+
+echo ""
+echo "======================================"
+echo " Database setup completed successfully"
+echo "======================================"
+```
+
+### Run it
+
+From the project root:
+
+```bash
+chmod +x setup-db.sh
+./setup-db.sh
+```
+
+Or:
+
+```bash
+bash setup-db.sh
+```
+
+The script expects your migrations to be stored here:
+
+```text
+supabase/
+└── migrations/
+    ├── 0001_backend_jwt_auth.sql
+    ├── 0002_disable_rls.sql
+    ├── 0003_roles_expenses_driver_tasks.sql
+    ├── 0004_reviews.sql
+    └── 0005_schema_consistency.sql
+```
+
+`supabase db reset` will recreate the local database and execute the migrations in order.
+
+### Recommended repository structure
+
+```text
+project/
+├── setup-db.sh
+├── package.json
+├── .env
+└── supabase/
+    └── migrations/
+        ├── 0001_backend_jwt_auth.sql
+        ├── 0002_disable_rls.sql
+        ├── 0003_roles_expenses_driver_tasks.sql
+        ├── 0004_reviews.sql
+        └── 0005_schema_consistency.sql
+```
+
+For a completely new laptop, the setup becomes:
+
+```bash
+git clone <repository-url>
+cd <project-folder>
+
+chmod +x setup-db.sh
+./setup-db.sh
+```
+
+This gives you a **single setup script** that starts Supabase and recreates the database from the version-controlled migrations.

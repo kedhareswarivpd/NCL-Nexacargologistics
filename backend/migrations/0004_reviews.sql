@@ -1,6 +1,6 @@
 -- Migration 0004 — create reviews table
--- DEPRECATED: This table is no longer used. Kept for backward compatibility.
--- Remove in next migration if no longer needed.
+-- Stores customer testimonials/reviews submitted via POST /reviews.
+-- Reviews require admin approval (approved=false) before public display.
 
 CREATE TABLE IF NOT EXISTS public.reviews (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

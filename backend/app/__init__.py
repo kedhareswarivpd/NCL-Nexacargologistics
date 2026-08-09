@@ -1,0 +1,3 @@
+"""
+NexaCargo backend application package.
+"""
