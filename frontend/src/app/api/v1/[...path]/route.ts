@@ -2,16 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 function getBackendBase(): string {
   const defaultUrl = process.env.VERCEL
-    ? "https://nexacargo-backend.onrender.com/api/v1"
-    : "http://127.0.0.1:8000/api/v1";
+    ? "https://nexacargo-backend.onrender.com"
+    : "http://127.0.0.1:8000";
   let raw = (process.env.BACKEND_API_URL || defaultUrl).trim();
   while (raw.endsWith("/")) {
     raw = raw.slice(0, -1);
   }
-  if (!raw.endsWith("/api/v1") && !raw.includes("/api/")) {
-    raw = `${raw}/api/v1`;
-  }
-  return raw;
+  return `${raw}/api/v1`;
 }
 
 async function proxyWithRetry(
