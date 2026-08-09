@@ -75,7 +75,7 @@ export default function NotificationsPage() {
   async function load() {
     setLoading(true);
     try {
-      const data = await notificationsApi.list();
+      const data = await notificationsApi.list("all");
       setNotifications((data ?? []) as NotificationItem[]);
     } catch {
       setNotifications([]);
@@ -97,7 +97,7 @@ export default function NotificationsPage() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const data = await notificationsApi.list();
+        const data = await notificationsApi.list("all");
         if (isMounted) setNotifications((data ?? []) as NotificationItem[]);
       } catch {
         if (isMounted) setNotifications([]);
@@ -132,7 +132,7 @@ export default function NotificationsPage() {
     setSending(true);
     const channel = form.type === "both" ? "email" : form.type;
     try {
-      await notificationsApi.send({
+      const result = await notificationsApi.send({
         user_id: form.user_id,
         channel,
         title: form.subject || "NexaCargo Notification",
@@ -140,9 +140,12 @@ export default function NotificationsPage() {
         type: "system",
         email_to: form.recipient_email || undefined,
       });
+      console.log("Send notification response:", result);
       setForm({ user_id: "", recipient_name: "", recipient_email: "", recipient_phone: "", subject: "", message: "", type: "both" });
       setShowForm(false);
-      load();
+      await new Promise(resolve => setTimeout(resolve, 500));
+      await load();
+      console.log("Notifications after reload:", notifications);
     } catch (err: any) {
       console.error("Failed to send notification:", err);
       alert(`Failed to send: ${err?.response?.data?.detail || err.message}`);

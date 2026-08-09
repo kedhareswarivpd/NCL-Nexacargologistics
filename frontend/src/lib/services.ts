@@ -124,7 +124,7 @@ export const supportApi = {
 
 // ----------------------------- Notifications -----------------------------
 export const notificationsApi = {
-  list: () => data(api.get("/notifications")),
+  list: (scope?: string) => data(api.get("/notifications", { params: scope ? { scope } : undefined })),
   markRead: (id: string) => data(api.post(`/notifications/${id}/read`)),
   send: (body: Dict & { email_to?: string }) => data(api.post("/notifications", body)),
 };

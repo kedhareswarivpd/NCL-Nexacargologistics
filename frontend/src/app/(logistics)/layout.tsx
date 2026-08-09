@@ -1,26 +1,21 @@
 "use client";
-import React from "react";
 
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { LogisticsSidebar } from "@/components/shared/LogisticsSidebar";
-import { PortalHeader } from "@/components/shared/PortalHeader";
-import { MobileSidebarWrapper } from "@/components/shared/MobileSidebarWrapper";
+import { PortalLayout } from "@/components/shared/PortalLayout";
+import { logisticsNavItems } from "@/components/shared/sidebar-configs";
 
-// Force dynamic rendering to prevent 304 cache issues on Vercel
 export const dynamic = "force-dynamic";
 
 export default function LogisticsLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <ProtectedRoute allow={["logistics"]}>
-      <div className="flex bg-background text-on-surface min-h-screen">
-        <MobileSidebarWrapper>
-          <LogisticsSidebar />
-        </MobileSidebarWrapper>
-        <main className="flex flex-1 flex-col overflow-y-auto min-w-0">
-          <PortalHeader userRole="Logistics Manager" />
-          <div className="flex-1 p-4 lg:p-6">{children}</div>
-        </main>
-      </div>
-    </ProtectedRoute>
+    <PortalLayout
+      role={["logistics"]}
+      userRole="Logistics Manager"
+      sidebarConfig={{
+        portalName: "Logistics Portal",
+        navItems: logisticsNavItems,
+      }}
+    >
+      {children}
+    </PortalLayout>
   );
 }

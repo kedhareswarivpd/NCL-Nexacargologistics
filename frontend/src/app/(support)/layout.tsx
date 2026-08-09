@@ -1,26 +1,22 @@
 "use client";
 
 import { ReactNode } from "react";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { SupportSidebar } from "@/components/shared/SupportSidebar";
-import { PortalHeader } from "@/components/shared/PortalHeader";
-import { MobileSidebarWrapper } from "@/components/shared/MobileSidebarWrapper";
+import { PortalLayout } from "@/components/shared/PortalLayout";
+import { supportNavItems } from "@/components/shared/sidebar-configs";
 
-// Force dynamic rendering to prevent 304 cache issues on Vercel
 export const dynamic = "force-dynamic";
 
 export default function SupportLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <ProtectedRoute allow={["support"]}>
-      <div className="flex bg-background text-on-surface min-h-screen">
-        <MobileSidebarWrapper>
-          <SupportSidebar />
-        </MobileSidebarWrapper>
-        <main className="flex flex-1 flex-col overflow-y-auto min-w-0">
-          <PortalHeader userRole="Support Executive" />
-          <div className="flex-1 p-4 lg:p-6">{children}</div>
-        </main>
-      </div>
-    </ProtectedRoute>
+    <PortalLayout
+      role={["support"]}
+      userRole="Support Executive"
+      sidebarConfig={{
+        portalName: "Support Portal",
+        navItems: supportNavItems,
+      }}
+    >
+      {children}
+    </PortalLayout>
   );
 }

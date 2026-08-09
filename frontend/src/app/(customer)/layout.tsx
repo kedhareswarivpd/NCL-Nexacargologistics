@@ -1,26 +1,21 @@
 "use client";
-import React from "react";
 
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { CustomerSidebar } from "@/components/shared/CustomerSidebar";
-import { PortalHeader } from "@/components/shared/PortalHeader";
-import { MobileSidebarWrapper } from "@/components/shared/MobileSidebarWrapper";
+import { PortalLayout } from "@/components/shared/PortalLayout";
+import { customerNavItems } from "@/components/shared/sidebar-configs";
 
-// Force dynamic rendering to prevent 304 cache issues on Vercel
 export const dynamic = "force-dynamic";
 
 export default function CustomerLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <ProtectedRoute allow={["customer"]}>
-      <div className="h-screen w-screen flex bg-background text-on-surface overflow-hidden">
-        <MobileSidebarWrapper>
-          <CustomerSidebar />
-        </MobileSidebarWrapper>
-        <main className="flex flex-1 flex-col overflow-y-auto min-w-0">
-          <PortalHeader userRole="Customer" />
-          <div className="flex-1 p-4 lg:p-6">{children}</div>
-        </main>
-      </div>
-    </ProtectedRoute>
+    <PortalLayout
+      role={["customer"]}
+      userRole="Customer"
+      sidebarConfig={{
+        portalName: "Customer Portal",
+        navItems: customerNavItems,
+      }}
+    >
+      {children}
+    </PortalLayout>
   );
 }

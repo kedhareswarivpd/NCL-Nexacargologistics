@@ -67,14 +67,12 @@ async def _notify_user(db: AsyncSession, user_id: str, email: str, title: str, m
     await create_notification(db, user_id=user_id, title=title, message=message, channel="email", type="shipment", email_to=email)
 
 
-async def get_user_notifications(db: AsyncSession, user_id: str, skip: int = 0, limit: int = 50) -> list[Notification]:
-    result = await db.execute(
-        select(Notification)
-        .where(Notification.user_id == uuid.UUID(user_id))
-        .order_by(Notification.created_at.desc())
-        .offset(skip)
-        .limit(limit)
-    )
+async def get_user_notifications(db: AsyncSession, user_id: str | None, skip: int = 0, limit: int = 50) -> list[Notification]:
+    query = select(Notification)
+    if user_id is not None:
+        query = query.where(Notification.user_id == uuid.UUID(user_id))
+    query = query.order_by(Notification.created_at.desc()).offset(skip).limit(limit)
+    result = await db.execute(query)
     return list(result.scalars().all())
 
 

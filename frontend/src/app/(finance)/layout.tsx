@@ -1,26 +1,21 @@
 "use client";
-import React from "react";
 
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { FinanceSidebar } from "@/components/shared/FinanceSidebar";
-import { PortalHeader } from "@/components/shared/PortalHeader";
-import { MobileSidebarWrapper } from "@/components/shared/MobileSidebarWrapper";
+import { PortalLayout } from "@/components/shared/PortalLayout";
+import { financeNavItems } from "@/components/shared/sidebar-configs";
 
-// Force dynamic rendering to prevent 304 cache issues on Vercel
 export const dynamic = "force-dynamic";
 
 export default function FinanceLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <ProtectedRoute allow={["finance"]}>
-      <div className="flex bg-background text-on-surface min-h-screen">
-        <MobileSidebarWrapper>
-          <FinanceSidebar />
-        </MobileSidebarWrapper>
-        <main className="flex flex-1 flex-col overflow-y-auto min-w-0">
-          <PortalHeader userRole="Finance Team" />
-          <div className="flex-1 p-4 lg:p-6">{children}</div>
-        </main>
-      </div>
-    </ProtectedRoute>
+    <PortalLayout
+      role={["finance"]}
+      userRole="Finance Team"
+      sidebarConfig={{
+        portalName: "Finance Portal",
+        navItems: financeNavItems,
+      }}
+    >
+      {children}
+    </PortalLayout>
   );
 }

@@ -31,9 +31,13 @@ router = APIRouter(prefix="/notifications", tags=["notifications"])
 async def my_notifications(
     skip: int = 0,
     limit: int = 50,
+    scope: str = "own",
     db: AsyncSession = Depends(get_db),
     current_user: Profile = Depends(get_current_user),
 ):
+    if scope == "all" and current_user.role == "admin":
+        all_items = await get_user_notifications(db, None, skip, limit)
+        return [serialize(n) for n in all_items]
     items = await get_user_notifications(db, str(current_user.id), skip, limit)
     return [serialize(n) for n in items]
 
