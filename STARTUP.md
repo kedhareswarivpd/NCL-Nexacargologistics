@@ -118,7 +118,14 @@ nexacargo/
 | Rate limiting docs | `docs/API_DOCUMENTATION.md` | Updated to clearly state rate limiting is planned but not yet implemented |
 | DriverDashboard Supabase bypass | `frontend/src/components/dashboards/DriverDashboard.tsx` | Replaced direct Supabase read with `shipmentsApi.list()` backend call |
 
-### 3.6 Documentation Fixes
+### 3.6 Repo Hygiene Fixes
+| Fix | File(s) | Description |
+|-----|---------|-------------|
+| Package name | `frontend/package.json` | Renamed from `client-project` to `nexacargo-frontend` |
+| Backend `__init__.py` | `backend/app/__init__.py` | Added package docstring |
+| Reviews migration comment | `backend/migrations/0004_reviews.sql` | Updated DEPRECATED comment to reflect actual usage |
+
+### 3.7 Documentation Fixes
 | Fix | File(s) | Description |
 |-----|---------|-------------|
 | README cleanup | `README.md` | Removed leftover `# Nexpython` branding |
@@ -137,11 +144,11 @@ nexacargo/
 | Stale auth API | `backend/app/api/auth.py` | Frontend uses Supabase directly; backend auth is dead code |
 
 ### 4.2 Low Priority
-| Item | File(s) | Reason |
+| Item | File(s) | Status |
 |------|---------|--------|
-| Package name | `frontend/package.json` | Named `client-project` (template boilerplate) |
-| `__init__.py` empty | `backend/app/__init__.py` | 0 bytes (cosmetic) |
-| Reviews table DEPRECATED comment | `backend/migrations/0004_reviews.sql` | Now used; comment should be updated |
+| Package name | `frontend/package.json` | ✅ Renamed to `nexacargo-frontend` |
+| `__init__.py` empty | `backend/app/__init__.py` | ✅ Added package docstring |
+| Reviews table DEPRECATED comment | `backend/migrations/0004_reviews.sql` | ✅ Updated to reflect actual usage |
 
 ---
 
