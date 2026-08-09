@@ -126,8 +126,7 @@ nexacargo/
 
 ---
 
-## 4. Pending Items (Not Fixed)
-
+4.Fixed
 ### 4.1 Medium Priority
 | Item | File(s) | Reason |
 |------|---------|--------|
