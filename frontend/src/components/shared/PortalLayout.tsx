@@ -5,10 +5,11 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { PortalHeader } from "@/components/shared/PortalHeader";
 import { MobileSidebarWrapper } from "@/components/shared/MobileSidebarWrapper";
 import { PortalSidebar } from "@/components/shared/PortalSidebar";
+import type { UserRole } from "@/lib/types";
 
 interface PortalLayoutProps {
   children: React.ReactNode;
-  role: string[];
+  role: UserRole[];
   userRole: string;
   sidebarConfig: Parameters<typeof PortalSidebar>[0];
 }

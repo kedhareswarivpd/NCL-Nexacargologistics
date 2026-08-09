@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { FormEvent } from "react";
 import { X } from "lucide-react";
 
 const inputBase = "mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border text-sm text-on-surface focus:outline-none focus:border-tertiary/50";
@@ -105,10 +105,9 @@ interface PasswordChangeFormProps {
   errors: Record<string, string>;
   saved: boolean;
   showConfirm?: boolean;
-  updatePassword?: (newPassword: string) => Promise<{ error?: { message: string } }>;
 }
 
-export function PasswordChangeForm({ onSubmit, form, onFormChange, errors, saved, showConfirm, updatePassword }: PasswordChangeFormProps) {
+export function PasswordChangeForm({ onSubmit, form, onFormChange, errors, saved, showConfirm }: PasswordChangeFormProps) {
   return (
     <>
       {saved && <p className="text-xs text-green-400 bg-green-400/10 rounded-lg px-3 py-2">Password updated successfully.</p>}

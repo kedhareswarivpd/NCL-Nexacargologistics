@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export default function AdminLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <PortalLayout
-      role={["admin"]}
+      role={["admin"] as const}
       userRole="Administrator"
       sidebarConfig={{
         portalName: "Admin Portal",

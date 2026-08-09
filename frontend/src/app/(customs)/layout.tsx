@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export default function CustomsLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <PortalLayout
-      role={["customs"]}
+      role={["customs"] as const}
       userRole="Customs Expert"
       sidebarConfig={{
         portalName: "Customs Portal",

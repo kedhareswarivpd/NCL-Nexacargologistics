@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export default function FinanceLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <PortalLayout
-      role={["finance"]}
+      role={["finance"] as const}
       userRole="Finance Team"
       sidebarConfig={{
         portalName: "Finance Portal",

@@ -111,7 +111,7 @@ export function DataTable<T extends { id: string | number }>({ columns, data, em
             <tr key={item.id} className="hover:bg-white/5 transition-all duration-150 hover:translate-x-0.5 animate-fade-up" style={{ animationDelay: `${i * 0.04}s` }}>
               {columns.map(col => (
                 <td key={col.key} className={`px-4 py-3 ${col.className || ""}`}>
-                  {col.render ? col.render(item) : (item as any)[col.key]}
+                  {col.render ? col.render(item) : (item as Record<string, unknown>)[col.key]?.toString() ?? ""}
                 </td>
               ))}
             </tr>

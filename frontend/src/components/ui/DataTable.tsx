@@ -63,7 +63,7 @@ export function DataTable<T extends { id?: string | number }>({
               >
                 {columns.map(col => (
                   <td key={col.key} className={`px-4 py-3 ${col.className || ""}`}>
-                    {col.render ? col.render(item, i) : (item as any)[col.key]}
+                    {col.render ? col.render(item, i) : (item as Record<string, unknown>)[col.key]?.toString() ?? ""}
                   </td>
                 ))}
               </tr>
