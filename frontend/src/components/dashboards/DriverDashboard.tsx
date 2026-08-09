@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Card } from "@/components/ui/card";
-import { driverApi, dispatchApi } from "@/lib/services";
+import { driverApi, dispatchApi, shipmentsApi } from "@/lib/services";
 import type { DriverRoute, DeliveryStop, DriverTask } from "@/lib/types";
 import { useToast } from "@/context/ToastContext";
 import { supabase } from "@/lib/supabase";
@@ -91,12 +91,9 @@ export default function DriverDashboard() {  // NOSONAR
       setLoadingStops(false);
     }
 
-    // Load available unassigned shipments
+    // Load available unassigned shipments via backend API
     try {
-      const { data } = await supabase
-        .from("shipments")
-        .select("*")
-        .eq("status", "Awaiting Dispatch");
+      const data = await shipmentsApi.list({ status: "Awaiting Dispatch" });
       if (data) setUnassignedShipments(data);
     } catch {
       setUnassignedShipments([]);

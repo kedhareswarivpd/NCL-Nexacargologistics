@@ -3700,13 +3700,27 @@ List active shipments (logistics, admin).
 
 ## ⏱️ Rate Limiting {#rate-limiting}
 
-### Current Limits
+### Status: Planned (Not Yet Implemented)
 
-| Endpoint Type | Limit | Window |
-|--------------|-------|--------|
+> **Note:** Rate limiting is currently **not enforced** on any endpoint. The limits described below are **planned targets** for a future release.
+
+### Planned Limits
+
+| Endpoint Type | Planned Limit | Window |
+|--------------|---------------|--------|
 | Auth (login/register) | 10 requests | 60 seconds |
 | API (authenticated) | 100 requests | 60 seconds |
 | Public tracking | 50 requests | 60 seconds |
+
+### Implementation Roadmap
+
+Rate limiting will be implemented using a Redis-backed token bucket algorithm:
+
+1. **Phase 1:** Auth endpoints (login/register/forgot-password) — prevent brute force
+2. **Phase 2:** API endpoints — per-user rate limiting via Redis
+3. **Phase 3:** Public endpoints — IP-based rate limiting
+
+See `docs/SPECIFICATION.md` for the full security roadmap.
 
 ---
 

@@ -111,23 +111,24 @@ nexacargo/
 | Frontend isEmail test | `frontend/src/test/nexacargo.test.ts` | Removed empty string from invalid emails array (validator delegates empty to `required`) |
 | Backend schema tests | Already passing | Schema tests pass with current validation rules |
 
-### 3.5 Documentation Fixes
+### 3.5 CI/CD & Integration Fixes
+| Fix | File(s) | Description |
+|-----|---------|-------------|
+| GitHub Actions CI/CD | `.github/workflows/ci.yml` | Added pipeline for backend tests, frontend lint, frontend tests, and frontend build |
+| Rate limiting docs | `docs/API_DOCUMENTATION.md` | Updated to clearly state rate limiting is planned but not yet implemented |
+| DriverDashboard Supabase bypass | `frontend/src/components/dashboards/DriverDashboard.tsx` | Replaced direct Supabase read with `shipmentsApi.list()` backend call |
+
+### 3.6 Documentation Fixes
 | Fix | File(s) | Description |
 |-----|---------|-------------|
 | README cleanup | `README.md` | Removed leftover `# Nexpython` branding |
+| Startup guide | `STARTUP.md` | Added comprehensive startup guide with setup, fixes, and pending items |
 
 ---
 
 ## 4. Pending Items (Not Fixed)
 
-### 4.1 High Priority
-| Item | File(s) | Reason |
-|------|---------|--------|
-| No CI/CD pipeline | `.github/` (missing) | No automated build/test/lint on commit |
-| Rate limiting not implemented | `docs/API_DOCUMENTATION.md` | Docs claim rate limiting exists; it does not |
-| DriverDashboard Supabase bypass | `frontend/src/components/dashboards/DriverDashboard.tsx:96` | Reads directly via anon key instead of backend API |
-
-### 4.2 Medium Priority
+### 4.1 Medium Priority
 | Item | File(s) | Reason |
 |------|---------|--------|
 | RLS disabled | `backend/migrations/0002_disable_rls.sql` | Contradicts schema.sql; tables exposed to anon role |
@@ -135,7 +136,7 @@ nexacargo/
 | CORS origin mismatch | `core/config.py`, `frontend/src/app/api/proxy/[...path]/route.ts` | Multiple divergent deployment URLs |
 | Stale auth API | `backend/app/api/auth.py` | Frontend uses Supabase directly; backend auth is dead code |
 
-### 4.3 Low Priority
+### 4.2 Low Priority
 | Item | File(s) | Reason |
 |------|---------|--------|
 | Package name | `frontend/package.json` | Named `client-project` (template boilerplate) |
