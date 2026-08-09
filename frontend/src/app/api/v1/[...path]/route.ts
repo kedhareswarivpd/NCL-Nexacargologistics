@@ -10,7 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 const BACKEND =
   process.env.BACKEND_API_URL ||
   process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/v1\/?$/, "") ||
-  "https://nexacargo-backend.onrender.com";
+  "https://ncl-nexacargologistics-2.onrender.com";
 
 async function handler(
   req: NextRequest,
