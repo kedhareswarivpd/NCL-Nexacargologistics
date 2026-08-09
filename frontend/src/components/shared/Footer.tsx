@@ -124,12 +124,7 @@ export function Footer() {
               style={{ border: 0, filter: "invert(90%) hue-rotate(180deg) brightness(0.85) saturate(1.2)" }}
               loading="lazy"
               allowFullScreen
-              src={
-                process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY &&
-                process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY !== "YOUR_GOOGLE_MAPS_API_KEY"
-                  ? `https://www.google.com/maps/embed/v1/view?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&center=23.7925,90.4078&zoom=14&maptype=roadmap`
-                  : "https://maps.google.com/maps?q=Gulshan-2,%20Dhaka,%20Bangladesh&z=14&output=embed"
-              }
+              src="https://www.openstreetmap.org/export/embed.html?bbox=90.3878%2C23.7725%2C90.4278%2C23.8125&layer=mapnik&marker=23.7925%2C90.4078"
             />
           </div>
         </div>

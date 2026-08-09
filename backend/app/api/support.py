@@ -48,10 +48,20 @@ async def create_ticket(
     db: AsyncSession = Depends(get_db),
     current_user: Profile = Depends(get_current_user),
 ):
-    data = payload.model_dump(exclude_unset=True)
-    data["ticket_ref"] = generate_ref("TKT")
-    data["customer_id"] = current_user.id
-    return serialize(await crud.create_item(db, SupportTicket, data))
+    try:
+        data = payload.model_dump(exclude_unset=True)
+        data["ticket_ref"] = generate_ref("TKT")
+        data["customer_id"] = current_user.id
+        ticket = await crud.create_item(db, SupportTicket, data)
+        return serialize(ticket)
+    except HTTPException:
+        raise
+    except Exception as exc:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Failed to create ticket: {str(exc)}",
+        )
 
 
 @router.get("/tickets/{ticket_id}")
@@ -80,17 +90,26 @@ async def add_message(
     db: AsyncSession = Depends(get_db),
     current_user: Profile = Depends(get_current_user),
 ):
-    ticket = await crud.get_item(db, SupportTicket, ticket_id)
-    if not ticket:
-        raise HTTPException(status_code=404, detail=TICKET_NOT_FOUND)  # NOSONAR
-    if not _is_agent(current_user.role) and ticket.customer_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not allowed")  # NOSONAR
-    msg = await crud.create_item(db, TicketMessage, {
-        "ticket_id": ticket.id,
-        "sender_id": current_user.id,
-        "body": payload.body,
-    })
-    return serialize(msg)
+    try:
+        ticket = await crud.get_item(db, SupportTicket, ticket_id)
+        if not ticket:
+            raise HTTPException(status_code=404, detail=TICKET_NOT_FOUND)  # NOSONAR
+        if not _is_agent(current_user.role) and ticket.customer_id != current_user.id:
+            raise HTTPException(status_code=403, detail="Not allowed")  # NOSONAR
+        msg = await crud.create_item(db, TicketMessage, {
+            "ticket_id": ticket.id,
+            "sender_id": current_user.id,
+            "body": payload.body,
+        })
+        return serialize(msg)
+    except HTTPException:
+        raise
+    except Exception as exc:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Failed to add message: {str(exc)}",
+        )
 
 
 @router.patch("/tickets/{ticket_id}")

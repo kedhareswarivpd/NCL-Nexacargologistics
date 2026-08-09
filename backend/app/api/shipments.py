@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.dependencies import require_roles, assert_owner_or_staff
+from app.core.validators import validate_pagination
 from app.middleware.auth import get_current_user
 from app.models.profile import Profile, UserRole
 from app.models.shipment import Shipment, ShipmentStatusHistory, Document
@@ -29,11 +30,11 @@ ops_guard = require_roles(UserRole.LOGISTICS, UserRole.WAREHOUSE, UserRole.CUSTO
 @router.get("")
 async def list_shipments(
     status_filter: str | None = None,
-    skip: int = 0,
-    limit: int = 100,
+    pagination: tuple[int, int] = Depends(validate_pagination),
     db: AsyncSession = Depends(get_db),
     current_user: Profile = Depends(get_current_user),
 ):
+    skip, limit = pagination
     query = select(Shipment)
     if current_user.role not in UserRole.STAFF:
         query = query.where(Shipment.customer_id == current_user.id)

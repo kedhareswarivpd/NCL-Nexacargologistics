@@ -32,7 +32,7 @@ export default function FeedbackPage() {
     }
     setLoading(true);
     try {
-      await reviewsApi.create({ rating, title: title || null, comment, customer_role: customerRole || null });
+      await reviewsApi.create({ rating, title: title.trim() || undefined, comment, customer_role: customerRole.trim() || undefined });
       toast.success("Thank you for your feedback!");
       setSubmitted(true);
     } catch (err: any) {
@@ -62,7 +62,7 @@ export default function FeedbackPage() {
     <div className="space-y-6">
       <Link href="/customer" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#00C2FF] hover:bg-[#00a8e0] transition-colors w-fit shadow-[0_4px_16px_rgba(0,194,255,0.35)]">
         <ArrowLeft className="h-4 w-4 text-[#0B1F3A]" />
-        <span className="text-sm font-bold text-[#0B1F3A]">← Back to Dashboard</span>
+        <span className="text-sm font-bold text-[#0B1F3A]">Back to Dashboard</span>
       </Link>
 
       <div>

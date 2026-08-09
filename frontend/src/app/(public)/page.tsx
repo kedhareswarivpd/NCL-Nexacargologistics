@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Home from "./Home";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 export default function Page() {
   const { isAuthenticated, status } = useAuth();
@@ -14,5 +15,9 @@ export default function Page() {
     }
   }, [status, isAuthenticated, router]);
 
-  return <Home />;
+  return (
+    <ErrorBoundary>
+      <Home />
+    </ErrorBoundary>
+  );
 }

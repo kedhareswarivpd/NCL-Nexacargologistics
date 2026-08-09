@@ -23,8 +23,9 @@ services:
         generateValue: true
       - key: ACCESS_TOKEN_EXPIRE_MINUTES
         value: "1440"
+      # Set to your frontend URL(s) in the Render dashboard, e.g. https://your-app.vercel.app
       - key: CORS_ORIGINS
-        value: "*"
+        sync: false
       - key: APP_NAME
         value: NexaCargo API
       - key: VERSION

@@ -28,9 +28,9 @@ export default function LiveMap({ label = "GPS Active", height = 320 }: LiveMapP
   return (
     <div
       className="relative w-full rounded-xl overflow-hidden border border-white/10"
-      style={{ height, background: "#0d1e38" }}
+      style={{ height, minHeight: 200, background: "#0d1e38" }}
     >
-      <svg width="100%" height="100%" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid slice">
+      <svg width="100%" height="100%" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet">
 
         {/* ── Map background blocks (city grid) ── */}
         <rect width={W} height={H} fill="#0d1e38" />

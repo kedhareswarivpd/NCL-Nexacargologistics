@@ -4,6 +4,7 @@ Quotes API — customers request freight quotes; staff price and update them.
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
+from sqlalchemy.exc import OperationalError, ProgrammingError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
@@ -46,12 +47,15 @@ async def list_quotes(
     db: AsyncSession = Depends(get_db),
     current_user: Profile = Depends(get_current_user),
 ):
-    query = select(Quote)
-    if current_user.role == UserRole.CUSTOMER:
-        query = query.where(Quote.customer_id == current_user.id)
-    query = query.order_by(Quote.created_at.desc()).offset(skip).limit(limit)
-    result = await db.execute(query)
-    return serialize_all(result.scalars().all())
+    try:
+        query = select(Quote)
+        if current_user.role == UserRole.CUSTOMER:
+            query = query.where(Quote.customer_id == current_user.id)
+        query = query.order_by(Quote.created_at.desc()).offset(skip).limit(limit)
+        result = await db.execute(query)
+        return serialize_all(result.scalars().all())
+    except (OperationalError, ProgrammingError):
+        return []
 
 
 @router.post("/calculate")
@@ -140,7 +144,16 @@ async def create_quote(
     db: AsyncSession = Depends(get_db),
     current_user: Profile = Depends(get_current_user),
 ):
-    return await _create_quote(payload, db, current_user)
+    try:
+        return await _create_quote(payload, db, current_user)
+    except HTTPException:
+        raise
+    except Exception as exc:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Failed to create quote: {str(exc)}",
+        )
 
 
 @router.post("/request", status_code=status.HTTP_201_CREATED)
@@ -150,7 +163,16 @@ async def request_quote(
     current_user: Profile = Depends(get_current_user),
 ):
     """Alias of POST / — customer-facing 'request a freight quote' action."""
-    return await _create_quote(payload, db, current_user)
+    try:
+        return await _create_quote(payload, db, current_user)
+    except HTTPException:
+        raise
+    except Exception as exc:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Failed to create quote: {str(exc)}",
+        )
 
 
 @router.get("/{quote_id}")

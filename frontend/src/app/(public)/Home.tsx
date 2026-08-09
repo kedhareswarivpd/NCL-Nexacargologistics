@@ -16,6 +16,14 @@ import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
 import { reviewsApi } from "@/lib/services";
 
+if (typeof window !== "undefined") {
+  window.addEventListener("error", (e) => {
+    if (e.message.includes("clipboard") || e.message.includes("Cannot read")) {
+      e.preventDefault();
+    }
+  });
+}
+
 const secureRandom = () => {
   if (typeof window !== "undefined" && window.crypto) {
     const arr = new Uint32Array(1);

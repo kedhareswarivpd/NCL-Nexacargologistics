@@ -83,6 +83,7 @@ export function JobApplicationModal({ job, onClose }: Props) {
       e.phone = "Enter a valid phone number.";
     if (!form.years_of_experience)       e.years_of_experience = "Required.";
     if (!form.cover_letter.trim())       e.cover_letter = "Please add a short cover letter.";
+    if (!resumeFile)                      e.resume_name  = "Resume is required.";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -279,12 +280,12 @@ export function JobApplicationModal({ job, onClose }: Props) {
 
               {/* Resume Upload */}
               <div>
-                <p className="text-xs font-semibold text-[#00C2FF]/70 uppercase tracking-widest mb-3">Resume (optional)</p>
+                <p className="text-xs font-semibold text-[#00C2FF]/70 uppercase tracking-widest mb-3">Resume *</p>
                 <input ref={fileRef} type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={handleFileChange} />
                 <button
                   type="button"
                   onClick={() => fileRef.current?.click()}
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-dashed border-white/15 hover:border-[#00C2FF]/40 bg-white/3 hover:bg-[#00C2FF]/5 transition-all text-sm text-white/50 hover:text-white/80"
+                  className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-dashed ${errors.resume_name ? "border-red-400/60" : "border-white/15 hover:border-[#00C2FF]/40"} bg-white/3 hover:bg-[#00C2FF]/5 transition-all text-sm text-white/50 hover:text-white/80`}
                 >
                   <Upload className="w-4 h-4" />
                   {resumeFile ? (
@@ -293,6 +294,7 @@ export function JobApplicationModal({ job, onClose }: Props) {
                     "Upload PDF, DOC or DOCX"
                   )}
                 </button>
+                {errors.resume_name && <p className="text-red-400 text-[11px] mt-1">{errors.resume_name}</p>}
               </div>
 
               {/* Submit */}

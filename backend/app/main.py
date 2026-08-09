@@ -11,6 +11,7 @@ from app.core.config import settings, is_origin_allowed
 from app.core.database import engine, Base
 from app.api import api_router
 from app.middleware.logging import LoggingMiddleware
+from app.middleware.rate_limit import RateLimitMiddleware
 import app.models  # noqa: F401
 
 logging.basicConfig(level=logging.INFO)
@@ -30,11 +31,18 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     try:
+        import app.models  # noqa: F401 — ensure all models are imported
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
         logger.info("Database tables initialized successfully.")
     except Exception as exc:
-        logger.warning("Database auto-initialization skipped/failed: %s", exc)
+        if "SSL" in str(exc) or "CERTIFICATE" in str(exc):
+            logger.error(
+                "Database SSL connection failed. For local development, set DB_SSL_VERIFY=False in .env. Error: %s", exc
+            )
+        else:
+            logger.error("Database auto-initialization failed: %s", exc, exc_info=True)
+        raise RuntimeError(f"Database initialization failed: {exc}") from exc
     yield
 
 

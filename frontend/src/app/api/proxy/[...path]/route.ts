@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 function getBackendBase(): string {
-  const defaultUrl = process.env.VERCEL ? "https://ncl-nexacargologistics-2.onrender.com/api/v1" : "http://127.0.0.1:8000/api/v1";
-  let raw = (process.env.BACKEND_API_URL || defaultUrl).trim();
+  let raw = (process.env.BACKEND_API_URL || "http://127.0.0.1:8000/api/v1").trim();
   while (raw.endsWith("/")) {
     raw = raw.slice(0, -1);
   }
@@ -34,10 +33,14 @@ async function proxyWithRetry(
 
       const data = await res.text();
       if (!res.ok) {
-        console.error(`[proxy] ${method} ${url} → HTTP ${status}\nBackend response: ${data.slice(0, 500)}`);
+        console.error(`[proxy] ${method} ${url} ${ status}\nBackend response: ${data.slice(0, 500)}`);
       }
 
-      return new NextResponse(data, {
+      if (status === 204) {
+        return new NextResponse(null, { status: 204 });
+      }
+
+      return new NextResponse(data || "{}", {
         status,
         headers: { "Content-Type": res.headers.get("Content-Type") || "application/json" },
       });

@@ -32,7 +32,7 @@ const FAQS = [
 export default function SupportTicketsPage() {
   const [submitted, setSubmitted] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [form, setForm] = useState({ subject: "", category: "Shipment Issue", priority: "Medium", message: "" });
+  const [form, setForm] = useState({ subject: "", category: "delivery", priority: "medium", message: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [tickets, setTickets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -77,8 +77,8 @@ export default function SupportTicketsPage() {
     try {
       await supportApi.create({
         subject: form.subject.trim(),
-        category: form.category.toLowerCase().split(" ")[0],
-        priority: form.priority.toLowerCase(),
+        category: form.category,
+        priority: form.priority,
         description: form.message.trim(),
       });
       setSubmitted(true);
@@ -95,7 +95,7 @@ export default function SupportTicketsPage() {
     <div className="space-y-6">
       <Link href="/customer" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#00C2FF] hover:bg-[#00a8e0] transition-colors w-fit shadow-[0_4px_16px_rgba(0,194,255,0.35)]">
         <ArrowLeft className="h-4 w-4 text-[#0B1F3A]" />
-        <span className="text-sm font-bold text-[#0B1F3A]">← Back to Dashboard</span>
+        <span className="text-sm font-bold text-[#0B1F3A]">Back to Dashboard</span>
       </Link>
       <div>
         <p className="text-xs uppercase tracking-widest text-tertiary">Customer Portal</p>
@@ -159,20 +159,20 @@ export default function SupportTicketsPage() {
                 <label htmlFor="category-select" className="text-xs uppercase tracking-widest text-on-surface-variant">Category</label>
                 <select id="category-select" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}
                   className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
-                  <option>Shipment Issue</option>
-                  <option>Billing</option>
-                  <option>Documentation</option>
-                  <option>Insurance</option>
-                  <option>General Inquiry</option>
+                  <option value="delivery">Shipment / Delivery</option>
+                  <option value="billing">Billing</option>
+                  <option value="damage">Damage</option>
+                  <option value="documentation">Documentation</option>
+                  <option value="general">General Inquiry</option>
                 </select>
               </div>
               <div>
                 <label htmlFor="priority-select" className="text-xs uppercase tracking-widest text-on-surface-variant">Priority</label>
                 <select id="priority-select" value={form.priority} onChange={(e) => setForm({ ...form, priority: e.target.value })}
                   className="mt-1 w-full px-3 py-2 rounded-lg bg-surface-container border border-white/10 text-sm text-on-surface focus:outline-none focus:border-tertiary/50">
-                  <option>Low</option>
-                  <option>Medium</option>
-                  <option>High</option>
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
                 </select>
               </div>
             </div>
