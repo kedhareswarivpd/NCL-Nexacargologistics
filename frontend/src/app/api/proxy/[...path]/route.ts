@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
 function getBackendBase(): string {
-  let raw = (process.env.BACKEND_API_URL || "http://127.0.0.1:8000/api/v1").trim();
+  const defaultUrl = process.env.VERCEL
+    ? "https://nexacargo-backend.onrender.com/api/v1"
+    : "http://127.0.0.1:8000/api/v1";
+  let raw = (process.env.BACKEND_API_URL || defaultUrl).trim();
   while (raw.endsWith("/")) {
     raw = raw.slice(0, -1);
   }
@@ -67,6 +70,7 @@ async function handler(req: NextRequest, { params }: { params: Promise<{ path: s
 
   const backendBase = getBackendBase();
   const url = `${backendBase}/${path.join("/")}${req.nextUrl.search}`;
+  console.log(`[proxy] ${req.method} ${req.url} -> ${url}`);
 
   const headers: Record<string, string> = {};
 
