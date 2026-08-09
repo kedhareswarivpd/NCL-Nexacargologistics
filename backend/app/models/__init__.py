@@ -19,6 +19,7 @@ from app.models.customs import CustomsEntry
 from app.models.insurance import InsurancePolicy
 from app.models.support import SupportTicket, TicketMessage
 from app.models.notification import Notification, AuditLog
+from app.models.reviews import Review
 
 __all__ = [
     "Profile",
@@ -48,4 +49,5 @@ __all__ = [
     "TicketMessage",
     "Notification",
     "AuditLog",
+    "Review",
 ]
