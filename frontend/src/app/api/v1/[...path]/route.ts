@@ -70,13 +70,10 @@ async function handler(req: NextRequest, { params }: { params: Promise<{ path: s
 
   const backendBase = getBackendBase();
   const url = `${backendBase}/${path.join("/")}${req.nextUrl.search}`;
-  console.log(`[proxy] ${req.method} ${req.url} -> ${url}`);
 
   const headers: Record<string, string> = {};
-
   const auth = req.headers.get("authorization");
   if (auth) headers["Authorization"] = auth;
-
   const contentType = req.headers.get("content-type");
   if (contentType) headers["Content-Type"] = contentType;
 
