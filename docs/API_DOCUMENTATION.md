@@ -3700,25 +3700,31 @@ List active shipments (logistics, admin).
 
 ## ⏱️ Rate Limiting {#rate-limiting}
 
-### Status: Planned (Not Yet Implemented)
+### Status: ✅ Implemented
 
-> **Note:** Rate limiting is currently **not enforced** on any endpoint. The limits described below are **planned targets** for a future release.
+> **Note:** Rate limiting is **currently enforced** on auth endpoints using an in-memory token bucket algorithm.
 
-### Planned Limits
+### Enforced Limits
 
-| Endpoint Type | Planned Limit | Window |
-|--------------|---------------|--------|
-| Auth (login/register) | 10 requests | 60 seconds |
-| API (authenticated) | 100 requests | 60 seconds |
-| Public tracking | 50 requests | 60 seconds |
+| Endpoint Type | Limit | Window |
+|--------------|-------|--------|
+| Login | 10 requests | 60 seconds |
+| Register | 5 requests | 60 seconds |
+| Forgot Password | 3 requests | 60 seconds |
 
-### Implementation Roadmap
+### Implementation Details
 
-Rate limiting will be implemented using a Redis-backed token bucket algorithm:
+Rate limiting is implemented in two layers:
+1. **Middleware** (`backend/app/middleware/rate_limit.py`) — global token bucket per IP
+2. **In-endpoint** (`backend/app/api/auth.py`) — per-endpoint buckets with custom limits
 
-1. **Phase 1:** Auth endpoints (login/register/forgot-password) — prevent brute force
-2. **Phase 2:** API endpoints — per-user rate limiting via Redis
-3. **Phase 3:** Public endpoints — IP-based rate limiting
+Both are disabled during testing (`TESTING=true`).
+
+### Future Enhancements
+
+- Redis-backed rate limiting for multi-instance deployments
+- Per-user rate limiting for authenticated endpoints
+- IP-based rate limiting for public endpoints
 
 See `docs/SPECIFICATION.md` for the full security roadmap.
 

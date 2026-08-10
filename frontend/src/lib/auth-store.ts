@@ -144,8 +144,16 @@ export async function getCurrentUser(): Promise<User | null> {
     const expiresAt = session.expires_at ?? 0;
     const nowSecs = Math.floor(Date.now() / 1000);
     if (expiresAt - nowSecs < 60) {
-      const { data: refreshed } = await supabase.auth.refreshSession();
-      if (refreshed.session) session = refreshed.session;
+      try {
+        const { data: refreshed } = await supabase.auth.refreshSession();
+        if (refreshed.session) session = refreshed.session;
+      } catch {
+        // Refresh token invalid/expired — clear and return null
+        if (typeof window !== "undefined") {
+          localStorage.removeItem(SESSION_KEY);
+        }
+        return null;
+      }
     }
   }
 
@@ -182,8 +190,10 @@ export async function updateUser(_id: string, input: ProfileInput): Promise<User
 }
 
 export async function requestPasswordReset(email: string): Promise<void> {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
+    || (typeof window !== "undefined" ? window.location.origin : "");
   await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
-    redirectTo: `${typeof window !== "undefined" ? window.location.origin : ""}/reset-password`,
+    redirectTo: `${baseUrl}/reset-password`,
   });
 }
 

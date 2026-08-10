@@ -98,16 +98,21 @@ export function JobApplicationModal({ job, onClose }: Props) {
 
       // Upload resume to Supabase Storage if provided
       if (resumeFile) {
-        const ext = resumeFile.name.split(".").pop();
-        const path = `resumes/${Date.now()}_${form.full_name.replace(/\s+/g, "_")}.${ext}`;
-        const { error: uploadErr } = await supabase.storage
-          .from("job-applications")
-          .upload(path, resumeFile, { upsert: false });
-        if (!uploadErr) {
-          const { data: urlData } = supabase.storage
+        try {
+          const ext = resumeFile.name.split(".").pop() || "pdf";
+          const safeName = form.full_name.trim().replace(/\s+/g, "_").replace(/[^a-zA-Z0-9_]/g, "");
+          const path = `resumes/${Date.now()}_${safeName}.${ext}`;
+          const { error: uploadErr } = await supabase.storage
             .from("job-applications")
-            .getPublicUrl(path);
-          resume_url = urlData.publicUrl;
+            .upload(path, resumeFile, { upsert: false });
+          if (!uploadErr) {
+            const { data: urlData } = supabase.storage
+              .from("job-applications")
+              .getPublicUrl(path);
+            resume_url = urlData.publicUrl;
+          }
+        } catch {
+          // Storage upload failed — submit without resume_url
         }
       }
 

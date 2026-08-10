@@ -3,6 +3,7 @@ Email service — sends real emails via SMTP or logs when not configured.
 Configure via environment variables: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM
 """
 
+import html
 import logging
 import smtplib
 import os
@@ -28,12 +29,14 @@ SMTP_FROM = os.getenv("SMTP_FROM", "no-reply@nexacargo.com")
 
 
 def _html_template(subject: str, body: str) -> str:
+    safe_subject = html.escape(subject)
+    safe_body = html.escape(body)
     return f"""
     <html><body style="font-family:Arial,sans-serif;background:#0B1F3A;color:#fff;padding:32px;">
       <div style="max-width:600px;margin:auto;background:#0d2545;border-radius:12px;padding:32px;border:1px solid rgba(0,194,255,0.2);">
         <h2 style="color:#00C2FF;margin-top:0;">NexaCargo</h2>
-        <h3 style="color:#fff;">{subject}</h3>
-        <p style="color:#a0b4cc;line-height:1.6;">{body}</p>
+        <h3 style="color:#fff;">{safe_subject}</h3>
+        <p style="color:#a0b4cc;line-height:1.6;">{safe_body}</p>
         <hr style="border-color:rgba(255,255,255,0.1);margin:24px 0;">
         <p style="color:#5a7a9a;font-size:12px;">This is an automated message from NexaCargo. Please do not reply.</p>
       </div>

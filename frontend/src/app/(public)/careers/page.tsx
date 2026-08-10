@@ -54,6 +54,16 @@ export default function CareersPage() {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   }, []);
 
+  useEffect(() => {
+    const onErr = (e: ErrorEvent) => {
+      if (e.message.includes("clipboard") || e.message.includes("Cannot read")) {
+        e.preventDefault();
+      }
+    };
+    window.addEventListener("error", onErr);
+    return () => window.removeEventListener("error", onErr);
+  }, []);
+
   return (
     <div className="bg-background text-on-surface overflow-x-hidden pt-20">
 

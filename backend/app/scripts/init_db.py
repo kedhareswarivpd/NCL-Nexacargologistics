@@ -33,7 +33,7 @@ async def verify_tables():
         "warehouses", "inventory_items", "warehouse_tasks", "invoices",
         "payments", "expenses", "customs_entries", "insurance_policies",
         "support_tickets", "ticket_messages", "notifications", "audit_logs",
-        "roles", "reviews", "job_applications",
+        "roles", "reviews",
     ]
 
     async with engine.begin() as conn:

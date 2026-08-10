@@ -16,7 +16,7 @@ begin
     'profiles','roles','branches','quotes','shipments','shipment_status_history','documents',
     'vehicles','routes','containers','deliveries','warehouses','inventory_items',
     'warehouse_tasks','expenses','invoices','payments','customs_entries','insurance_policies',
-    'support_tickets','ticket_messages','notifications','audit_logs'
+    'support_tickets','ticket_messages','notifications','audit_logs','reviews'
   ] loop
     execute format('alter table public.%I disable row level security;', t);
   end loop;

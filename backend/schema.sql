@@ -24,7 +24,7 @@ begin
     'storage_allocation','system_analytics','users','vehicle_assignments','vehicles',
     'warehouses','routes','containers','deliveries','shipment_status_history','documents',
     'branches','inventory_items','warehouse_tasks','customs_entries','insurance_policies',
-    'support_tickets','ticket_messages','audit_logs','roles','expenses','reviews','driver_tasks'
+    'support_tickets','ticket_messages','audit_logs','driver_tasks'
   ] loop
     execute format('drop table if exists public.%I cascade;', t);
   end loop;
@@ -435,6 +435,23 @@ create table public.ticket_messages (
 );
 create index if not exists idx_messages_ticket on public.ticket_messages(ticket_id);
 
+-- ------------------------------------------------ reviews
+create table if not exists public.reviews (
+  id              uuid primary key default gen_random_uuid(),
+  customer_id     uuid not null references public.profiles(id) on delete cascade,
+  customer_name   varchar(255) not null,
+  customer_company varchar(255),
+  customer_role   varchar(100),
+  rating          integer not null check (rating >= 1 and rating <= 5),
+  title           varchar(255),
+  comment         text not null,
+  approved        boolean not null default false,
+  created_at      timestamptz default now()
+);
+
+create index if not exists idx_reviews_customer on public.reviews(customer_id);
+create index if not exists idx_reviews_approved on public.reviews(approved) where approved = true;
+
 -- ------------------------------------------------ notifications + audit
 create table public.notifications (
   id           uuid primary key default gen_random_uuid(),
@@ -487,7 +504,7 @@ begin
     'roles','branches','quotes','shipments','shipment_status_history','documents',
     'vehicles','routes','containers','deliveries','warehouses','inventory_items',
     'warehouse_tasks','expenses','invoices','payments','customs_entries','insurance_policies',
-    'support_tickets','ticket_messages','notifications','audit_logs'
+    'support_tickets','ticket_messages','notifications','audit_logs','reviews'
   ] loop
     execute format('alter table public.%I enable row level security;', t);
   end loop;

@@ -4,7 +4,7 @@ Automated Database Migration & Integrity Runner for NexaCargo Logistics.
 Executes database schema migrations programmatically without requiring manual SQL intervention:
 1. Creates any missing active tables from SQLAlchemy Base metadata.
 2. Backfills missing profile columns (password_hash, department, branch_id, status).
-3. Safely drops legacy/prototype tables (roles, driver_tasks, expenses, reviews, etc.).
+3. Safely drops legacy/prototype tables (Register, activity_logs, users, etc.).
 4. Decouples profiles from auth.users (drops profiles_id_fkey constraint if present).
 5. Verifies table count, foreign keys, and column integrity.
 """
@@ -17,10 +17,6 @@ import app.models  # noqa: F401
 
 
 LEGACY_TABLES = [
-    "roles",
-    "driver_tasks",
-    "expenses",
-    "reviews",
     "Register",
     "Request Access",
     "activity_logs",

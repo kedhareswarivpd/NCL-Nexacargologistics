@@ -18,7 +18,7 @@ services:
       - "8000:8000"
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/nexacargo
-      SECRET_KEY: change-me-in-production
+      JWT_SECRET: change-me-in-production
       CORS_ORIGINS: http://localhost:3000
     depends_on:
       - db

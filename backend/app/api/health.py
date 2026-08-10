@@ -49,26 +49,33 @@ async def health_check(db: AsyncSession = Depends(get_db)):
         is_degraded = True
 
     # 2. Supabase Auth Health Check
-    auth_start = time.perf_counter()
-    try:
-        supabase_key = os.getenv("SUPABASE_ANON_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNnd3l3Z3JhYm9ta2JlZ25zcmVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NjI0NTcsImV4cCI6MjA5NjAzODQ1N30.R2cgG-Kv_iBkOPZ5wQ5cdPsJuou4TEj9x3uD3UGBoIw")
-        req = urllib.request.Request(
-            "https://sgwywgrabomkbegnsref.supabase.co/auth/v1/health",
-            headers={"apikey": supabase_key, "User-Agent": "NexaCargo-HealthCheck/1.0"}
-        )
-        with urllib.request.urlopen(req, timeout=3) as resp:
-            auth_latency_ms = round((time.perf_counter() - auth_start) * 1000, 2)
-            services["auth_service"] = {
-                "status": "up" if resp.status < 400 else "degraded",
-                "latency_ms": auth_latency_ms,
-                "message": "Supabase Auth operational"
-            }
-    except Exception as exc:
+    supabase_key = os.getenv("SUPABASE_ANON_KEY", "")
+    supabase_url = os.getenv("SUPABASE_URL", "")
+    if not supabase_key or not supabase_url:
         services["auth_service"] = {
-            "status": "degraded",
-            "error": str(exc),
-            "message": "Supabase Auth check skipped or unreachable"
+            "status": "skipped",
+            "message": "Supabase credentials not configured"
         }
+    else:
+        auth_start = time.perf_counter()
+        try:
+            req = urllib.request.Request(
+                f"{supabase_url}/auth/v1/health",
+                headers={"apikey": supabase_key, "User-Agent": "NexaCargo-HealthCheck/1.0"}
+            )
+            with urllib.request.urlopen(req, timeout=3) as resp:
+                auth_latency_ms = round((time.perf_counter() - auth_start) * 1000, 2)
+                services["auth_service"] = {
+                    "status": "up" if resp.status < 400 else "degraded",
+                    "latency_ms": auth_latency_ms,
+                    "message": "Supabase Auth operational"
+                }
+        except Exception as exc:
+            services["auth_service"] = {
+                "status": "degraded",
+                "error": str(exc),
+                "message": "Supabase Auth check skipped or unreachable"
+            }
 
     # 3. System Memory & Process Stats
     try:

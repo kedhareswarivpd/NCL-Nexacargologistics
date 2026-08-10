@@ -115,7 +115,7 @@ nexacargo/
 | Fix | File(s) | Description |
 |-----|---------|-------------|
 | GitHub Actions CI/CD | `.github/workflows/ci.yml` | Added pipeline for backend tests, frontend lint, frontend tests, and frontend build |
-| Rate limiting docs | `docs/API_DOCUMENTATION.md` | Updated to clearly state rate limiting is planned but not yet implemented |
+| Rate limiting docs | `docs/API_DOCUMENTATION.md` | Updated to clearly state rate limiting IS enforced on auth endpoints |
 | DriverDashboard Supabase bypass | `frontend/src/components/dashboards/DriverDashboard.tsx` | Replaced direct Supabase read with `shipmentsApi.list()` backend call |
 
 ### 3.6 Documentation Fixes

@@ -70,7 +70,7 @@ uvicorn app.main:app --reload --port 8000
 | `CORS_ORIGINS` | ✅ | e.g. `http://localhost:3000` |
 
 - API docs: <http://localhost:8000/docs> · Health: <http://localhost:8000/health>
-- All endpoints are under `/api` (e.g. `GET /api/shipments`).
+- All endpoints are under `/api/v1` (e.g. `GET /api/v1/shipments`).
 
 ## 3. Frontend
 
