@@ -14,8 +14,22 @@ router = APIRouter(tags=["health"])
 @router.get("/health")
 async def health_check(db: AsyncSession = Depends(get_db)):
     """Health check endpoint - returns service status and DB connectivity."""
+    diagnostics = {}
+    
+    # Check roles table columns/query
     try:
-        await db.execute(text("SELECT 1"))
-        return {"status": "ok", "database": "connected"}
+        res = await db.execute(text("SELECT * FROM public.roles LIMIT 1"))
+        res.fetchall()
+        diagnostics["roles_query"] = "success"
     except Exception as exc:
-        return {"status": "error", "database": str(exc)}
+        diagnostics["roles_query_error"] = f"{type(exc).__name__}: {str(exc)}"
+
+    # Check expenses table columns/query
+    try:
+        res = await db.execute(text("SELECT * FROM public.expenses LIMIT 1"))
+        res.fetchall()
+        diagnostics["expenses_query"] = "success"
+    except Exception as exc:
+        diagnostics["expenses_query_error"] = f"{type(exc).__name__}: {str(exc)}"
+
+    return {"status": "ok", "diagnostics": diagnostics}
