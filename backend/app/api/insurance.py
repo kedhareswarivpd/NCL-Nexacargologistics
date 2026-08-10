@@ -25,14 +25,17 @@ def _is_staff(role: str) -> bool:
     return role in (UserRole.ADMIN, UserRole.FINANCE)
 
 
-insurance_guard = require_roles(UserRole.FINANCE, UserRole.ADMIN)
-
 @router.get("/policies")
 async def list_policies(
     db: AsyncSession = Depends(get_db),
-    _: Profile = Depends(insurance_guard),
+    current_user: Profile = Depends(get_current_user),
 ):
-    query = select(InsurancePolicy).order_by(InsurancePolicy.created_at.desc())
+    query = select(InsurancePolicy)
+    if current_user.role == UserRole.CUSTOMER:
+        query = query.where(InsurancePolicy.customer_id == current_user.id)
+    elif current_user.role not in (UserRole.ADMIN, UserRole.FINANCE, UserRole.LOGISTICS, UserRole.SUPPORT):
+        raise HTTPException(status_code=403, detail="Not allowed")  # NOSONAR
+    query = query.order_by(InsurancePolicy.created_at.desc())
     result = await db.execute(query)
     return [serialize(p) for p in result.scalars().all()]
 

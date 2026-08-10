@@ -28,16 +28,19 @@ def _is_finance(role: str) -> bool:
 
 
 # ----------------------------- Invoices -----------------------------
-finance_guard = require_roles(UserRole.FINANCE, UserRole.ADMIN)
-
 @router.get("/invoices")
 async def list_invoices(
     skip: int = 0,
     limit: int = 200,
     db: AsyncSession = Depends(get_db),
-    _: Profile = Depends(finance_guard),
+    current_user: Profile = Depends(get_current_user),
 ):
-    query = select(Invoice).order_by(Invoice.created_at.desc()).offset(skip).limit(limit)
+    query = select(Invoice)
+    if current_user.role == UserRole.CUSTOMER:
+        query = query.where(Invoice.customer_id == current_user.id)
+    elif current_user.role not in (UserRole.ADMIN, UserRole.FINANCE, UserRole.LOGISTICS, UserRole.SUPPORT):
+        raise HTTPException(status_code=403, detail="Not allowed")  # NOSONAR
+    query = query.order_by(Invoice.created_at.desc()).offset(skip).limit(limit)
     result = await db.execute(query)
     return [serialize(i) for i in result.scalars().all()]
 
