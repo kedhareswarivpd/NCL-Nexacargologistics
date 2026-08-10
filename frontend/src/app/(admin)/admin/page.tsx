@@ -137,7 +137,7 @@ export default function AdminDashboardPage() {
             <p className="text-[10px] uppercase tracking-widest text-on-surface-variant/60 font-semibold whitespace-nowrap">Active Shipments</p>
             <div className="flex items-center justify-end gap-2 mt-0.5">
               <span className="flex h-2 w-2 rounded-full bg-green-400 animate-pulse" />
-              <span className="font-mono text-2xl font-bold text-on-surface">348</span>
+              <span className="font-mono text-2xl font-bold text-on-surface">{stats[2].value}</span>
             </div>
           </div>
 
