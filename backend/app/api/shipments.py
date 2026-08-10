@@ -55,6 +55,11 @@ async def create_shipment(
     data = payload.model_dump(exclude_unset=True)
     data["tracking_id"] = generate_tracking_id()
 
+    if data.get("weight") is not None:
+        data["weight"] = str(data["weight"])
+    if data.get("volume") is not None:
+        data["volume"] = str(data["volume"])
+
     if current_user.role == UserRole.CUSTOMER:
         data["customer_id"] = current_user.id
         data.setdefault("customer_name", current_user.name)
