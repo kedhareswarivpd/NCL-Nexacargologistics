@@ -14,6 +14,7 @@ router = APIRouter(tags=["health"])
 @router.get("/health")
 async def health_check(db: AsyncSession = Depends(get_db)):
     """Health check endpoint - returns service status and DB connectivity."""
+    from sqlalchemy import select
     diagnostics = {}
     
     # Try SQLAlchemy query for Role
