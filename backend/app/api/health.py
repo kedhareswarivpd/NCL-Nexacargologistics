@@ -17,6 +17,14 @@ async def health_check(db: AsyncSession = Depends(get_db)):
     from sqlalchemy import select
     diagnostics = {}
     
+    # Add updated_at column to public.roles table
+    try:
+        await db.execute(text("ALTER TABLE public.roles ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();"))
+        await db.commit()
+        diagnostics["roles_column_add"] = "success"
+    except Exception as exc:
+        diagnostics["roles_column_add_error"] = str(exc)
+
     # Try SQLAlchemy query for Role
     try:
         from app.models.profile import Role
