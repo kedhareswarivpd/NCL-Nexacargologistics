@@ -10,6 +10,7 @@ python-multipart>=0.0.12
 email-validator>=2.2.0
 python-dotenv>=1.0.1
 httpx>=0.27.0
+psutil>=5.9.0
 
 # Testing
 pytest>=8.0.0

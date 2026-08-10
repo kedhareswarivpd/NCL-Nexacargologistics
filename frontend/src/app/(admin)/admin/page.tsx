@@ -30,7 +30,7 @@ const STATS = [
   { label: "Total Users",     value: "1,284", delta: "+24 this week",     Icon: Users,       color: "text-tertiary bg-tertiary/10", href: "/admin/users" },
   { label: "Active Branches", value: "12",    delta: "3 countries",       Icon: GitBranch,   color: "text-secondary bg-secondary/10", href: "/admin/branches" },
   { label: "Active Shipments",value: "348",   delta: "+12 today",         Icon: Package,     color: "text-green-400 bg-green-400/10", href: "/admin/logistics" },
-  { label: "System Health",   value: "99.8%", delta: "Uptime this month", Icon: Activity,    color: "text-on-tertiary-container bg-on-tertiary-container/10", href: "/admin" },
+  { label: "System Health",   value: "99.8%", delta: "Live service status", Icon: Activity,    color: "text-on-tertiary-container bg-on-tertiary-container/10", href: "/admin/health" },
 ];
 
 type Analytics = {
