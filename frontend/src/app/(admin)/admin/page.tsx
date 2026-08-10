@@ -93,11 +93,17 @@ export default function AdminDashboardPage() {
         setQuotes([]);
       }
       try {
-        const a: Analytics = await adminApi.analytics();
+        const d: any = await adminApi.dashboard();
+        const userCount = typeof d?.users === "number" ? d.users : (d?.users?.total ?? 0);
+        const branchCount = typeof d?.branches === "number" ? d.branches : 0;
+        const shipmentCount = typeof d?.shipments_in_transit === "number"
+          ? d.shipments_in_transit
+          : (typeof d?.shipments === "number" ? d.shipments : (d?.shipments?.active ?? 0));
+
         setStats([
-          { ...STATS[0], value: String(a.users ?? "—"),                delta: "Registered users" },
-          { ...STATS[1], value: String(a.branches ?? "—"),             delta: "Active locations" },
-          { ...STATS[2], value: String(a.shipments_in_transit ?? "—"), delta: "In transit" },
+          { ...STATS[0], value: Number(userCount).toLocaleString(), delta: "Registered users" },
+          { ...STATS[1], value: Number(branchCount).toLocaleString(), delta: "Active locations" },
+          { ...STATS[2], value: Number(shipmentCount).toLocaleString(), delta: "In transit" },
           { ...STATS[3] },
         ]);
       } catch {
