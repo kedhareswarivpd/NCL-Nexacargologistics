@@ -16,20 +16,22 @@ async def health_check(db: AsyncSession = Depends(get_db)):
     """Health check endpoint - returns service status and DB connectivity."""
     diagnostics = {}
     
-    # Check roles table columns/query
+    # Try SQLAlchemy query for Role
     try:
-        res = await db.execute(text("SELECT * FROM public.roles LIMIT 1"))
-        res.fetchall()
-        diagnostics["roles_query"] = "success"
+        from app.models.profile import Role
+        res = await db.execute(select(Role))
+        res.scalars().all()
+        diagnostics["roles_sa_query"] = "success"
     except Exception as exc:
-        diagnostics["roles_query_error"] = f"{type(exc).__name__}: {str(exc)}"
+        diagnostics["roles_sa_query_error"] = f"{type(exc).__name__}: {str(exc)}"
 
-    # Check expenses table columns/query
+    # Try SQLAlchemy query for Expense
     try:
-        res = await db.execute(text("SELECT * FROM public.expenses LIMIT 1"))
-        res.fetchall()
-        diagnostics["expenses_query"] = "success"
+        from app.models.finance import Expense
+        res = await db.execute(select(Expense))
+        res.scalars().all()
+        diagnostics["expenses_sa_query"] = "success"
     except Exception as exc:
-        diagnostics["expenses_query_error"] = f"{type(exc).__name__}: {str(exc)}"
+        diagnostics["expenses_sa_query_error"] = f"{type(exc).__name__}: {str(exc)}"
 
     return {"status": "ok", "diagnostics": diagnostics}
